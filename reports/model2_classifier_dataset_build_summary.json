@@ -1,0 +1,1553 @@
+{
+  "total_images": 15304,
+  "total_classes": 117,
+  "total_crops": 39,
+  "total_healthy_images": 6939,
+  "total_diseased_images": 8365,
+  "split_counts": {
+    "train": 10705,
+    "val": 2295,
+    "test": 2304
+  },
+  "classes_under_20_count": 16,
+  "classes_under_50_count": 55,
+  "classes_under_100_count": 93,
+  "classes_under_20": [
+    {
+      "class": "bell_pepper__powdery_mildew",
+      "count": 18
+    },
+    {
+      "class": "blueberry__botrytis_blight",
+      "count": 19
+    },
+    {
+      "class": "broccoli__ring_spot",
+      "count": 7
+    },
+    {
+      "class": "carrot__cercospora_leaf_blight",
+      "count": 16
+    },
+    {
+      "class": "cauliflower__bacterial_soft_rot",
+      "count": 18
+    },
+    {
+      "class": "celery__anthracnose",
+      "count": 11
+    },
+    {
+      "class": "coffee__black_rot",
+      "count": 3
+    },
+    {
+      "class": "coffee__brown_eye_spot",
+      "count": 11
+    },
+    {
+      "class": "peach__anthracnose",
+      "count": 10
+    },
+    {
+      "class": "peach__rust",
+      "count": 5
+    },
+    {
+      "class": "plum__bacterial_spot",
+      "count": 10
+    },
+    {
+      "class": "plum__rust",
+      "count": 17
+    },
+    {
+      "class": "raspberry__gray_mold",
+      "count": 17
+    },
+    {
+      "class": "raspberry__leaf_spot",
+      "count": 11
+    },
+    {
+      "class": "strawberry__leaf_scorch",
+      "count": 19
+    },
+    {
+      "class": "tobacco__frogeye_leaf_spot",
+      "count": 15
+    }
+  ],
+  "classes_under_50": [
+    {
+      "class": "banana__anthracnose",
+      "count": 48
+    },
+    {
+      "class": "banana__cigar_end_rot",
+      "count": 31
+    },
+    {
+      "class": "banana__cordana_leaf_spot",
+      "count": 28
+    },
+    {
+      "class": "banana__panama_disease",
+      "count": 49
+    },
+    {
+      "class": "basil__downy_mildew",
+      "count": 41
+    },
+    {
+      "class": "bean__halo_blight",
+      "count": 35
+    },
+    {
+      "class": "bean__mosaic_virus",
+      "count": 33
+    },
+    {
+      "class": "bell_pepper__bacterial_spot",
+      "count": 47
+    },
+    {
+      "class": "bell_pepper__frogeye_leaf_spot",
+      "count": 23
+    },
+    {
+      "class": "bell_pepper__powdery_mildew",
+      "count": 18
+    },
+    {
+      "class": "blueberry__anthracnose",
+      "count": 26
+    },
+    {
+      "class": "blueberry__botrytis_blight",
+      "count": 19
+    },
+    {
+      "class": "blueberry__mummy_berry",
+      "count": 28
+    },
+    {
+      "class": "blueberry__rust",
+      "count": 33
+    },
+    {
+      "class": "blueberry__scorch",
+      "count": 32
+    },
+    {
+      "class": "broccoli__downy_mildew",
+      "count": 23
+    },
+    {
+      "class": "broccoli__ring_spot",
+      "count": 7
+    },
+    {
+      "class": "cabbage__alternaria_leaf_spot",
+      "count": 36
+    },
+    {
+      "class": "cabbage__downy_mildew",
+      "count": 49
+    },
+    {
+      "class": "carrot__alternaria_leaf_blight",
+      "count": 45
+    },
+    {
+      "class": "carrot__cavity_spot",
+      "count": 42
+    },
+    {
+      "class": "carrot__cercospora_leaf_blight",
+      "count": 16
+    },
+    {
+      "class": "cauliflower__alternaria_leaf_spot",
+      "count": 27
+    },
+    {
+      "class": "cauliflower__bacterial_soft_rot",
+      "count": 18
+    },
+    {
+      "class": "celery__anthracnose",
+      "count": 11
+    },
+    {
+      "class": "celery__early_blight",
+      "count": 29
+    },
+    {
+      "class": "cherry__powdery_mildew",
+      "count": 25
+    },
+    {
+      "class": "coffee__black_rot",
+      "count": 3
+    },
+    {
+      "class": "coffee__brown_eye_spot",
+      "count": 11
+    },
+    {
+      "class": "eggplant__cercospora_leaf_spot",
+      "count": 36
+    },
+    {
+      "class": "eggplant__phomopsis_fruit_rot",
+      "count": 32
+    },
+    {
+      "class": "eggplant__phytophthora_blight",
+      "count": 22
+    },
+    {
+      "class": "ginger__leaf_spot",
+      "count": 22
+    },
+    {
+      "class": "grape__grapevine_leafroll_disease",
+      "count": 32
+    },
+    {
+      "class": "lettuce__mosaic_virus",
+      "count": 22
+    },
+    {
+      "class": "peach__anthracnose",
+      "count": 10
+    },
+    {
+      "class": "peach__rust",
+      "count": 5
+    },
+    {
+      "class": "plum__bacterial_spot",
+      "count": 10
+    },
+    {
+      "class": "plum__brown_rot",
+      "count": 38
+    },
+    {
+      "class": "plum__pocket_disease",
+      "count": 28
+    },
+    {
+      "class": "plum__pox_virus",
+      "count": 22
+    },
+    {
+      "class": "plum__rust",
+      "count": 17
+    },
+    {
+      "class": "raspberry__fire_blight",
+      "count": 23
+    },
+    {
+      "class": "raspberry__gray_mold",
+      "count": 17
+    },
+    {
+      "class": "raspberry__leaf_spot",
+      "count": 11
+    },
+    {
+      "class": "raspberry__yellow_rust",
+      "count": 22
+    },
+    {
+      "class": "soybean__brown_spot",
+      "count": 47
+    },
+    {
+      "class": "strawberry__anthracnose",
+      "count": 30
+    },
+    {
+      "class": "strawberry__leaf_scorch",
+      "count": 19
+    },
+    {
+      "class": "tobacco__blue_mold",
+      "count": 34
+    },
+    {
+      "class": "tobacco__brown_spot",
+      "count": 46
+    },
+    {
+      "class": "tobacco__frogeye_leaf_spot",
+      "count": 15
+    },
+    {
+      "class": "tobacco__mosaic_virus",
+      "count": 29
+    },
+    {
+      "class": "tomato__mosaic_virus",
+      "count": 43
+    },
+    {
+      "class": "zucchini__downy_mildew",
+      "count": 32
+    }
+  ],
+  "classes_under_100": [
+    {
+      "class": "apple__black_rot",
+      "count": 63
+    },
+    {
+      "class": "apple__mosaic_virus",
+      "count": 73
+    },
+    {
+      "class": "apple__rust",
+      "count": 98
+    },
+    {
+      "class": "banana__anthracnose",
+      "count": 48
+    },
+    {
+      "class": "banana__bunchy_top",
+      "count": 72
+    },
+    {
+      "class": "banana__cigar_end_rot",
+      "count": 31
+    },
+    {
+      "class": "banana__cordana_leaf_spot",
+      "count": 28
+    },
+    {
+      "class": "banana__panama_disease",
+      "count": 49
+    },
+    {
+      "class": "basil__downy_mildew",
+      "count": 41
+    },
+    {
+      "class": "bean__halo_blight",
+      "count": 35
+    },
+    {
+      "class": "bean__mosaic_virus",
+      "count": 33
+    },
+    {
+      "class": "bell_pepper__bacterial_spot",
+      "count": 47
+    },
+    {
+      "class": "bell_pepper__blossom_end_rot",
+      "count": 78
+    },
+    {
+      "class": "bell_pepper__frogeye_leaf_spot",
+      "count": 23
+    },
+    {
+      "class": "bell_pepper__powdery_mildew",
+      "count": 18
+    },
+    {
+      "class": "blueberry__anthracnose",
+      "count": 26
+    },
+    {
+      "class": "blueberry__botrytis_blight",
+      "count": 19
+    },
+    {
+      "class": "blueberry__mummy_berry",
+      "count": 28
+    },
+    {
+      "class": "blueberry__rust",
+      "count": 33
+    },
+    {
+      "class": "blueberry__scorch",
+      "count": 32
+    },
+    {
+      "class": "broccoli__alternaria_leaf_spot",
+      "count": 53
+    },
+    {
+      "class": "broccoli__downy_mildew",
+      "count": 23
+    },
+    {
+      "class": "broccoli__ring_spot",
+      "count": 7
+    },
+    {
+      "class": "cabbage__alternaria_leaf_spot",
+      "count": 36
+    },
+    {
+      "class": "cabbage__black_rot",
+      "count": 88
+    },
+    {
+      "class": "cabbage__downy_mildew",
+      "count": 49
+    },
+    {
+      "class": "carrot__alternaria_leaf_blight",
+      "count": 45
+    },
+    {
+      "class": "carrot__cavity_spot",
+      "count": 42
+    },
+    {
+      "class": "carrot__cercospora_leaf_blight",
+      "count": 16
+    },
+    {
+      "class": "cauliflower__alternaria_leaf_spot",
+      "count": 27
+    },
+    {
+      "class": "cauliflower__bacterial_soft_rot",
+      "count": 18
+    },
+    {
+      "class": "celery__anthracnose",
+      "count": 11
+    },
+    {
+      "class": "celery__early_blight",
+      "count": 29
+    },
+    {
+      "class": "cherry__leaf_spot",
+      "count": 66
+    },
+    {
+      "class": "cherry__powdery_mildew",
+      "count": 25
+    },
+    {
+      "class": "citrus__greening_disease",
+      "count": 93
+    },
+    {
+      "class": "coffee__berry_blotch",
+      "count": 65
+    },
+    {
+      "class": "coffee__black_rot",
+      "count": 3
+    },
+    {
+      "class": "coffee__brown_eye_spot",
+      "count": 11
+    },
+    {
+      "class": "corn__gray_leaf_spot",
+      "count": 76
+    },
+    {
+      "class": "corn__northern_leaf_blight",
+      "count": 92
+    },
+    {
+      "class": "cucumber__bacterial_wilt",
+      "count": 82
+    },
+    {
+      "class": "eggplant__cercospora_leaf_spot",
+      "count": 36
+    },
+    {
+      "class": "eggplant__phomopsis_fruit_rot",
+      "count": 32
+    },
+    {
+      "class": "eggplant__phytophthora_blight",
+      "count": 22
+    },
+    {
+      "class": "garlic__leaf_blight",
+      "count": 79
+    },
+    {
+      "class": "garlic__rust",
+      "count": 80
+    },
+    {
+      "class": "ginger__leaf_spot",
+      "count": 22
+    },
+    {
+      "class": "ginger__sheath_blight",
+      "count": 57
+    },
+    {
+      "class": "grape__black_rot",
+      "count": 87
+    },
+    {
+      "class": "grape__grapevine_leafroll_disease",
+      "count": 32
+    },
+    {
+      "class": "grape__leaf_spot",
+      "count": 66
+    },
+    {
+      "class": "lettuce__downy_mildew",
+      "count": 53
+    },
+    {
+      "class": "lettuce__mosaic_virus",
+      "count": 22
+    },
+    {
+      "class": "maple__tar_spot",
+      "count": 57
+    },
+    {
+      "class": "peach__anthracnose",
+      "count": 10
+    },
+    {
+      "class": "peach__brown_rot",
+      "count": 93
+    },
+    {
+      "class": "peach__rust",
+      "count": 5
+    },
+    {
+      "class": "peach__scab",
+      "count": 53
+    },
+    {
+      "class": "plum__bacterial_spot",
+      "count": 10
+    },
+    {
+      "class": "plum__brown_rot",
+      "count": 38
+    },
+    {
+      "class": "plum__pocket_disease",
+      "count": 28
+    },
+    {
+      "class": "plum__pox_virus",
+      "count": 22
+    },
+    {
+      "class": "plum__rust",
+      "count": 17
+    },
+    {
+      "class": "potato__early_blight",
+      "count": 66
+    },
+    {
+      "class": "potato__late_blight",
+      "count": 76
+    },
+    {
+      "class": "raspberry__fire_blight",
+      "count": 23
+    },
+    {
+      "class": "raspberry__gray_mold",
+      "count": 17
+    },
+    {
+      "class": "raspberry__leaf_spot",
+      "count": 11
+    },
+    {
+      "class": "raspberry__yellow_rust",
+      "count": 22
+    },
+    {
+      "class": "rice__blast",
+      "count": 50
+    },
+    {
+      "class": "rice__sheath_blight",
+      "count": 52
+    },
+    {
+      "class": "soybean__bacterial_blight",
+      "count": 60
+    },
+    {
+      "class": "soybean__brown_spot",
+      "count": 47
+    },
+    {
+      "class": "soybean__downy_mildew",
+      "count": 72
+    },
+    {
+      "class": "soybean__mosaic",
+      "count": 88
+    },
+    {
+      "class": "soybean__rust",
+      "count": 65
+    },
+    {
+      "class": "strawberry__anthracnose",
+      "count": 30
+    },
+    {
+      "class": "strawberry__leaf_scorch",
+      "count": 19
+    },
+    {
+      "class": "tobacco__blue_mold",
+      "count": 34
+    },
+    {
+      "class": "tobacco__brown_spot",
+      "count": 46
+    },
+    {
+      "class": "tobacco__frogeye_leaf_spot",
+      "count": 15
+    },
+    {
+      "class": "tobacco__mosaic_virus",
+      "count": 29
+    },
+    {
+      "class": "tomato__bacterial_leaf_spot",
+      "count": 88
+    },
+    {
+      "class": "tomato__mosaic_virus",
+      "count": 43
+    },
+    {
+      "class": "tomato__septoria_leaf_spot",
+      "count": 92
+    },
+    {
+      "class": "tomato__yellow_leaf_curl_virus",
+      "count": 59
+    },
+    {
+      "class": "wheat__bacterial_leaf_streak_(black_chaff)",
+      "count": 82
+    },
+    {
+      "class": "wheat__leaf_rust",
+      "count": 73
+    },
+    {
+      "class": "wheat__stem_rust",
+      "count": 83
+    },
+    {
+      "class": "zucchini__bacterial_wilt",
+      "count": 56
+    },
+    {
+      "class": "zucchini__downy_mildew",
+      "count": 32
+    },
+    {
+      "class": "zucchini__yellow_mosaic_virus",
+      "count": 56
+    }
+  ],
+  "source_dataset_contribution": {
+    "external_healthy_bell_pepper": 708,
+    "makerere_beans": 1295,
+    "model1_balanced_healthy": 3181,
+    "external_healthy_turnip": 181,
+    "external_healthy_spinach": 694,
+    "external_healthy_strawberry": 279,
+    "external_healthy_tomato": 1420,
+    "external_healthy_cabbage": 12,
+    "external_healthy_broccoli": 8,
+    "external_healthy_cauliflower": 29,
+    "plantseg": 7497
+  },
+  "crop_distribution": {
+    "Bell pepper": 708,
+    "Bean": 1437,
+    "Rose": 432,
+    "Turnip": 181,
+    "Broccoli": 193,
+    "Spinach": 1399,
+    "Strawberry": 416,
+    "Tomato": 2232,
+    "Cucumber": 549,
+    "Lettuce": 522,
+    "Capsicum": 804,
+    "Cabbage": 185,
+    "Marigold": 270,
+    "Cauliflower": 74,
+    "Apple": 400,
+    "Banana": 337,
+    "Basil": 41,
+    "Bell Pepper": 166,
+    "Blueberry": 138,
+    "Carrot": 103,
+    "Celery": 40,
+    "Cherry": 91,
+    "Citrus": 414,
+    "Coffee": 186,
+    "Corn": 419,
+    "Eggplant": 90,
+    "Garlic": 159,
+    "Ginger": 79,
+    "Grape": 394,
+    "Maple": 57,
+    "Peach": 282,
+    "Plum": 115,
+    "Potato": 142,
+    "Raspberry": 73,
+    "Rice": 102,
+    "Soybean": 471,
+    "Squash": 137,
+    "Tobacco": 124,
+    "Wheat": 1074,
+    "Zucchini": 268
+  },
+  "per_class_summary": {
+    "healthy": {
+      "total": 6939,
+      "train": 4857,
+      "val": 1041,
+      "test": 1041,
+      "class_id": 0
+    },
+    "apple__black_rot": {
+      "total": 63,
+      "train": 44,
+      "val": 9,
+      "test": 10,
+      "class_id": 1
+    },
+    "apple__mosaic_virus": {
+      "total": 73,
+      "train": 51,
+      "val": 11,
+      "test": 11,
+      "class_id": 2
+    },
+    "apple__rust": {
+      "total": 98,
+      "train": 69,
+      "val": 15,
+      "test": 14,
+      "class_id": 3
+    },
+    "apple__scab": {
+      "total": 166,
+      "train": 116,
+      "val": 25,
+      "test": 25,
+      "class_id": 4
+    },
+    "banana__anthracnose": {
+      "total": 48,
+      "train": 34,
+      "val": 7,
+      "test": 7,
+      "class_id": 5
+    },
+    "banana__black_leaf_streak": {
+      "total": 109,
+      "train": 76,
+      "val": 16,
+      "test": 17,
+      "class_id": 6
+    },
+    "banana__bunchy_top": {
+      "total": 72,
+      "train": 50,
+      "val": 11,
+      "test": 11,
+      "class_id": 7
+    },
+    "banana__cigar_end_rot": {
+      "total": 31,
+      "train": 22,
+      "val": 5,
+      "test": 4,
+      "class_id": 8
+    },
+    "banana__cordana_leaf_spot": {
+      "total": 28,
+      "train": 20,
+      "val": 4,
+      "test": 4,
+      "class_id": 9
+    },
+    "banana__panama_disease": {
+      "total": 49,
+      "train": 34,
+      "val": 7,
+      "test": 8,
+      "class_id": 10
+    },
+    "basil__downy_mildew": {
+      "total": 41,
+      "train": 29,
+      "val": 6,
+      "test": 6,
+      "class_id": 11
+    },
+    "bean__angular_leaf_spot": {
+      "total": 432,
+      "train": 302,
+      "val": 65,
+      "test": 65,
+      "class_id": 12
+    },
+    "bean__halo_blight": {
+      "total": 35,
+      "train": 24,
+      "val": 5,
+      "test": 6,
+      "class_id": 13
+    },
+    "bean__mosaic_virus": {
+      "total": 33,
+      "train": 23,
+      "val": 5,
+      "test": 5,
+      "class_id": 14
+    },
+    "bean__rust": {
+      "total": 510,
+      "train": 357,
+      "val": 76,
+      "test": 77,
+      "class_id": 15
+    },
+    "bell_pepper__bacterial_spot": {
+      "total": 47,
+      "train": 33,
+      "val": 7,
+      "test": 7,
+      "class_id": 16
+    },
+    "bell_pepper__blossom_end_rot": {
+      "total": 78,
+      "train": 55,
+      "val": 12,
+      "test": 11,
+      "class_id": 17
+    },
+    "bell_pepper__frogeye_leaf_spot": {
+      "total": 23,
+      "train": 16,
+      "val": 3,
+      "test": 4,
+      "class_id": 18
+    },
+    "bell_pepper__powdery_mildew": {
+      "total": 18,
+      "train": 13,
+      "val": 3,
+      "test": 2,
+      "class_id": 19
+    },
+    "blueberry__anthracnose": {
+      "total": 26,
+      "train": 18,
+      "val": 4,
+      "test": 4,
+      "class_id": 20
+    },
+    "blueberry__botrytis_blight": {
+      "total": 19,
+      "train": 13,
+      "val": 3,
+      "test": 3,
+      "class_id": 21
+    },
+    "blueberry__mummy_berry": {
+      "total": 28,
+      "train": 20,
+      "val": 4,
+      "test": 4,
+      "class_id": 22
+    },
+    "blueberry__rust": {
+      "total": 33,
+      "train": 23,
+      "val": 5,
+      "test": 5,
+      "class_id": 23
+    },
+    "blueberry__scorch": {
+      "total": 32,
+      "train": 22,
+      "val": 5,
+      "test": 5,
+      "class_id": 24
+    },
+    "broccoli__alternaria_leaf_spot": {
+      "total": 53,
+      "train": 37,
+      "val": 8,
+      "test": 8,
+      "class_id": 25
+    },
+    "broccoli__downy_mildew": {
+      "total": 23,
+      "train": 16,
+      "val": 3,
+      "test": 4,
+      "class_id": 26
+    },
+    "broccoli__ring_spot": {
+      "total": 7,
+      "train": 5,
+      "val": 1,
+      "test": 1,
+      "class_id": 27
+    },
+    "cabbage__alternaria_leaf_spot": {
+      "total": 36,
+      "train": 25,
+      "val": 5,
+      "test": 6,
+      "class_id": 28
+    },
+    "cabbage__black_rot": {
+      "total": 88,
+      "train": 62,
+      "val": 13,
+      "test": 13,
+      "class_id": 29
+    },
+    "cabbage__downy_mildew": {
+      "total": 49,
+      "train": 34,
+      "val": 7,
+      "test": 8,
+      "class_id": 30
+    },
+    "carrot__alternaria_leaf_blight": {
+      "total": 45,
+      "train": 31,
+      "val": 7,
+      "test": 7,
+      "class_id": 31
+    },
+    "carrot__cavity_spot": {
+      "total": 42,
+      "train": 29,
+      "val": 6,
+      "test": 7,
+      "class_id": 32
+    },
+    "carrot__cercospora_leaf_blight": {
+      "total": 16,
+      "train": 11,
+      "val": 2,
+      "test": 3,
+      "class_id": 33
+    },
+    "cauliflower__alternaria_leaf_spot": {
+      "total": 27,
+      "train": 19,
+      "val": 4,
+      "test": 4,
+      "class_id": 34
+    },
+    "cauliflower__bacterial_soft_rot": {
+      "total": 18,
+      "train": 13,
+      "val": 3,
+      "test": 2,
+      "class_id": 35
+    },
+    "celery__anthracnose": {
+      "total": 11,
+      "train": 8,
+      "val": 2,
+      "test": 1,
+      "class_id": 36
+    },
+    "celery__early_blight": {
+      "total": 29,
+      "train": 20,
+      "val": 4,
+      "test": 5,
+      "class_id": 37
+    },
+    "cherry__leaf_spot": {
+      "total": 66,
+      "train": 46,
+      "val": 10,
+      "test": 10,
+      "class_id": 38
+    },
+    "cherry__powdery_mildew": {
+      "total": 25,
+      "train": 18,
+      "val": 4,
+      "test": 3,
+      "class_id": 39
+    },
+    "citrus__canker": {
+      "total": 321,
+      "train": 225,
+      "val": 48,
+      "test": 48,
+      "class_id": 40
+    },
+    "citrus__greening_disease": {
+      "total": 93,
+      "train": 65,
+      "val": 14,
+      "test": 14,
+      "class_id": 41
+    },
+    "coffee__berry_blotch": {
+      "total": 65,
+      "train": 46,
+      "val": 10,
+      "test": 9,
+      "class_id": 42
+    },
+    "coffee__black_rot": {
+      "total": 3,
+      "train": 2,
+      "val": 1,
+      "test": 0,
+      "class_id": 43
+    },
+    "coffee__brown_eye_spot": {
+      "total": 11,
+      "train": 8,
+      "val": 2,
+      "test": 1,
+      "class_id": 44
+    },
+    "coffee__leaf_rust": {
+      "total": 107,
+      "train": 75,
+      "val": 16,
+      "test": 16,
+      "class_id": 45
+    },
+    "corn__gray_leaf_spot": {
+      "total": 76,
+      "train": 53,
+      "val": 11,
+      "test": 12,
+      "class_id": 46
+    },
+    "corn__northern_leaf_blight": {
+      "total": 92,
+      "train": 64,
+      "val": 14,
+      "test": 14,
+      "class_id": 47
+    },
+    "corn__rust": {
+      "total": 120,
+      "train": 84,
+      "val": 18,
+      "test": 18,
+      "class_id": 48
+    },
+    "corn__smut": {
+      "total": 131,
+      "train": 92,
+      "val": 20,
+      "test": 19,
+      "class_id": 49
+    },
+    "cucumber__angular_leaf_spot": {
+      "total": 148,
+      "train": 104,
+      "val": 22,
+      "test": 22,
+      "class_id": 50
+    },
+    "cucumber__bacterial_wilt": {
+      "total": 82,
+      "train": 57,
+      "val": 12,
+      "test": 13,
+      "class_id": 51
+    },
+    "cucumber__powdery_mildew": {
+      "total": 151,
+      "train": 106,
+      "val": 23,
+      "test": 22,
+      "class_id": 52
+    },
+    "eggplant__cercospora_leaf_spot": {
+      "total": 36,
+      "train": 25,
+      "val": 5,
+      "test": 6,
+      "class_id": 53
+    },
+    "eggplant__phomopsis_fruit_rot": {
+      "total": 32,
+      "train": 22,
+      "val": 5,
+      "test": 5,
+      "class_id": 54
+    },
+    "eggplant__phytophthora_blight": {
+      "total": 22,
+      "train": 15,
+      "val": 3,
+      "test": 4,
+      "class_id": 55
+    },
+    "garlic__leaf_blight": {
+      "total": 79,
+      "train": 55,
+      "val": 12,
+      "test": 12,
+      "class_id": 56
+    },
+    "garlic__rust": {
+      "total": 80,
+      "train": 56,
+      "val": 12,
+      "test": 12,
+      "class_id": 57
+    },
+    "ginger__leaf_spot": {
+      "total": 22,
+      "train": 15,
+      "val": 3,
+      "test": 4,
+      "class_id": 58
+    },
+    "ginger__sheath_blight": {
+      "total": 57,
+      "train": 40,
+      "val": 9,
+      "test": 8,
+      "class_id": 59
+    },
+    "grape__black_rot": {
+      "total": 87,
+      "train": 61,
+      "val": 13,
+      "test": 13,
+      "class_id": 60
+    },
+    "grape__downy_mildew": {
+      "total": 209,
+      "train": 146,
+      "val": 31,
+      "test": 32,
+      "class_id": 61
+    },
+    "grape__grapevine_leafroll_disease": {
+      "total": 32,
+      "train": 22,
+      "val": 5,
+      "test": 5,
+      "class_id": 62
+    },
+    "grape__leaf_spot": {
+      "total": 66,
+      "train": 46,
+      "val": 10,
+      "test": 10,
+      "class_id": 63
+    },
+    "lettuce__downy_mildew": {
+      "total": 53,
+      "train": 37,
+      "val": 8,
+      "test": 8,
+      "class_id": 64
+    },
+    "lettuce__mosaic_virus": {
+      "total": 22,
+      "train": 15,
+      "val": 3,
+      "test": 4,
+      "class_id": 65
+    },
+    "maple__tar_spot": {
+      "total": 57,
+      "train": 40,
+      "val": 9,
+      "test": 8,
+      "class_id": 66
+    },
+    "peach__anthracnose": {
+      "total": 10,
+      "train": 7,
+      "val": 2,
+      "test": 1,
+      "class_id": 67
+    },
+    "peach__brown_rot": {
+      "total": 93,
+      "train": 65,
+      "val": 14,
+      "test": 14,
+      "class_id": 68
+    },
+    "peach__leaf_curl": {
+      "total": 121,
+      "train": 85,
+      "val": 18,
+      "test": 18,
+      "class_id": 69
+    },
+    "peach__rust": {
+      "total": 5,
+      "train": 3,
+      "val": 1,
+      "test": 1,
+      "class_id": 70
+    },
+    "peach__scab": {
+      "total": 53,
+      "train": 37,
+      "val": 8,
+      "test": 8,
+      "class_id": 71
+    },
+    "plum__bacterial_spot": {
+      "total": 10,
+      "train": 7,
+      "val": 2,
+      "test": 1,
+      "class_id": 72
+    },
+    "plum__brown_rot": {
+      "total": 38,
+      "train": 27,
+      "val": 6,
+      "test": 5,
+      "class_id": 73
+    },
+    "plum__pocket_disease": {
+      "total": 28,
+      "train": 20,
+      "val": 4,
+      "test": 4,
+      "class_id": 74
+    },
+    "plum__pox_virus": {
+      "total": 22,
+      "train": 15,
+      "val": 3,
+      "test": 4,
+      "class_id": 75
+    },
+    "plum__rust": {
+      "total": 17,
+      "train": 12,
+      "val": 3,
+      "test": 2,
+      "class_id": 76
+    },
+    "potato__early_blight": {
+      "total": 66,
+      "train": 46,
+      "val": 10,
+      "test": 10,
+      "class_id": 77
+    },
+    "potato__late_blight": {
+      "total": 76,
+      "train": 53,
+      "val": 11,
+      "test": 12,
+      "class_id": 78
+    },
+    "raspberry__fire_blight": {
+      "total": 23,
+      "train": 16,
+      "val": 3,
+      "test": 4,
+      "class_id": 79
+    },
+    "raspberry__gray_mold": {
+      "total": 17,
+      "train": 12,
+      "val": 3,
+      "test": 2,
+      "class_id": 80
+    },
+    "raspberry__leaf_spot": {
+      "total": 11,
+      "train": 8,
+      "val": 2,
+      "test": 1,
+      "class_id": 81
+    },
+    "raspberry__yellow_rust": {
+      "total": 22,
+      "train": 15,
+      "val": 3,
+      "test": 4,
+      "class_id": 82
+    },
+    "rice__blast": {
+      "total": 50,
+      "train": 35,
+      "val": 8,
+      "test": 7,
+      "class_id": 83
+    },
+    "rice__sheath_blight": {
+      "total": 52,
+      "train": 36,
+      "val": 8,
+      "test": 8,
+      "class_id": 84
+    },
+    "soybean__bacterial_blight": {
+      "total": 60,
+      "train": 42,
+      "val": 9,
+      "test": 9,
+      "class_id": 85
+    },
+    "soybean__brown_spot": {
+      "total": 47,
+      "train": 33,
+      "val": 7,
+      "test": 7,
+      "class_id": 86
+    },
+    "soybean__downy_mildew": {
+      "total": 72,
+      "train": 50,
+      "val": 11,
+      "test": 11,
+      "class_id": 87
+    },
+    "soybean__frog_eye_leaf_spot": {
+      "total": 139,
+      "train": 97,
+      "val": 21,
+      "test": 21,
+      "class_id": 88
+    },
+    "soybean__mosaic": {
+      "total": 88,
+      "train": 62,
+      "val": 13,
+      "test": 13,
+      "class_id": 89
+    },
+    "soybean__rust": {
+      "total": 65,
+      "train": 46,
+      "val": 10,
+      "test": 9,
+      "class_id": 90
+    },
+    "squash__powdery_mildew": {
+      "total": 137,
+      "train": 96,
+      "val": 21,
+      "test": 20,
+      "class_id": 91
+    },
+    "strawberry__anthracnose": {
+      "total": 30,
+      "train": 21,
+      "val": 4,
+      "test": 5,
+      "class_id": 92
+    },
+    "strawberry__leaf_scorch": {
+      "total": 19,
+      "train": 13,
+      "val": 3,
+      "test": 3,
+      "class_id": 93
+    },
+    "tobacco__blue_mold": {
+      "total": 34,
+      "train": 24,
+      "val": 5,
+      "test": 5,
+      "class_id": 94
+    },
+    "tobacco__brown_spot": {
+      "total": 46,
+      "train": 32,
+      "val": 7,
+      "test": 7,
+      "class_id": 95
+    },
+    "tobacco__frogeye_leaf_spot": {
+      "total": 15,
+      "train": 10,
+      "val": 2,
+      "test": 3,
+      "class_id": 96
+    },
+    "tobacco__mosaic_virus": {
+      "total": 29,
+      "train": 20,
+      "val": 4,
+      "test": 5,
+      "class_id": 97
+    },
+    "tomato__bacterial_leaf_spot": {
+      "total": 88,
+      "train": 62,
+      "val": 13,
+      "test": 13,
+      "class_id": 98
+    },
+    "tomato__early_blight": {
+      "total": 146,
+      "train": 102,
+      "val": 22,
+      "test": 22,
+      "class_id": 99
+    },
+    "tomato__late_blight": {
+      "total": 117,
+      "train": 82,
+      "val": 18,
+      "test": 17,
+      "class_id": 100
+    },
+    "tomato__leaf_mold": {
+      "total": 102,
+      "train": 71,
+      "val": 15,
+      "test": 16,
+      "class_id": 101
+    },
+    "tomato__mosaic_virus": {
+      "total": 43,
+      "train": 30,
+      "val": 6,
+      "test": 7,
+      "class_id": 102
+    },
+    "tomato__septoria_leaf_spot": {
+      "total": 92,
+      "train": 64,
+      "val": 14,
+      "test": 14,
+      "class_id": 103
+    },
+    "tomato__yellow_leaf_curl_virus": {
+      "total": 59,
+      "train": 41,
+      "val": 9,
+      "test": 9,
+      "class_id": 104
+    },
+    "wheat__bacterial_leaf_streak_(black_chaff)": {
+      "total": 82,
+      "train": 57,
+      "val": 12,
+      "test": 13,
+      "class_id": 105
+    },
+    "wheat__head_scab": {
+      "total": 199,
+      "train": 139,
+      "val": 30,
+      "test": 30,
+      "class_id": 106
+    },
+    "wheat__leaf_rust": {
+      "total": 73,
+      "train": 51,
+      "val": 11,
+      "test": 11,
+      "class_id": 107
+    },
+    "wheat__loose_smut": {
+      "total": 127,
+      "train": 89,
+      "val": 19,
+      "test": 19,
+      "class_id": 108
+    },
+    "wheat__powdery_mildew": {
+      "total": 175,
+      "train": 122,
+      "val": 26,
+      "test": 27,
+      "class_id": 109
+    },
+    "wheat__septoria_blotch": {
+      "total": 123,
+      "train": 86,
+      "val": 18,
+      "test": 19,
+      "class_id": 110
+    },
+    "wheat__stem_rust": {
+      "total": 83,
+      "train": 58,
+      "val": 12,
+      "test": 13,
+      "class_id": 111
+    },
+    "wheat__stripe_rust": {
+      "total": 212,
+      "train": 148,
+      "val": 32,
+      "test": 32,
+      "class_id": 112
+    },
+    "zucchini__bacterial_wilt": {
+      "total": 56,
+      "train": 39,
+      "val": 8,
+      "test": 9,
+      "class_id": 113
+    },
+    "zucchini__downy_mildew": {
+      "total": 32,
+      "train": 22,
+      "val": 5,
+      "test": 5,
+      "class_id": 114
+    },
+    "zucchini__powdery_mildew": {
+      "total": 124,
+      "train": 87,
+      "val": 19,
+      "test": 18,
+      "class_id": 115
+    },
+    "zucchini__yellow_mosaic_virus": {
+      "total": 56,
+      "train": 39,
+      "val": 8,
+      "test": 9,
+      "class_id": 116
+    }
+  }
+}

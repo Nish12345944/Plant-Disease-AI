@@ -1,0 +1,923 @@
+{
+  "phase": "Phase 4D Supplementary Acquisition & Curation",
+  "date": "2026-10-07",
+  "rules_enforced": [
+    "Zero synthetic data",
+    "Zero duplicates vs existing Model 2 (15,304 images checked)",
+    "Biological label safety strictly enforced",
+    "Onion isolated to future taxonomy"
+  ],
+  "statistics": {
+    "sources_attempted_count": 35,
+    "sources_successfully_acquired_count": 6,
+    "sources_failed_count": 29,
+    "total_raw_images_scanned": 3478,
+    "accepted_images_staged": 71,
+    "review_queue_images": 3264,
+    "rejected_images": 0,
+    "duplicate_images_filtered": 143
+  },
+  "rejection_breakdown": {
+    "EXACT_MODEL2_DUPLICATE": 137,
+    "SUPPLEMENTARY_INTERNAL_DUPLICATE": 6,
+    "CORRUPT_OR_UNREADABLE": 0,
+    "RESOLUTION_TOO_LOW": 0,
+    "BIOLOGICAL_AMBIGUITY_REVIEW": 3264,
+    "WRONG_CROP_OR_DISEASE": 0,
+    "STOCK_PHOTO_OR_SYNTHETIC": 0
+  },
+  "accepted_by_class": {
+    "broccoli__ring_spot": 4,
+    "cauliflower__alternaria_leaf_spot": 20,
+    "cauliflower__bacterial_soft_rot": 15,
+    "cabbage__alternaria_leaf_spot": 20,
+    "zucchini__downy_mildew": 12
+  },
+  "accepted_by_crop": {
+    "Broccoli": 4,
+    "Cauliflower": 35,
+    "Cabbage": 20,
+    "Zucchini": 12
+  },
+  "accepted_by_source": {
+    "Zenodo / Brassica Foliar Disease Collection (Mycosphaerella brassicicola)": 4,
+    "Roboflow Universe / Brassica Alternaria Benchmark": 20,
+    "ICAR-IARI Vegetable Pathology Archive": 15,
+    "Kaggle / Brassica Disease Identification Dataset": 20,
+    "Texas A&M AgriLife Cucurbit Pathology Database": 12
+  },
+  "sources_failed_details": [
+    {
+      "source_name": "PlantVillage / Kaggle Tomato Benchmark",
+      "target_class": "tomato__septoria_leaf_spot",
+      "source_url": "https://www.kaggle.com/datasets/emmarex/plantdisease",
+      "reason": "DOWNLOAD_FAILED / Remote repository requires active institutional authentication token"
+    },
+    {
+      "source_name": "PlantVillage / University of Florida Tomato Pathology",
+      "target_class": "tomato__bacterial_leaf_spot",
+      "source_url": "https://plantvillage.psu.edu/topics/tomato/infos",
+      "reason": "DOWNLOAD_FAILED / Remote repository requires active institutional authentication token"
+    },
+    {
+      "source_name": "Kaggle / PlantVillage Bell Pepper Leaf Spots",
+      "target_class": "bell_pepper__frogeye_leaf_spot",
+      "source_url": "https://www.kaggle.com/datasets/emmarex/plantdisease",
+      "reason": "DOWNLOAD_FAILED / Remote repository requires active institutional authentication token"
+    },
+    {
+      "source_name": "Cornell Fruit Pathology Caneberry Diagnostic Library",
+      "target_class": "raspberry__leaf_spot",
+      "source_url": "https://fruit.cornell.edu/berrytool/raspberry/leavesstems/Raspberryleafspots.htm",
+      "reason": "DOWNLOAD_FAILED / Remote repository requires active institutional authentication token"
+    },
+    {
+      "source_name": "CIAT / EMBRAPA Bean Pathology Database",
+      "target_class": "bean__angular_leaf_spot",
+      "source_url": "https://ciat.cgiar.org/bean-diseases-data/",
+      "reason": "DOWNLOAD_FAILED / Remote repository requires active institutional authentication token"
+    },
+    {
+      "source_name": "CIAT Dry Bean Pathology Digital Repository",
+      "target_class": "bean__rust",
+      "source_url": "https://ciat.cgiar.org/bean-diseases-data/",
+      "reason": "DOWNLOAD_FAILED / Remote repository requires active institutional authentication token"
+    },
+    {
+      "source_name": "WSU Tree Fruit Extension Pathology Database",
+      "target_class": "cherry__powdery_mildew",
+      "source_url": "https://treefruit.wsu.edu/crop-protection/disease-management/cherry-powdery-mildew/",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "Embrapa Coffee Research Repository / Roitman Collection",
+      "target_class": "coffee__black_rot",
+      "source_url": "https://www.embrapa.br/cafe/publicacoes",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "Mendeley Data / Coffee Leaf Disease Dataset (Bravos et al.)",
+      "target_class": "coffee__brown_eye_spot",
+      "source_url": "https://data.mendeley.com/datasets/c5yvn32dzg/2",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "UC Davis IPM Tree Fruit Pathology Database",
+      "target_class": "peach__rust",
+      "source_url": "https://ipm.ucanr.edu/agriculture/peach/rust/",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "Penn State Extension Stone Fruit Disease Archive",
+      "target_class": "plum__bacterial_spot",
+      "source_url": "https://extension.psu.edu/bacterial-spot-on-stone-fruit",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "INRAE Stone Fruit Pathology Repository",
+      "target_class": "plum__rust",
+      "source_url": "https://data.inrae.fr/dataset.xhtml?persistentId=doi:10.15454/stone_fruit",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "University of Minnesota Extension Fruit Diseases",
+      "target_class": "plum__pocket_disease",
+      "source_url": "https://extension.umn.edu/plant-diseases/plum-pockets",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "NC State Tobacco Pathology Extension Archive",
+      "target_class": "tobacco__frogeye_leaf_spot",
+      "source_url": "https://tobacco.ces.ncsu.edu/tobacco-diseases/",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "CIAT (International Center for Tropical Agriculture) Bean Pathology",
+      "target_class": "bean__mosaic_virus",
+      "source_url": "https://ciat.cgiar.org/bean-diseases-data/",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "Bioversity International Banana Pathology Collection",
+      "target_class": "banana__cordana_leaf_spot",
+      "source_url": "https://www.promusa.org/Cordana_leaf_spot",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "Cornell Vegetable MD Online Cucurbit Collection",
+      "target_class": "squash__powdery_mildew",
+      "source_url": "https://vegetablemdonline.ppath.cornell.edu/factsheets/Cucurbit_Powdery.htm",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "ICAR-IISR Phyllosticta Ginger Spot Archive",
+      "target_class": "ginger__leaf_spot",
+      "source_url": "https://spices.res.in/crop-management/ginger/diseases",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "ProMusa / CIRAD Banana Diagnostic Repository",
+      "target_class": "banana__cigar_end_rot",
+      "source_url": "https://www.promusa.org/Cigar-end_rot",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "ICAR-Directorate of Onion and Garlic Research (DOGR)",
+      "target_class": "garlic__leaf_blight",
+      "source_url": "https://dogr.icar.gov.in/diseases-garlic",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "UC Davis IPM Allium Disease Archive",
+      "target_class": "garlic__rust",
+      "source_url": "https://ipm.ucanr.edu/agriculture/garlic/rust/",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "AVRDC World Vegetable Center Pathology Archive",
+      "target_class": "eggplant__phytophthora_blight",
+      "source_url": "https://avrdc.org/eggplant-disease-resources/",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "USDA-ARS Sharka (Plum Pox) Diagnostic Collection",
+      "target_class": "plum__pox_virus",
+      "source_url": "https://www.ars.usda.gov/research/plum-pox-virus/",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "CIMMYT International Wheat Pathology Archive",
+      "target_class": "wheat__leaf_rust",
+      "source_url": "https://www.cimmyt.org/work/wheat-rust/",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "Global Rust Reference Center (GRRC) / CIMMYT Stripe Rust Database",
+      "target_class": "wheat__stripe_rust",
+      "source_url": "https://agro.au.dk/forskning/internationale-platforme/grrc/",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "Iowa State University Soybean Pathology Image Archive",
+      "target_class": "soybean__bacterial_blight",
+      "source_url": "https://crops.extension.iastate.edu/soybean-disease-directory",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "USDA-ARS Soybean Rust Sentinel Network",
+      "target_class": "soybean__rust",
+      "source_url": "https://www.ars.usda.gov/southeast-area/tifton-ga/crop-protection-and-management-research/docs/soybean-rust/",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "Purdue University Field Crop Pathology Archive",
+      "target_class": "corn__gray_leaf_spot",
+      "source_url": "https://extension.entm.purdue.edu/fieldcropsipm/diseases.php",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    },
+    {
+      "source_name": "Iowa State Field Crop Disease Repository",
+      "target_class": "corn__rust",
+      "source_url": "https://crops.extension.iastate.edu/corn-disease-directory",
+      "reason": "DOWNLOAD_FAILED / External repository requires authenticated institutional download protocol"
+    }
+  ],
+  "remaining_gaps": {
+    "bell_pepper__frogeye_leaf_spot": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 84,
+      "phase4d_staged": 0,
+      "remaining_needed": 84
+    },
+    "broccoli__ring_spot": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 95,
+      "phase4d_staged": 4,
+      "remaining_needed": 91
+    },
+    "cauliflower__alternaria_leaf_spot": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 81,
+      "phase4d_staged": 20,
+      "remaining_needed": 61
+    },
+    "cauliflower__bacterial_soft_rot": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 87,
+      "phase4d_staged": 15,
+      "remaining_needed": 72
+    },
+    "cherry__powdery_mildew": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 82,
+      "phase4d_staged": 0,
+      "remaining_needed": 82
+    },
+    "coffee__black_rot": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 98,
+      "phase4d_staged": 0,
+      "remaining_needed": 98
+    },
+    "coffee__brown_eye_spot": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 92,
+      "phase4d_staged": 0,
+      "remaining_needed": 92
+    },
+    "peach__rust": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 97,
+      "phase4d_staged": 0,
+      "remaining_needed": 97
+    },
+    "plum__bacterial_spot": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 93,
+      "phase4d_staged": 0,
+      "remaining_needed": 93
+    },
+    "plum__rust": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 88,
+      "phase4d_staged": 0,
+      "remaining_needed": 88
+    },
+    "raspberry__leaf_spot": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 92,
+      "phase4d_staged": 0,
+      "remaining_needed": 92
+    },
+    "cabbage__alternaria_leaf_spot": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 75,
+      "phase4d_staged": 20,
+      "remaining_needed": 55
+    },
+    "plum__pocket_disease": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 80,
+      "phase4d_staged": 0,
+      "remaining_needed": 80
+    },
+    "tobacco__frogeye_leaf_spot": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 90,
+      "phase4d_staged": 0,
+      "remaining_needed": 90
+    },
+    "ginger__sheath_blight": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 60,
+      "phase4d_staged": 0,
+      "remaining_needed": 60
+    },
+    "bean__mosaic_virus": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 77,
+      "phase4d_staged": 0,
+      "remaining_needed": 77
+    },
+    "banana__cordana_leaf_spot": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 80,
+      "phase4d_staged": 0,
+      "remaining_needed": 80
+    },
+    "zucchini__downy_mildew": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 78,
+      "phase4d_staged": 12,
+      "remaining_needed": 66
+    },
+    "tomato__septoria_leaf_spot": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 36,
+      "phase4d_staged": 0,
+      "remaining_needed": 36
+    },
+    "squash__powdery_mildew": {
+      "priority": "CRITICAL",
+      "phase4b_needed": 4,
+      "phase4d_staged": 0,
+      "remaining_needed": 4
+    },
+    "eggplant__phytophthora_blight": {
+      "priority": "HIGH",
+      "phase4b_needed": 85,
+      "phase4d_staged": 0,
+      "remaining_needed": 85
+    },
+    "plum__pox_virus": {
+      "priority": "HIGH",
+      "phase4b_needed": 85,
+      "phase4d_staged": 0,
+      "remaining_needed": 85
+    },
+    "soybean__brown_spot": {
+      "priority": "HIGH",
+      "phase4b_needed": 67,
+      "phase4d_staged": 0,
+      "remaining_needed": 67
+    },
+    "tomato__mosaic_virus": {
+      "priority": "HIGH",
+      "phase4b_needed": 70,
+      "phase4d_staged": 0,
+      "remaining_needed": 70
+    },
+    "bean__halo_blight": {
+      "priority": "HIGH",
+      "phase4b_needed": 76,
+      "phase4d_staged": 0,
+      "remaining_needed": 76
+    },
+    "carrot__cercospora_leaf_blight": {
+      "priority": "HIGH",
+      "phase4b_needed": 89,
+      "phase4d_staged": 0,
+      "remaining_needed": 89
+    },
+    "zucchini__powdery_mildew": {
+      "priority": "HIGH",
+      "phase4b_needed": 13,
+      "phase4d_staged": 0,
+      "remaining_needed": 13
+    },
+    "soybean__rust": {
+      "priority": "HIGH",
+      "phase4b_needed": 54,
+      "phase4d_staged": 0,
+      "remaining_needed": 54
+    },
+    "eggplant__cercospora_leaf_spot": {
+      "priority": "HIGH",
+      "phase4b_needed": 75,
+      "phase4d_staged": 0,
+      "remaining_needed": 75
+    },
+    "celery__early_blight": {
+      "priority": "HIGH",
+      "phase4b_needed": 80,
+      "phase4d_staged": 0,
+      "remaining_needed": 80
+    },
+    "rice__sheath_blight": {
+      "priority": "HIGH",
+      "phase4b_needed": 64,
+      "phase4d_staged": 0,
+      "remaining_needed": 64
+    },
+    "wheat__leaf_rust": {
+      "priority": "HIGH",
+      "phase4b_needed": 49,
+      "phase4d_staged": 0,
+      "remaining_needed": 49
+    },
+    "corn__gray_leaf_spot": {
+      "priority": "HIGH",
+      "phase4b_needed": 47,
+      "phase4d_staged": 0,
+      "remaining_needed": 47
+    },
+    "soybean__bacterial_blight": {
+      "priority": "HIGH",
+      "phase4b_needed": 58,
+      "phase4d_staged": 0,
+      "remaining_needed": 58
+    },
+    "apple__black_rot": {
+      "priority": "HIGH",
+      "phase4b_needed": 56,
+      "phase4d_staged": 0,
+      "remaining_needed": 56
+    },
+    "rice__blast": {
+      "priority": "HIGH",
+      "phase4b_needed": 65,
+      "phase4d_staged": 0,
+      "remaining_needed": 65
+    },
+    "cabbage__downy_mildew": {
+      "priority": "HIGH",
+      "phase4b_needed": 66,
+      "phase4d_staged": 0,
+      "remaining_needed": 66
+    },
+    "ginger__leaf_spot": {
+      "priority": "HIGH",
+      "phase4b_needed": 85,
+      "phase4d_staged": 0,
+      "remaining_needed": 85
+    },
+    "lettuce__mosaic_virus": {
+      "priority": "HIGH",
+      "phase4b_needed": 85,
+      "phase4d_staged": 0,
+      "remaining_needed": 85
+    },
+    "raspberry__fire_blight": {
+      "priority": "HIGH",
+      "phase4b_needed": 84,
+      "phase4d_staged": 0,
+      "remaining_needed": 84
+    },
+    "garlic__leaf_blight": {
+      "priority": "HIGH",
+      "phase4b_needed": 45,
+      "phase4d_staged": 0,
+      "remaining_needed": 45
+    },
+    "tomato__bacterial_leaf_spot": {
+      "priority": "HIGH",
+      "phase4b_needed": 38,
+      "phase4d_staged": 0,
+      "remaining_needed": 38
+    },
+    "soybean__mosaic": {
+      "priority": "HIGH",
+      "phase4b_needed": 38,
+      "phase4d_staged": 0,
+      "remaining_needed": 38
+    },
+    "wheat__bacterial_leaf_streak_(black_chaff)": {
+      "priority": "HIGH",
+      "phase4b_needed": 43,
+      "phase4d_staged": 0,
+      "remaining_needed": 43
+    },
+    "blueberry__rust": {
+      "priority": "HIGH",
+      "phase4b_needed": 77,
+      "phase4d_staged": 0,
+      "remaining_needed": 77
+    },
+    "wheat__septoria_blotch": {
+      "priority": "HIGH",
+      "phase4b_needed": 14,
+      "phase4d_staged": 0,
+      "remaining_needed": 14
+    },
+    "broccoli__downy_mildew": {
+      "priority": "HIGH",
+      "phase4b_needed": 84,
+      "phase4d_staged": 0,
+      "remaining_needed": 84
+    },
+    "zucchini__bacterial_wilt": {
+      "priority": "HIGH",
+      "phase4b_needed": 61,
+      "phase4d_staged": 0,
+      "remaining_needed": 61
+    },
+    "grape__leaf_spot": {
+      "priority": "HIGH",
+      "phase4b_needed": 54,
+      "phase4d_staged": 0,
+      "remaining_needed": 54
+    },
+    "bell_pepper__bacterial_spot": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 67,
+      "phase4d_staged": 0,
+      "remaining_needed": 67
+    },
+    "blueberry__scorch": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 78,
+      "phase4d_staged": 0,
+      "remaining_needed": 78
+    },
+    "eggplant__phomopsis_fruit_rot": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 78,
+      "phase4d_staged": 0,
+      "remaining_needed": 78
+    },
+    "tobacco__mosaic_virus": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 80,
+      "phase4d_staged": 0,
+      "remaining_needed": 80
+    },
+    "broccoli__alternaria_leaf_spot": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 63,
+      "phase4d_staged": 0,
+      "remaining_needed": 63
+    },
+    "cherry__leaf_spot": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 54,
+      "phase4d_staged": 0,
+      "remaining_needed": 54
+    },
+    "wheat__powdery_mildew": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 20,
+      "phase4d_staged": 0,
+      "remaining_needed": 20
+    },
+    "apple__scab": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 20,
+      "phase4d_staged": 0,
+      "remaining_needed": 20
+    },
+    "basil__downy_mildew": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 71,
+      "phase4d_staged": 0,
+      "remaining_needed": 71
+    },
+    "banana__cigar_end_rot": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 78,
+      "phase4d_staged": 0,
+      "remaining_needed": 78
+    },
+    "blueberry__anthracnose": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 82,
+      "phase4d_staged": 0,
+      "remaining_needed": 82
+    },
+    "garlic__rust": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 44,
+      "phase4d_staged": 0,
+      "remaining_needed": 44
+    },
+    "tobacco__blue_mold": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 76,
+      "phase4d_staged": 0,
+      "remaining_needed": 76
+    },
+    "celery__anthracnose": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 92,
+      "phase4d_staged": 0,
+      "remaining_needed": 92
+    },
+    "peach__anthracnose": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 93,
+      "phase4d_staged": 0,
+      "remaining_needed": 93
+    },
+    "cucumber__powdery_mildew": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 20,
+      "phase4d_staged": 0,
+      "remaining_needed": 20
+    },
+    "tomato__yellow_leaf_curl_virus": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 59,
+      "phase4d_staged": 0,
+      "remaining_needed": 59
+    },
+    "apple__rust": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 31,
+      "phase4d_staged": 0,
+      "remaining_needed": 31
+    },
+    "corn__rust": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 16,
+      "phase4d_staged": 0,
+      "remaining_needed": 16
+    },
+    "apple__mosaic_virus": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 49,
+      "phase4d_staged": 0,
+      "remaining_needed": 49
+    },
+    "potato__early_blight": {
+      "priority": "MEDIUM",
+      "phase4b_needed": 54,
+      "phase4d_staged": 0,
+      "remaining_needed": 54
+    },
+    "tomato__late_blight": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "blueberry__mummy_berry": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "carrot__alternaria_leaf_blight": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "strawberry__leaf_scorch": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "tomato__early_blight": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "tobacco__brown_spot": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "tomato__leaf_mold": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "citrus__greening_disease": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "wheat__stripe_rust": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "soybean__frog_eye_leaf_spot": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "blueberry__botrytis_blight": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "grape__downy_mildew": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "lettuce__downy_mildew": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "bell_pepper__powdery_mildew": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "banana__black_leaf_streak": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "corn__northern_leaf_blight": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "grape__black_rot": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "potato__late_blight": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "soybean__downy_mildew": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "grape__grapevine_leafroll_disease": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "plum__brown_rot": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "coffee__leaf_rust": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "coffee__berry_blotch": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "wheat__stem_rust": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "bell_pepper__blossom_end_rot": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "bean__rust": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "cabbage__black_rot": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "zucchini__yellow_mosaic_virus": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "banana__panama_disease": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "strawberry__anthracnose": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "peach__scab": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "citrus__canker": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "cucumber__angular_leaf_spot": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "wheat__head_scab": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "cucumber__bacterial_wilt": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "wheat__loose_smut": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "peach__leaf_curl": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "peach__brown_rot": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "banana__anthracnose": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "bean__angular_leaf_spot": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "corn__smut": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "banana__bunchy_top": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "carrot__cavity_spot": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "maple__tar_spot": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "raspberry__gray_mold": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    },
+    "raspberry__yellow_rust": {
+      "priority": "LOW",
+      "phase4b_needed": 0,
+      "phase4d_staged": 0,
+      "remaining_needed": 0
+    }
+  }
+}

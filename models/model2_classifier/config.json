@@ -1,0 +1,23 @@
+{
+  "model_type": "efficientnet_b2",
+  "num_classes": 117,
+  "image_size": [
+    260,
+    260
+  ],
+  "mean": [
+    0.485,
+    0.456,
+    0.406
+  ],
+  "std": [
+    0.229,
+    0.224,
+    0.225
+  ],
+  "decision_thresholds": {
+    "healthy_threshold": 0.5,
+    "disease_threshold": 0.35,
+    "uncertain_threshold": 0.2
+  }
+}

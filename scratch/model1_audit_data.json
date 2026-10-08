@@ -1,0 +1,520 @@
+{
+  "total_images": 16537,
+  "total_crops": 20,
+  "crops": [
+    "anthurium",
+    "blueberry",
+    "broccoli",
+    "capsicum",
+    "carnation",
+    "chrysanthemum",
+    "cucumber",
+    "french_bean",
+    "geranium",
+    "gerbera",
+    "lettuce",
+    "lilium",
+    "marigold",
+    "melon",
+    "orchid",
+    "rose",
+    "spinach",
+    "strawberry",
+    "tomato",
+    "zucchini"
+  ],
+  "categorization": {
+    "A_directly_reusable": 0,
+    "B_reusable_after_annotation": 6774,
+    "C_healthy_negative": 3596,
+    "D_not_suitable": 6167
+  },
+  "crop_stats": {
+    "anthurium": {
+      "total": 104,
+      "splits": {
+        "train": 83,
+        "val": 10,
+        "test": 11
+      },
+      "plant_parts": {
+        "flower": 104
+      },
+      "health_status": {
+        "unknown": 104
+      },
+      "sources": {
+        "anthurium": 104
+      },
+      "categories": {
+        "D_not_suitable": 104
+      }
+    },
+    "blueberry": {
+      "total": 314,
+      "splits": {
+        "train": 251,
+        "val": 31,
+        "test": 32
+      },
+      "plant_parts": {
+        "leaves": 202,
+        "fruit": 112
+      },
+      "health_status": {
+        "diseased": 314
+      },
+      "sources": {
+        "blueberry_leaves": 201,
+        "blueberry": 112,
+        "blueberry_leaves_external": 1
+      },
+      "categories": {
+        "B_reusable_after_annotation": 202,
+        "D_not_suitable": 112
+      }
+    },
+    "broccoli": {
+      "total": 414,
+      "splits": {
+        "train": 331,
+        "val": 41,
+        "test": 42
+      },
+      "plant_parts": {
+        "leaves": 414
+      },
+      "health_status": {
+        "diseased": 312,
+        "healthy": 102
+      },
+      "sources": {
+        "broccoli_new": 414
+      },
+      "categories": {
+        "B_reusable_after_annotation": 312,
+        "C_healthy_negative": 102
+      }
+    },
+    "capsicum": {
+      "total": 1500,
+      "splits": {
+        "train": 1200,
+        "val": 150,
+        "test": 150
+      },
+      "plant_parts": {
+        "fruit": 96,
+        "leaves": 1404
+      },
+      "health_status": {
+        "diseased": 696,
+        "healthy": 804
+      },
+      "sources": {
+        "pepper_bell": 1500
+      },
+      "categories": {
+        "D_not_suitable": 96,
+        "B_reusable_after_annotation": 600,
+        "C_healthy_negative": 804
+      }
+    },
+    "carnation": {
+      "total": 51,
+      "splits": {
+        "train": 40,
+        "val": 5,
+        "test": 6
+      },
+      "plant_parts": {
+        "flower": 51
+      },
+      "health_status": {
+        "healthy": 51
+      },
+      "sources": {
+        "carnation": 51
+      },
+      "categories": {
+        "D_not_suitable": 51
+      }
+    },
+    "chrysanthemum": {
+      "total": 418,
+      "splits": {
+        "train": 334,
+        "val": 41,
+        "test": 43
+      },
+      "plant_parts": {
+        "leaves": 418
+      },
+      "health_status": {
+        "unknown": 418
+      },
+      "sources": {
+        "Herbal_Dataset.v11i.yolov11": 418
+      },
+      "categories": {
+        "D_not_suitable": 418
+      }
+    },
+    "cucumber": {
+      "total": 1500,
+      "splits": {
+        "train": 1200,
+        "val": 150,
+        "test": 150
+      },
+      "plant_parts": {
+        "stem": 500,
+        "fruit": 500,
+        "leaves": 500
+      },
+      "health_status": {
+        "diseased": 1315,
+        "healthy": 168,
+        "unknown": 17
+      },
+      "sources": {
+        "cucumber": 1483,
+        "Herbal_Dataset.v11i.yolov11": 17
+      },
+      "categories": {
+        "D_not_suitable": 1017,
+        "B_reusable_after_annotation": 315,
+        "C_healthy_negative": 168
+      }
+    },
+    "french_bean": {
+      "total": 1400,
+      "splits": {
+        "train": 1120,
+        "val": 140,
+        "test": 140
+      },
+      "plant_parts": {
+        "leaves": 1400
+      },
+      "health_status": {
+        "diseased": 985,
+        "healthy": 415
+      },
+      "sources": {
+        "hf_makerere_beans": 1260,
+        "plantseg": 140
+      },
+      "categories": {
+        "B_reusable_after_annotation": 985,
+        "C_healthy_negative": 415
+      }
+    },
+    "geranium": {
+      "total": 251,
+      "splits": {
+        "train": 200,
+        "val": 25,
+        "test": 26
+      },
+      "plant_parts": {
+        "leaves": 135,
+        "flower": 116
+      },
+      "health_status": {
+        "unknown": 251
+      },
+      "sources": {
+        "medicinal_plants": 135,
+        "geranium": 116
+      },
+      "categories": {
+        "D_not_suitable": 251
+      }
+    },
+    "gerbera": {
+      "total": 3,
+      "splits": {
+        "train": 2,
+        "test": 1
+      },
+      "plant_parts": {
+        "flower": 3
+      },
+      "health_status": {
+        "unknown": 3
+      },
+      "sources": {
+        "gerbera_commons": 3
+      },
+      "categories": {
+        "D_not_suitable": 3
+      }
+    },
+    "lettuce": {
+      "total": 1500,
+      "splits": {
+        "train": 1200,
+        "val": 150,
+        "test": 150
+      },
+      "plant_parts": {
+        "leaves": 1500
+      },
+      "health_status": {
+        "diseased": 602,
+        "unknown": 451,
+        "healthy": 447
+      },
+      "sources": {
+        "lettuce-disease.v6i.folder": 1500
+      },
+      "categories": {
+        "B_reusable_after_annotation": 602,
+        "D_not_suitable": 451,
+        "C_healthy_negative": 447
+      }
+    },
+    "lilium": {
+      "total": 45,
+      "splits": {
+        "train": 36,
+        "val": 4,
+        "test": 5
+      },
+      "plant_parts": {
+        "flower": 45
+      },
+      "health_status": {
+        "healthy": 45
+      },
+      "sources": {
+        "oxford_flowers_102": 45
+      },
+      "categories": {
+        "D_not_suitable": 45
+      }
+    },
+    "marigold": {
+      "total": 1197,
+      "splits": {
+        "train": 957,
+        "val": 119,
+        "test": 121
+      },
+      "plant_parts": {
+        "leaves": 1130,
+        "flower": 67
+      },
+      "health_status": {
+        "healthy": 270,
+        "diseased": 389,
+        "unknown": 538
+      },
+      "sources": {
+        "Marigold_new": 723,
+        "Herbal_Dataset.v11i.yolov11": 474
+      },
+      "categories": {
+        "C_healthy_negative": 270,
+        "B_reusable_after_annotation": 389,
+        "D_not_suitable": 538
+      }
+    },
+    "melon": {
+      "total": 247,
+      "splits": {
+        "train": 197,
+        "val": 24,
+        "test": 26
+      },
+      "plant_parts": {
+        "fruit": 247
+      },
+      "health_status": {
+        "unknown": 247
+      },
+      "sources": {
+        "Herbal_Dataset.v11i.yolov11": 215,
+        "Fruits Model.v1i.yolov11": 32
+      },
+      "categories": {
+        "D_not_suitable": 247
+      }
+    },
+    "orchid": {
+      "total": 1200,
+      "splits": {
+        "train": 960,
+        "val": 120,
+        "test": 120
+      },
+      "plant_parts": {
+        "flower": 1200
+      },
+      "health_status": {
+        "unknown": 1200
+      },
+      "sources": {
+        "Orchid_source": 1200
+      },
+      "categories": {
+        "D_not_suitable": 1200
+      }
+    },
+    "rose": {
+      "total": 1500,
+      "splits": {
+        "train": 1200,
+        "val": 150,
+        "test": 150
+      },
+      "plant_parts": {
+        "leaves": 1329,
+        "flower": 171
+      },
+      "health_status": {
+        "unknown": 223,
+        "diseased": 845,
+        "healthy": 432
+      },
+      "sources": {
+        "Herbal_Dataset.v11i.yolov11": 52,
+        "rose_new": 1448
+      },
+      "categories": {
+        "D_not_suitable": 223,
+        "B_reusable_after_annotation": 845,
+        "C_healthy_negative": 432
+      }
+    },
+    "spinach": {
+      "total": 1500,
+      "splits": {
+        "train": 1200,
+        "val": 150,
+        "test": 150
+      },
+      "plant_parts": {
+        "leaves": 1500
+      },
+      "health_status": {
+        "diseased": 795,
+        "healthy": 705
+      },
+      "sources": {
+        "spinach_disease": 1500
+      },
+      "categories": {
+        "B_reusable_after_annotation": 795,
+        "C_healthy_negative": 705
+      }
+    },
+    "strawberry": {
+      "total": 1500,
+      "splits": {
+        "train": 1200,
+        "val": 150,
+        "test": 150
+      },
+      "plant_parts": {
+        "fruit": 1373,
+        "leaves": 127
+      },
+      "health_status": {
+        "healthy": 1410,
+        "diseased": 90
+      },
+      "sources": {
+        "strawberry_clean": 1322,
+        "strawberry_leaves": 127,
+        "strawberry": 51
+      },
+      "categories": {
+        "D_not_suitable": 1373,
+        "C_healthy_negative": 88,
+        "B_reusable_after_annotation": 39
+      }
+    },
+    "tomato": {
+      "total": 1500,
+      "splits": {
+        "train": 1200,
+        "val": 150,
+        "test": 150
+      },
+      "plant_parts": {
+        "leaves": 1478,
+        "fruit": 22
+      },
+      "health_status": {
+        "diseased": 1319,
+        "healthy": 165,
+        "unknown": 16
+      },
+      "sources": {
+        "tomato": 1425,
+        "plantseg": 59,
+        "Herbal_Dataset.v11i.yolov11": 16
+      },
+      "categories": {
+        "B_reusable_after_annotation": 1297,
+        "C_healthy_negative": 165,
+        "D_not_suitable": 38
+      }
+    },
+    "zucchini": {
+      "total": 393,
+      "splits": {
+        "train": 314,
+        "val": 39,
+        "test": 40
+      },
+      "plant_parts": {
+        "leaves": 393
+      },
+      "health_status": {
+        "diseased": 393
+      },
+      "sources": {
+        "zuchhini": 141,
+        "plantseg": 252
+      },
+      "categories": {
+        "B_reusable_after_annotation": 393
+      }
+    }
+  },
+  "annotated_external_dirs": {
+    "Fruits Model.v1i.yolov11": {
+      "xml": 0,
+      "json": 0,
+      "txt": 774
+    },
+    "Herbal_Dataset.v11i.yolov11": {
+      "xml": 0,
+      "json": 0,
+      "txt": 20940
+    },
+    "herbs.v4i.yolov11": {
+      "xml": 0,
+      "json": 0,
+      "txt": 939
+    },
+    "lettuce-disease.v6i.folder": {
+      "xml": 0,
+      "json": 0,
+      "txt": 2
+    },
+    "Orchid_source": {
+      "xml": 0,
+      "json": 1,
+      "txt": 0
+    },
+    "plantseg": {
+      "xml": 0,
+      "json": 3,
+      "txt": 0
+    }
+  }
+}

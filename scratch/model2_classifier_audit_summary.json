@@ -1,0 +1,502 @@
+{
+  "total_crops": 39,
+  "total_disease_classes": 115,
+  "total_healthy_images": 5773,
+  "total_diseased_images": 7631,
+  "total_usable_images": 13404,
+  "missing_healthy_crops": [
+    "Apple",
+    "Banana",
+    "Basil",
+    "Bean",
+    "Bell Pepper",
+    "Blueberry",
+    "Carrot",
+    "Celery",
+    "Cherry",
+    "Citrus",
+    "Coffee",
+    "Corn",
+    "Eggplant",
+    "Garlic",
+    "Ginger",
+    "Grape",
+    "Maple",
+    "Peach",
+    "Plum",
+    "Potato",
+    "Raspberry",
+    "Rice",
+    "Soybean",
+    "Squash",
+    "Tobacco",
+    "Wheat",
+    "Zucchini"
+  ],
+  "classes_under_50_images": [
+    "Banana: banana cigar end rot (32)",
+    "Banana: banana cordana leaf spot (30)",
+    "Banana: banana panama disease (49)",
+    "Basil: basil downy mildew (41)",
+    "Bean: bean angular leaf spot (0)",
+    "Bean: bean halo blight (35)",
+    "Bean: bean mosaic virus (33)",
+    "Bell Pepper: bell pepper frogeye leaf spot (23)",
+    "Bell Pepper: bell pepper powdery mildew (18)",
+    "Blueberry: blueberry anthracnose (28)",
+    "Blueberry: blueberry botrytis blight (19)",
+    "Blueberry: blueberry mummy berry (29)",
+    "Blueberry: blueberry rust (33)",
+    "Blueberry: blueberry scorch (32)",
+    "Broccoli: broccoli downy mildew (23)",
+    "Broccoli: broccoli ring spot (11)",
+    "Cabbage: cabbage alternaria leaf spot (35)",
+    "Cabbage: cabbage downy mildew (49)",
+    "Carrot: carrot alternaria leaf blight (44)",
+    "Carrot: carrot cavity spot (42)",
+    "Carrot: carrot cercospora leaf blight (18)",
+    "Cauliflower: cauliflower alternaria leaf spot (31)",
+    "Cauliflower: cauliflower bacterial soft rot (19)",
+    "Celery: celery anthracnose (11)",
+    "Celery: celery early blight (29)",
+    "Cherry: cherry powdery mildew (25)",
+    "Coffee: coffee black rot (3)",
+    "Coffee: coffee brown eye spot (14)",
+    "Eggplant: eggplant cercospora leaf spot (36)",
+    "Eggplant: eggplant phomopsis fruit rot (32)",
+    "Eggplant: eggplant phytophthora blight (22)",
+    "Ginger: ginger leaf spot (22)",
+    "Grape: grapevine leafroll disease (32)",
+    "Lettuce: lettuce mosaic virus (22)",
+    "Peach: peach anthracnose (10)",
+    "Peach: peach rust (5)",
+    "Plum: plum bacterial spot (10)",
+    "Plum: plum brown rot (41)",
+    "Plum: plum pocket disease (28)",
+    "Plum: plum pox virus (22)",
+    "Plum: plum rust (17)",
+    "Raspberry: raspberry fire blight (24)",
+    "Raspberry: raspberry gray mold (18)",
+    "Raspberry: raspberry leaf spot (11)",
+    "Raspberry: raspberry yellow rust (22)",
+    "Strawberry: strawberry anthracnose (30)",
+    "Strawberry: strawberry leaf scorch (19)",
+    "Tobacco: tobacco blue mold (35)",
+    "Tobacco: tobacco brown spot (45)",
+    "Tobacco: tobacco frogeye leaf spot (17)",
+    "Tobacco: tobacco mosaic virus (28)",
+    "Tomato: tomato mosaic virus (42)",
+    "Zucchini: zucchini downy mildew (33)"
+  ],
+  "classes_under_20_images": [
+    "Bean: bean angular leaf spot (0)",
+    "Bell Pepper: bell pepper powdery mildew (18)",
+    "Blueberry: blueberry botrytis blight (19)",
+    "Broccoli: broccoli ring spot (11)",
+    "Carrot: carrot cercospora leaf blight (18)",
+    "Cauliflower: cauliflower bacterial soft rot (19)",
+    "Celery: celery anthracnose (11)",
+    "Coffee: coffee black rot (3)",
+    "Coffee: coffee brown eye spot (14)",
+    "Peach: peach anthracnose (10)",
+    "Peach: peach rust (5)",
+    "Plum: plum bacterial spot (10)",
+    "Plum: plum rust (17)",
+    "Raspberry: raspberry gray mold (18)",
+    "Raspberry: raspberry leaf spot (11)",
+    "Strawberry: strawberry leaf scorch (19)",
+    "Tobacco: tobacco frogeye leaf spot (17)"
+  ],
+  "crop_inventory": {
+    "Apple": {
+      "healthy_images": 0,
+      "diseases_count": 4,
+      "disease_classes": {
+        "apple black rot": 61,
+        "apple mosaic virus": 72,
+        "apple rust": 98,
+        "apple scab": 168
+      },
+      "total_crop_images": 399
+    },
+    "Banana": {
+      "healthy_images": 0,
+      "diseases_count": 6,
+      "disease_classes": {
+        "banana anthracnose": 50,
+        "banana black leaf streak": 113,
+        "banana bunchy top": 76,
+        "banana cigar end rot": 32,
+        "banana cordana leaf spot": 30,
+        "banana panama disease": 49
+      },
+      "total_crop_images": 350
+    },
+    "Basil": {
+      "healthy_images": 0,
+      "diseases_count": 1,
+      "disease_classes": {
+        "basil downy mildew": 41
+      },
+      "total_crop_images": 41
+    },
+    "Bean": {
+      "healthy_images": 0,
+      "diseases_count": 4,
+      "disease_classes": {
+        "bean angular leaf spot": 0,
+        "bean halo blight": 35,
+        "bean mosaic virus": 33,
+        "bean rust": 73
+      },
+      "total_crop_images": 141
+    },
+    "Bell Pepper": {
+      "healthy_images": 0,
+      "diseases_count": 4,
+      "disease_classes": {
+        "bell pepper bacterial spot": 51,
+        "bell pepper blossom end rot": 80,
+        "bell pepper frogeye leaf spot": 23,
+        "bell pepper powdery mildew": 18
+      },
+      "total_crop_images": 172
+    },
+    "Blueberry": {
+      "healthy_images": 0,
+      "diseases_count": 5,
+      "disease_classes": {
+        "blueberry anthracnose": 28,
+        "blueberry botrytis blight": 19,
+        "blueberry mummy berry": 29,
+        "blueberry rust": 33,
+        "blueberry scorch": 32
+      },
+      "total_crop_images": 141
+    },
+    "Broccoli": {
+      "healthy_images": 102,
+      "diseases_count": 3,
+      "disease_classes": {
+        "broccoli alternaria leaf spot": 52,
+        "broccoli downy mildew": 23,
+        "broccoli ring spot": 11
+      },
+      "total_crop_images": 188
+    },
+    "Cabbage": {
+      "healthy_images": 132,
+      "diseases_count": 3,
+      "disease_classes": {
+        "cabbage alternaria leaf spot": 35,
+        "cabbage black rot": 92,
+        "cabbage downy mildew": 49
+      },
+      "total_crop_images": 308
+    },
+    "Capsicum": {
+      "healthy_images": 804,
+      "diseases_count": 0,
+      "disease_classes": {},
+      "total_crop_images": 804
+    },
+    "Carrot": {
+      "healthy_images": 0,
+      "diseases_count": 3,
+      "disease_classes": {
+        "carrot alternaria leaf blight": 44,
+        "carrot cavity spot": 42,
+        "carrot cercospora leaf blight": 18
+      },
+      "total_crop_images": 104
+    },
+    "Cauliflower": {
+      "healthy_images": 87,
+      "diseases_count": 2,
+      "disease_classes": {
+        "cauliflower alternaria leaf spot": 31,
+        "cauliflower bacterial soft rot": 19
+      },
+      "total_crop_images": 137
+    },
+    "Celery": {
+      "healthy_images": 0,
+      "diseases_count": 2,
+      "disease_classes": {
+        "celery anthracnose": 11,
+        "celery early blight": 29
+      },
+      "total_crop_images": 40
+    },
+    "Cherry": {
+      "healthy_images": 0,
+      "diseases_count": 2,
+      "disease_classes": {
+        "cherry leaf spot": 66,
+        "cherry powdery mildew": 25
+      },
+      "total_crop_images": 91
+    },
+    "Citrus": {
+      "healthy_images": 0,
+      "diseases_count": 2,
+      "disease_classes": {
+        "citrus canker": 321,
+        "citrus greening disease": 93
+      },
+      "total_crop_images": 414
+    },
+    "Coffee": {
+      "healthy_images": 0,
+      "diseases_count": 4,
+      "disease_classes": {
+        "coffee berry blotch": 67,
+        "coffee black rot": 3,
+        "coffee brown eye spot": 14,
+        "coffee leaf rust": 107
+      },
+      "total_crop_images": 191
+    },
+    "Corn": {
+      "healthy_images": 0,
+      "diseases_count": 4,
+      "disease_classes": {
+        "corn gray leaf spot": 76,
+        "corn northern leaf blight": 91,
+        "corn rust": 120,
+        "corn smut": 131
+      },
+      "total_crop_images": 418
+    },
+    "Cucumber": {
+      "healthy_images": 168,
+      "diseases_count": 3,
+      "disease_classes": {
+        "cucumber angular leaf spot": 147,
+        "cucumber bacterial wilt": 82,
+        "cucumber powdery mildew": 149
+      },
+      "total_crop_images": 546
+    },
+    "Eggplant": {
+      "healthy_images": 0,
+      "diseases_count": 3,
+      "disease_classes": {
+        "eggplant cercospora leaf spot": 36,
+        "eggplant phomopsis fruit rot": 32,
+        "eggplant phytophthora blight": 22
+      },
+      "total_crop_images": 90
+    },
+    "French_Bean": {
+      "healthy_images": 415,
+      "diseases_count": 0,
+      "disease_classes": {},
+      "total_crop_images": 415
+    },
+    "Garlic": {
+      "healthy_images": 0,
+      "diseases_count": 2,
+      "disease_classes": {
+        "garlic leaf blight": 79,
+        "garlic rust": 79
+      },
+      "total_crop_images": 158
+    },
+    "Ginger": {
+      "healthy_images": 0,
+      "diseases_count": 2,
+      "disease_classes": {
+        "ginger leaf spot": 22,
+        "ginger sheath blight": 56
+      },
+      "total_crop_images": 78
+    },
+    "Grape": {
+      "healthy_images": 0,
+      "diseases_count": 4,
+      "disease_classes": {
+        "grape black rot": 88,
+        "grape downy mildew": 210,
+        "grape leaf spot": 66,
+        "grapevine leafroll disease": 32
+      },
+      "total_crop_images": 396
+    },
+    "Lettuce": {
+      "healthy_images": 447,
+      "diseases_count": 2,
+      "disease_classes": {
+        "lettuce downy mildew": 54,
+        "lettuce mosaic virus": 22
+      },
+      "total_crop_images": 523
+    },
+    "Maple": {
+      "healthy_images": 0,
+      "diseases_count": 1,
+      "disease_classes": {
+        "maple tar spot": 58
+      },
+      "total_crop_images": 58
+    },
+    "Marigold": {
+      "healthy_images": 270,
+      "diseases_count": 0,
+      "disease_classes": {},
+      "total_crop_images": 270
+    },
+    "Peach": {
+      "healthy_images": 0,
+      "diseases_count": 5,
+      "disease_classes": {
+        "peach anthracnose": 10,
+        "peach brown rot": 95,
+        "peach leaf curl": 121,
+        "peach rust": 5,
+        "peach scab": 54
+      },
+      "total_crop_images": 285
+    },
+    "Plum": {
+      "healthy_images": 0,
+      "diseases_count": 5,
+      "disease_classes": {
+        "plum bacterial spot": 10,
+        "plum brown rot": 41,
+        "plum pocket disease": 28,
+        "plum pox virus": 22,
+        "plum rust": 17
+      },
+      "total_crop_images": 118
+    },
+    "Potato": {
+      "healthy_images": 0,
+      "diseases_count": 2,
+      "disease_classes": {
+        "potato early blight": 67,
+        "potato late blight": 78
+      },
+      "total_crop_images": 145
+    },
+    "Raspberry": {
+      "healthy_images": 0,
+      "diseases_count": 4,
+      "disease_classes": {
+        "raspberry fire blight": 24,
+        "raspberry gray mold": 18,
+        "raspberry leaf spot": 11,
+        "raspberry yellow rust": 22
+      },
+      "total_crop_images": 75
+    },
+    "Rice": {
+      "healthy_images": 0,
+      "diseases_count": 2,
+      "disease_classes": {
+        "rice blast": 50,
+        "rice sheath blight": 54
+      },
+      "total_crop_images": 104
+    },
+    "Rose": {
+      "healthy_images": 432,
+      "diseases_count": 0,
+      "disease_classes": {},
+      "total_crop_images": 432
+    },
+    "Soybean": {
+      "healthy_images": 0,
+      "diseases_count": 6,
+      "disease_classes": {
+        "soybean bacterial blight": 59,
+        "soybean brown spot": 54,
+        "soybean downy mildew": 74,
+        "soybean frog eye leaf spot": 149,
+        "soybean mosaic": 88,
+        "soybean rust": 66
+      },
+      "total_crop_images": 490
+    },
+    "Spinach": {
+      "healthy_images": 705,
+      "diseases_count": 0,
+      "disease_classes": {},
+      "total_crop_images": 705
+    },
+    "Squash": {
+      "healthy_images": 0,
+      "diseases_count": 1,
+      "disease_classes": {
+        "squash powdery mildew": 141
+      },
+      "total_crop_images": 141
+    },
+    "Strawberry": {
+      "healthy_images": 455,
+      "diseases_count": 2,
+      "disease_classes": {
+        "strawberry anthracnose": 30,
+        "strawberry leaf scorch": 19
+      },
+      "total_crop_images": 504
+    },
+    "Tobacco": {
+      "healthy_images": 0,
+      "diseases_count": 4,
+      "disease_classes": {
+        "tobacco blue mold": 35,
+        "tobacco brown spot": 45,
+        "tobacco frogeye leaf spot": 17,
+        "tobacco mosaic virus": 28
+      },
+      "total_crop_images": 125
+    },
+    "Tomato": {
+      "healthy_images": 1756,
+      "diseases_count": 7,
+      "disease_classes": {
+        "tomato bacterial leaf spot": 86,
+        "tomato early blight": 151,
+        "tomato late blight": 116,
+        "tomato leaf mold": 102,
+        "tomato mosaic virus": 42,
+        "tomato septoria leaf spot": 98,
+        "tomato yellow leaf curl virus": 62
+      },
+      "total_crop_images": 2413
+    },
+    "Wheat": {
+      "healthy_images": 0,
+      "diseases_count": 8,
+      "disease_classes": {
+        "wheat bacterial leaf streak (black chaff)": 81,
+        "wheat head scab": 215,
+        "wheat leaf rust": 73,
+        "wheat loose smut": 138,
+        "wheat powdery mildew": 177,
+        "wheat septoria blotch": 131,
+        "wheat stem rust": 85,
+        "wheat stripe rust": 220
+      },
+      "total_crop_images": 1120
+    },
+    "Zucchini": {
+      "healthy_images": 0,
+      "diseases_count": 4,
+      "disease_classes": {
+        "zucchini bacterial wilt": 56,
+        "zucchini downy mildew": 33,
+        "zucchini powdery mildew": 129,
+        "zucchini yellow mosaic virus": 56
+      },
+      "total_crop_images": 274
+    }
+  },
+  "recommended_architecture": "EfficientNet-B2 with ImageNet pretrained transfer learning",
+  "recommended_splits": {
+    "train": "70%",
+    "val": "15%",
+    "test": "15%"
+  }
+}

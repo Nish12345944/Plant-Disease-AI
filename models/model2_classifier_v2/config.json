@@ -1,0 +1,28 @@
+{
+  "model_architecture": "efficientnet_b2",
+  "num_classes": 117,
+  "image_size": [
+    260,
+    260
+  ],
+  "batch_size": 32,
+  "effective_batch_size": 64,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.0001,
+  "optimizer": "AdamW",
+  "scheduler": "CosineAnnealingLR",
+  "random_seed": 42,
+  "best_epoch": 2,
+  "best_val_macro_f1": 0.8135118500636662,
+  "test_top1_accuracy": 0.8598090277777778,
+  "test_top3_accuracy": 0.9561631944444444,
+  "test_macro_f1": 0.6528969407899663,
+  "test_disease_macro_f1": 0.6443218632493715,
+  "test_healthy_f1": 0.9947089947089947,
+  "pytorch_version": "2.11.0+cu128",
+  "cuda_version": "12.8",
+  "gpu": "NVIDIA GeForce RTX 3050 Laptop GPU",
+  "train_samples": 15252,
+  "val_samples": 1697,
+  "test_samples": 2304
+}

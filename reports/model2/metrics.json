@@ -1,0 +1,76 @@
+{
+  "model_architecture": "YOLOX-S",
+  "num_classes": 115,
+  "input_resolution": [
+    640,
+    640
+  ],
+  "dataset_statistics": {
+    "total_images": 7631,
+    "total_boxes": 54562,
+    "train_images": 5353,
+    "train_boxes": 38074,
+    "val_images": 809,
+    "val_boxes": 6106,
+    "test_images": 1469,
+    "test_boxes": 10382
+  },
+  "validation_metrics": {
+    "map_50_95": 0.0148,
+    "map_50": 0.0249,
+    "eval_summary": "Loading and preparing results...\nDONE (t=0.22s)\ncreating index...\nindex created!\nRunning per image evaluation...\nEvaluate annotation type *bbox*\nDONE (t=5.03s).\nAccumulating evaluation results...\nDONE (t=1.74s).\n"
+  },
+  "test_metrics": {
+    "map_50_95": 0.0095,
+    "map_50": 0.0166,
+    "eval_summary": "Loading and preparing results...\nDONE (t=0.36s)\ncreating index...\nindex created!\nRunning per image evaluation...\nEvaluate annotation type *bbox*\nDONE (t=8.43s).\nAccumulating evaluation results...\nDONE (t=2.83s).\n"
+  },
+  "training_summary": {
+    "model": "YOLOX-S",
+    "num_classes": 115,
+    "input_resolution": [
+      640,
+      640
+    ],
+    "epochs_completed": 3,
+    "total_target_epochs": 10,
+    "elapsed_time_seconds": 742.64,
+    "elapsed_time_minutes": 12.38,
+    "final_train_loss": 9.9666,
+    "best_val_map_50_95": 0.0148,
+    "history": {
+      "epoch": [
+        2,
+        3
+      ],
+      "train_total_loss": [
+        10.433919232344236,
+        9.966627076067732
+      ],
+      "train_iou_loss": [
+        2.1315041210262944,
+        2.1383968368952226
+      ],
+      "train_conf_loss": [
+        4.493470328805692,
+        4.369687755724418
+      ],
+      "train_cls_loss": [
+        3.8089447734245447,
+        3.4585424802406664
+      ],
+      "val_map_50": [
+        0.02493557287036784,
+        0.0
+      ],
+      "val_map_50_95": [
+        0.014750309462159435,
+        0.0
+      ],
+      "lr": [
+        0.0006706586826347305,
+        0.0013393213572854292
+      ]
+    }
+  }
+}

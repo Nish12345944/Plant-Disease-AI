@@ -1,0 +1,17 @@
+class_name,support,support_level,correct,incorrect,accuracy,mean_confidence_correct,mean_confidence_incorrect
+banana__cordana_leaf_spot,20,strong external evidence (>=20),16,4,80.0,0.7484,0.5109
+cucumber__powdery_mildew,20,strong external evidence (>=20),4,16,20.0,0.5156,0.6403
+healthy,20,strong external evidence (>=20),0,20,0.0,0.0,0.4808
+tomato__early_blight,20,strong external evidence (>=20),8,12,40.0,0.4383,0.5406
+tomato__septoria_leaf_spot,20,strong external evidence (>=20),8,12,40.0,0.5809,0.6773
+tomato__leaf_mold,20,strong external evidence (>=20),15,5,75.0,0.7957,0.6025
+tomato__late_blight,20,strong external evidence (>=20),4,16,20.0,0.5707,0.5046
+zucchini__powdery_mildew,18,moderate (10-19),4,14,22.22,0.6515,0.6475
+peach__brown_rot,4,insufficient (<5),4,0,100.0,0.9412,0.0
+wheat__head_scab,4,insufficient (<5),4,0,100.0,0.956,0.0
+wheat__stripe_rust,3,insufficient (<5),3,0,100.0,0.9012,0.0
+banana__bunchy_top,3,insufficient (<5),3,0,100.0,0.9684,0.0
+bean__rust,2,insufficient (<5),1,1,50.0,0.6612,0.3554
+soybean__frog_eye_leaf_spot,2,insufficient (<5),2,0,100.0,0.8306,0.0
+banana__black_leaf_streak,1,insufficient (<5),1,0,100.0,0.9726,0.0
+wheat__loose_smut,1,insufficient (<5),1,0,100.0,0.9464,0.0

@@ -1,0 +1,117 @@
+class_name,crop,current_train_count,current_val_count,current_test_count,test_precision,test_recall,test_f1,priority,recommended_target_train_count,additional_images_needed,top_confusion_targets
+bell_pepper__frogeye_leaf_spot,Bell Pepper,16,3,4,0.0000,0.0000,0.0000,CRITICAL,100,84,"soybean__frog_eye_leaf_spot (2), tobacco__frogeye_leaf_spot (1), bean__rust (1)"
+broccoli__ring_spot,Broccoli,5,1,1,0.0000,0.0000,0.0000,CRITICAL,100,95,cabbage__downy_mildew (1)
+cauliflower__alternaria_leaf_spot,Cauliflower,19,4,4,0.0000,0.0000,0.0000,CRITICAL,100,81,"cabbage__alternaria_leaf_spot (2), broccoli__ring_spot (1), tomato__septoria_leaf_spot (1)"
+cauliflower__bacterial_soft_rot,Cauliflower,13,3,2,0.0000,0.0000,0.0000,CRITICAL,100,87,"corn__smut (1), cauliflower__alternaria_leaf_spot (1)"
+cherry__powdery_mildew,Cherry,18,4,3,0.0000,0.0000,0.0000,CRITICAL,100,82,"squash__powdery_mildew (1), citrus__canker (1), apple__rust (1)"
+coffee__black_rot,Coffee,2,1,0,0.0000,0.0000,0.0000,CRITICAL,100,98,None
+coffee__brown_eye_spot,Coffee,8,2,1,0.0000,0.0000,0.0000,CRITICAL,100,92,citrus__canker (1)
+peach__rust,Peach,3,1,1,0.0000,0.0000,0.0000,CRITICAL,100,97,peach__leaf_curl (1)
+plum__bacterial_spot,Plum,7,2,1,0.0000,0.0000,0.0000,CRITICAL,100,93,apple__scab (1)
+plum__rust,Plum,12,3,2,0.0000,0.0000,0.0000,CRITICAL,100,88,"bean__rust (1), soybean__rust (1)"
+raspberry__leaf_spot,Raspberry,8,2,1,0.0000,0.0000,0.0000,CRITICAL,100,92,healthy (1)
+cabbage__alternaria_leaf_spot,Cabbage,25,5,6,0.1429,0.1667,0.1538,CRITICAL,100,75,"tobacco__frogeye_leaf_spot (1), broccoli__alternaria_leaf_spot (1), grape__leaf_spot (1)"
+plum__pocket_disease,Plum,20,4,4,0.2000,0.2500,0.2222,CRITICAL,100,80,"healthy (1), plum__brown_rot (1), wheat__loose_smut (1)"
+tobacco__frogeye_leaf_spot,Tobacco,10,2,3,0.1667,0.3333,0.2222,CRITICAL,100,90,"tobacco__blue_mold (1), tobacco__brown_spot (1)"
+ginger__sheath_blight,Ginger,40,9,8,0.2222,0.2500,0.2353,CRITICAL,100,60,"rice__sheath_blight (5), eggplant__phomopsis_fruit_rot (1)"
+bean__mosaic_virus,Bean,23,5,5,0.2000,0.4000,0.2667,CRITICAL,100,77,"soybean__mosaic (2), tobacco__blue_mold (1)"
+banana__cordana_leaf_spot,Banana,20,4,4,0.3333,0.2500,0.2857,CRITICAL,100,80,"banana__black_leaf_streak (1), corn__gray_leaf_spot (1), banana__cigar_end_rot (1)"
+zucchini__downy_mildew,Zucchini,22,5,5,1.0000,0.2000,0.3333,CRITICAL,100,78,"cucumber__angular_leaf_spot (2), basil__downy_mildew (1), grape__downy_mildew (1)"
+tomato__septoria_leaf_spot,Tomato,64,14,14,0.3333,0.3571,0.3448,CRITICAL,100,36,"tomato__bacterial_leaf_spot (6), cauliflower__alternaria_leaf_spot (1), tomato__early_blight (1)"
+squash__powdery_mildew,Squash,96,21,20,0.4118,0.3500,0.3784,CRITICAL,100,4,"zucchini__powdery_mildew (7), cucumber__powdery_mildew (4), zucchini__bacterial_wilt (1)"
+eggplant__phytophthora_blight,Eggplant,15,3,4,1.0000,0.2500,0.4000,HIGH,100,85,"potato__late_blight (1), ginger__sheath_blight (1), eggplant__phomopsis_fruit_rot (1)"
+plum__pox_virus,Plum,15,3,4,1.0000,0.2500,0.4000,HIGH,100,85,"bean__mosaic_virus (2), apple__scab (1)"
+soybean__brown_spot,Soybean,33,7,7,0.6667,0.2857,0.4000,HIGH,100,67,"soybean__bacterial_blight (3), bean__rust (2)"
+tomato__mosaic_virus,Tomato,30,6,7,0.6667,0.2857,0.4000,HIGH,100,70,"tomato__yellow_leaf_curl_virus (2), bean__mosaic_virus (1), carrot__alternaria_leaf_blight (1)"
+bean__halo_blight,Bean,24,5,6,0.5000,0.3333,0.4000,HIGH,100,76,"bean__mosaic_virus (2), soybean__rust (1), tomato__leaf_mold (1)"
+carrot__cercospora_leaf_blight,Carrot,11,2,3,0.5000,0.3333,0.4000,HIGH,100,89,"carrot__alternaria_leaf_blight (1), celery__early_blight (1)"
+zucchini__powdery_mildew,Zucchini,87,19,18,0.4118,0.3889,0.4000,HIGH,100,13,"squash__powdery_mildew (5), cucumber__powdery_mildew (4), tomato__septoria_leaf_spot (1)"
+soybean__rust,Soybean,46,10,9,0.3333,0.5556,0.4167,HIGH,100,54,"bean__rust (2), cucumber__angular_leaf_spot (1), soybean__bacterial_blight (1)"
+eggplant__cercospora_leaf_spot,Eggplant,25,5,6,0.6667,0.3333,0.4444,HIGH,100,75,"tomato__septoria_leaf_spot (2), plum__bacterial_spot (1), tomato__bacterial_leaf_spot (1)"
+celery__early_blight,Celery,20,4,5,0.5000,0.4000,0.4444,HIGH,100,80,"rice__blast (1), healthy (1), carrot__cercospora_leaf_blight (1)"
+rice__sheath_blight,Rice,36,8,8,0.3571,0.6250,0.4545,HIGH,100,64,ginger__sheath_blight (3)
+wheat__leaf_rust,Wheat,51,11,11,0.4000,0.5455,0.4615,HIGH,100,49,"wheat__stripe_rust (3), garlic__rust (1), wheat__bacterial_leaf_streak_(black_chaff) (1)"
+corn__gray_leaf_spot,Corn,53,11,12,0.5556,0.4167,0.4762,HIGH,100,47,"corn__rust (3), wheat__septoria_blotch (1), banana__black_leaf_streak (1)"
+soybean__bacterial_blight,Soybean,42,9,9,0.4167,0.5556,0.4762,HIGH,100,58,"soybean__rust (3), soybean__frog_eye_leaf_spot (1)"
+apple__black_rot,Apple,44,9,10,0.6667,0.4000,0.5000,HIGH,100,56,"apple__scab (1), peach__anthracnose (1), apple__rust (1)"
+rice__blast,Rice,35,8,7,0.6000,0.4286,0.5000,HIGH,100,65,"ginger__leaf_spot (1), banana__black_leaf_streak (1), garlic__rust (1)"
+cabbage__downy_mildew,Cabbage,34,7,8,0.5000,0.5000,0.5000,HIGH,100,66,"cabbage__black_rot (1), tomato__septoria_leaf_spot (1), wheat__powdery_mildew (1)"
+ginger__leaf_spot,Ginger,15,3,4,0.5000,0.5000,0.5000,HIGH,100,85,"ginger__sheath_blight (1), corn__gray_leaf_spot (1)"
+lettuce__mosaic_virus,Lettuce,15,3,4,0.5000,0.5000,0.5000,HIGH,100,85,"healthy (1), tobacco__mosaic_virus (1)"
+raspberry__fire_blight,Raspberry,16,3,4,0.5000,0.5000,0.5000,HIGH,100,84,"zucchini__bacterial_wilt (1), carrot__alternaria_leaf_blight (1)"
+garlic__leaf_blight,Garlic,55,12,12,0.4375,0.5833,0.5000,HIGH,100,45,"ginger__sheath_blight (2), garlic__rust (1), wheat__septoria_blotch (1)"
+tomato__bacterial_leaf_spot,Tomato,62,13,13,0.4706,0.6154,0.5333,HIGH,100,38,"tomato__septoria_leaf_spot (2), cabbage__downy_mildew (1), soybean__bacterial_blight (1)"
+soybean__mosaic,Soybean,62,13,13,0.5385,0.5385,0.5385,HIGH,100,38,"bean__mosaic_virus (3), soybean__downy_mildew (1), citrus__greening_disease (1)"
+wheat__bacterial_leaf_streak_(black_chaff),Wheat,57,12,13,0.5385,0.5385,0.5385,HIGH,100,43,"wheat__septoria_blotch (3), wheat__head_scab (2), wheat__powdery_mildew (1)"
+blueberry__rust,Blueberry,23,5,5,0.5000,0.6000,0.5455,HIGH,100,77,blueberry__anthracnose (2)
+wheat__septoria_blotch,Wheat,86,18,19,0.5238,0.5789,0.5500,HIGH,100,14,"wheat__stripe_rust (3), wheat__bacterial_leaf_streak_(black_chaff) (1), corn__northern_leaf_blight (1)"
+broccoli__downy_mildew,Broccoli,16,3,4,0.6667,0.5000,0.5714,HIGH,100,84,"cabbage__black_rot (1), cabbage__downy_mildew (1)"
+zucchini__bacterial_wilt,Zucchini,39,8,9,0.5000,0.6667,0.5714,HIGH,100,61,"healthy (1), cucumber__bacterial_wilt (1), banana__black_leaf_streak (1)"
+grape__leaf_spot,Grape,46,10,10,0.7143,0.5000,0.5882,HIGH,100,54,"zucchini__bacterial_wilt (1), tomato__early_blight (1), grape__downy_mildew (1)"
+bell_pepper__bacterial_spot,Bell Pepper,33,7,7,1.0000,0.4286,0.6000,MEDIUM,100,67,"bell_pepper__blossom_end_rot (2), bean__halo_blight (1), citrus__canker (1)"
+blueberry__scorch,Blueberry,22,5,5,0.6000,0.6000,0.6000,MEDIUM,100,78,"raspberry__fire_blight (1), citrus__canker (1)"
+eggplant__phomopsis_fruit_rot,Eggplant,22,5,5,0.6000,0.6000,0.6000,MEDIUM,100,78,"bell_pepper__blossom_end_rot (1), tomato__bacterial_leaf_spot (1)"
+tobacco__mosaic_virus,Tobacco,20,4,5,0.6000,0.6000,0.6000,MEDIUM,100,80,"tobacco__blue_mold (1), lettuce__mosaic_virus (1)"
+broccoli__alternaria_leaf_spot,Broccoli,37,8,8,0.8000,0.5000,0.6154,MEDIUM,100,63,"cabbage__alternaria_leaf_spot (2), tomato__early_blight (1), eggplant__cercospora_leaf_spot (1)"
+cherry__leaf_spot,Cherry,46,10,10,1.0000,0.5000,0.6667,MEDIUM,100,54,"apple__mosaic_virus (1), plum__pocket_disease (1), coffee__leaf_rust (1)"
+wheat__powdery_mildew,Wheat,122,26,27,0.8333,0.5556,0.6667,MEDIUM,142,20,"garlic__leaf_blight (3), rice__sheath_blight (2), wheat__leaf_rust (2)"
+apple__scab,Apple,116,25,25,0.7500,0.6000,0.6667,MEDIUM,136,20,"peach__scab (2), citrus__canker (1), citrus__greening_disease (1)"
+basil__downy_mildew,Basil,29,6,6,0.6667,0.6667,0.6667,MEDIUM,100,71,"tomato__septoria_leaf_spot (1), tomato__leaf_mold (1)"
+banana__cigar_end_rot,Banana,22,5,4,0.6000,0.7500,0.6667,MEDIUM,100,78,banana__anthracnose (1)
+blueberry__anthracnose,Blueberry,18,4,4,0.6000,0.7500,0.6667,MEDIUM,100,82,blueberry__mummy_berry (1)
+garlic__rust,Garlic,56,12,12,0.6000,0.7500,0.6667,MEDIUM,100,44,"garlic__leaf_blight (2), wheat__stripe_rust (1)"
+tobacco__blue_mold,Tobacco,24,5,5,0.5714,0.8000,0.6667,MEDIUM,100,76,soybean__downy_mildew (1)
+celery__anthracnose,Celery,8,2,1,0.5000,1.0000,0.6667,MEDIUM,100,92,None
+peach__anthracnose,Peach,7,2,1,0.5000,1.0000,0.6667,MEDIUM,100,93,None
+cucumber__powdery_mildew,Cucumber,106,23,22,0.6296,0.7727,0.6939,MEDIUM,126,20,"squash__powdery_mildew (3), healthy (1), zucchini__powdery_mildew (1)"
+tomato__yellow_leaf_curl_virus,Tomato,41,9,9,0.7500,0.6667,0.7059,MEDIUM,100,59,"healthy (1), zucchini__bacterial_wilt (1), tomato__mosaic_virus (1)"
+apple__rust,Apple,69,15,14,0.8182,0.6429,0.7200,MEDIUM,100,31,"apple__scab (2), coffee__leaf_rust (1), banana__cigar_end_rot (1)"
+corn__rust,Corn,84,18,18,0.8000,0.6667,0.7273,MEDIUM,100,16,"wheat__leaf_rust (2), wheat__septoria_blotch (2), garlic__leaf_blight (1)"
+apple__mosaic_virus,Apple,51,11,11,0.7273,0.7273,0.7273,MEDIUM,100,49,"soybean__downy_mildew (1), soybean__mosaic (1), healthy (1)"
+potato__early_blight,Potato,46,10,10,0.7778,0.7000,0.7368,MEDIUM,100,54,"tomato__septoria_leaf_spot (1), soybean__frog_eye_leaf_spot (1), potato__late_blight (1)"
+tomato__late_blight,Tomato,82,18,17,0.8000,0.7059,0.7500,LOW,82,0,"tomato__leaf_mold (1), bell_pepper__blossom_end_rot (1), celery__early_blight (1)"
+blueberry__mummy_berry,Blueberry,20,4,4,0.7500,0.7500,0.7500,LOW,20,0,blueberry__rust (1)
+carrot__alternaria_leaf_blight,Carrot,31,7,7,0.6667,0.8571,0.7500,LOW,31,0,raspberry__fire_blight (1)
+strawberry__leaf_scorch,Strawberry,13,3,3,0.6000,1.0000,0.7500,LOW,13,0,None
+tomato__early_blight,Tomato,102,22,22,0.8000,0.7273,0.7619,LOW,102,0,"potato__early_blight (1), tomato__septoria_leaf_spot (1), tomato__late_blight (1)"
+tobacco__brown_spot,Tobacco,32,7,7,0.8333,0.7143,0.7692,LOW,32,0,"cabbage__alternaria_leaf_spot (1), tobacco__frogeye_leaf_spot (1)"
+tomato__leaf_mold,Tomato,71,15,16,0.8000,0.7500,0.7742,LOW,71,0,"cucumber__powdery_mildew (2), tomato__late_blight (1), soybean__mosaic (1)"
+citrus__greening_disease,Citrus,65,14,14,0.7059,0.8571,0.7742,LOW,65,0,"basil__downy_mildew (1), plum__pocket_disease (1)"
+wheat__stripe_rust,Wheat,148,32,32,0.7812,0.7812,0.7812,LOW,148,0,"wheat__leaf_rust (3), wheat__stem_rust (2), garlic__rust (1)"
+soybean__frog_eye_leaf_spot,Soybean,97,21,21,0.7727,0.8095,0.7907,LOW,97,0,"blueberry__rust (1), soybean__bacterial_blight (1), soybean__brown_spot (1)"
+blueberry__botrytis_blight,Blueberry,13,3,3,1.0000,0.6667,0.8000,LOW,13,0,blueberry__scorch (1)
+grape__downy_mildew,Grape,146,31,32,0.8571,0.7500,0.8000,LOW,146,0,"blueberry__scorch (1), squash__powdery_mildew (1), zucchini__powdery_mildew (1)"
+lettuce__downy_mildew,Lettuce,37,8,8,0.8571,0.7500,0.8000,LOW,37,0,"cabbage__downy_mildew (1), bell_pepper__powdery_mildew (1)"
+bell_pepper__powdery_mildew,Bell Pepper,13,3,2,0.6667,1.0000,0.8000,LOW,13,0,None
+banana__black_leaf_streak,Banana,76,16,17,0.7500,0.8824,0.8108,LOW,76,0,"banana__panama_disease (1), banana__cordana_leaf_spot (1)"
+corn__northern_leaf_blight,Corn,64,14,14,0.8462,0.7857,0.8148,LOW,64,0,"ginger__leaf_spot (1), wheat__loose_smut (1), corn__gray_leaf_spot (1)"
+grape__black_rot,Grape,61,13,13,0.7857,0.8462,0.8148,LOW,61,0,"tobacco__frogeye_leaf_spot (1), grape__leaf_spot (1)"
+potato__late_blight,Potato,53,11,12,0.8333,0.8333,0.8333,LOW,53,0,"tomato__late_blight (1), zucchini__bacterial_wilt (1)"
+soybean__downy_mildew,Soybean,50,11,11,0.7692,0.9091,0.8333,LOW,50,0,soybean__rust (1)
+grape__grapevine_leafroll_disease,Grape,22,5,5,0.7143,1.0000,0.8333,LOW,22,0,None
+plum__brown_rot,Plum,27,6,5,0.7143,1.0000,0.8333,LOW,27,0,None
+coffee__leaf_rust,Coffee,75,16,16,0.8667,0.8125,0.8387,LOW,75,0,"citrus__greening_disease (2), soybean__mosaic (1)"
+coffee__berry_blotch,Coffee,46,10,9,0.8000,0.8889,0.8421,LOW,46,0,coffee__brown_eye_spot (1)
+wheat__stem_rust,Wheat,58,12,13,0.8462,0.8462,0.8462,LOW,58,0,"wheat__septoria_blotch (1), wheat__leaf_rust (1)"
+bell_pepper__blossom_end_rot,Bell Pepper,55,12,11,0.7333,1.0000,0.8462,LOW,55,0,None
+bean__rust,Bean,357,76,77,0.8272,0.8701,0.8481,LOW,357,0,"soybean__rust (3), bean__angular_leaf_spot (2), healthy (2)"
+cabbage__black_rot,Cabbage,62,13,13,0.8000,0.9231,0.8571,LOW,62,0,lettuce__mosaic_virus (1)
+zucchini__yellow_mosaic_virus,Zucchini,39,8,9,1.0000,0.7778,0.8750,LOW,39,0,"celery__anthracnose (1), zucchini__powdery_mildew (1)"
+banana__panama_disease,Banana,34,7,8,0.8750,0.8750,0.8750,LOW,34,0,banana__black_leaf_streak (1)
+strawberry__anthracnose,Strawberry,21,4,5,1.0000,0.8000,0.8889,LOW,21,0,strawberry__leaf_scorch (1)
+peach__scab,Peach,37,8,8,0.8000,1.0000,0.8889,LOW,37,0,None
+citrus__canker,Citrus,225,48,48,0.8800,0.9167,0.8980,LOW,225,0,"tobacco__frogeye_leaf_spot (1), citrus__greening_disease (1), peach__leaf_curl (1)"
+cucumber__angular_leaf_spot,Cucumber,104,22,22,0.8750,0.9545,0.9130,LOW,104,0,bean__rust (1)
+wheat__head_scab,Wheat,139,30,30,0.9032,0.9333,0.9180,LOW,139,0,wheat__bacterial_leaf_streak_(black_chaff) (2)
+cucumber__bacterial_wilt,Cucumber,57,12,13,0.9231,0.9231,0.9231,LOW,57,0,zucchini__bacterial_wilt (1)
+wheat__loose_smut,Wheat,89,19,19,0.9000,0.9474,0.9231,LOW,89,0,wheat__powdery_mildew (1)
+peach__leaf_curl,Peach,85,18,18,0.8571,1.0000,0.9231,LOW,85,0,None
+peach__brown_rot,Peach,65,14,14,0.9286,0.9286,0.9286,LOW,65,0,plum__pocket_disease (1)
+banana__anthracnose,Banana,34,7,7,0.8750,1.0000,0.9333,LOW,34,0,None
+bean__angular_leaf_spot,Bean,302,65,65,0.9672,0.9077,0.9365,LOW,302,0,bean__rust (6)
+corn__smut,Corn,92,20,19,0.9474,0.9474,0.9474,LOW,92,0,garlic__leaf_blight (1)
+banana__bunchy_top,Banana,50,11,11,1.0000,0.9091,0.9524,LOW,50,0,banana__cordana_leaf_spot (1)
+carrot__cavity_spot,Carrot,29,6,7,1.0000,1.0000,1.0000,LOW,29,0,None
+maple__tar_spot,Maple,40,9,8,1.0000,1.0000,1.0000,LOW,40,0,None
+raspberry__gray_mold,Raspberry,12,3,2,1.0000,1.0000,1.0000,LOW,12,0,None
+raspberry__yellow_rust,Raspberry,15,3,4,1.0000,1.0000,1.0000,LOW,15,0,None

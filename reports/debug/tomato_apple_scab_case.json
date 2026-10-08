@@ -1,0 +1,126 @@
+{
+  "image": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\data\\external\\end_to_end_test\\tomato\\tomato_tomato_early_blight_0001.jpg",
+  "model1_predicted_crop": "tomato",
+  "model1_crop_confidence": 0.9998923540115356,
+  "model1_top5": [
+    {
+      "crop": "tomato",
+      "probability": 0.9998923540115356,
+      "percentage": "99.99%"
+    },
+    {
+      "crop": "capsicum",
+      "probability": 0.00010484839003765956,
+      "percentage": "0.01%"
+    },
+    {
+      "crop": "strawberry",
+      "probability": 1.3420469713310013e-06,
+      "percentage": "0.00%"
+    },
+    {
+      "crop": "broccoli",
+      "probability": 9.68526364886202e-07,
+      "percentage": "0.00%"
+    },
+    {
+      "crop": "blueberry",
+      "probability": 1.4562773742454738e-07,
+      "percentage": "0.00%"
+    }
+  ],
+  "model2_raw_predicted_class": "tomato__septoria_leaf_spot",
+  "model2_raw_confidence": 0.5397480130195618,
+  "raw_compatibility_result": "VALID",
+  "model2_top10": [
+    {
+      "class_id": 103,
+      "class_name": "tomato__septoria_leaf_spot",
+      "probability": 0.5397480130195618,
+      "percentage": "53.97%",
+      "is_compatible_with_m1_crop": true
+    },
+    {
+      "class_id": 99,
+      "class_name": "tomato__early_blight",
+      "probability": 0.21440546214580536,
+      "percentage": "21.44%",
+      "is_compatible_with_m1_crop": true
+    },
+    {
+      "class_id": 77,
+      "class_name": "potato__early_blight",
+      "probability": 0.17490355670452118,
+      "percentage": "17.49%",
+      "is_compatible_with_m1_crop": false
+    },
+    {
+      "class_id": 98,
+      "class_name": "tomato__bacterial_leaf_spot",
+      "probability": 0.02398715913295746,
+      "percentage": "2.40%",
+      "is_compatible_with_m1_crop": true
+    },
+    {
+      "class_id": 53,
+      "class_name": "eggplant__cercospora_leaf_spot",
+      "probability": 0.014810580760240555,
+      "percentage": "1.48%",
+      "is_compatible_with_m1_crop": false
+    },
+    {
+      "class_id": 13,
+      "class_name": "bean__halo_blight",
+      "probability": 0.005886565428227186,
+      "percentage": "0.59%",
+      "is_compatible_with_m1_crop": false
+    },
+    {
+      "class_id": 86,
+      "class_name": "soybean__brown_spot",
+      "probability": 0.0026912365574389696,
+      "percentage": "0.27%",
+      "is_compatible_with_m1_crop": false
+    },
+    {
+      "class_id": 38,
+      "class_name": "cherry__leaf_spot",
+      "probability": 0.002657259814441204,
+      "percentage": "0.27%",
+      "is_compatible_with_m1_crop": false
+    },
+    {
+      "class_id": 16,
+      "class_name": "bell_pepper__bacterial_spot",
+      "probability": 0.002188044134527445,
+      "percentage": "0.22%",
+      "is_compatible_with_m1_crop": false
+    },
+    {
+      "class_id": 4,
+      "class_name": "apple__scab",
+      "probability": 0.002147398190572858,
+      "percentage": "0.21%",
+      "is_compatible_with_m1_crop": false
+    }
+  ],
+  "compatible_candidates_found": 3,
+  "best_compatible_candidate": {
+    "class_id": 103,
+    "class_name": "tomato__septoria_leaf_spot",
+    "probability": 0.5397480130195618,
+    "percentage": "53.97%",
+    "is_compatible_with_m1_crop": true
+  },
+  "final_prediction": {
+    "crop": "tomato",
+    "crop_confidence": 0.9998923540115356,
+    "status": "diseased",
+    "disease": "tomato__septoria_leaf_spot",
+    "disease_confidence": 0.5397480130195618
+  },
+  "diagnosis_contract": {
+    "apple_scab_prevented_on_tomato": true,
+    "healthy_invariant_satisfied": true
+  }
+}

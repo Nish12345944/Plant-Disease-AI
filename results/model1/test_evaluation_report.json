@@ -1,0 +1,135 @@
+{
+  "best_epoch": 6,
+  "test_loss": 0.0517,
+  "test_accuracy": 0.9841,
+  "macro_precision": 0.9297,
+  "macro_recall": 0.9506,
+  "macro_f1": 0.9381,
+  "weighted_f1": 0.9847,
+  "top3_accuracy": 0.9977,
+  "inference_time_sec": 74.34,
+  "total_test_samples": 5221,
+  "per_class_report": {
+    "anthurium": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 10.0
+    },
+    "blueberry": {
+      "precision": 0.8285714285714286,
+      "recall": 0.9354838709677419,
+      "f1-score": 0.8787878787878788,
+      "support": 31.0
+    },
+    "broccoli": {
+      "precision": 1.0,
+      "recall": 0.9024390243902439,
+      "f1-score": 0.9487179487179487,
+      "support": 41.0
+    },
+    "capsicum": {
+      "precision": 0.9612676056338029,
+      "recall": 0.978494623655914,
+      "f1-score": 0.9698046181172292,
+      "support": 279.0
+    },
+    "carnation": {
+      "precision": 0.8333333333333334,
+      "recall": 1.0,
+      "f1-score": 0.9090909090909091,
+      "support": 5.0
+    },
+    "chrysanthemum": {
+      "precision": 0.9761904761904762,
+      "recall": 0.9761904761904762,
+      "f1-score": 0.9761904761904762,
+      "support": 42.0
+    },
+    "cucumber": {
+      "precision": 0.9935794542536116,
+      "recall": 0.9778830963665087,
+      "f1-score": 0.9856687898089171,
+      "support": 1266.0
+    },
+    "french_bean": {
+      "precision": 0.6923076923076923,
+      "recall": 0.6428571428571429,
+      "f1-score": 0.6666666666666666,
+      "support": 14.0
+    },
+    "geranium": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 25.0
+    },
+    "lettuce": {
+      "precision": 0.9953271028037384,
+      "recall": 0.9508928571428571,
+      "f1-score": 0.9726027397260274,
+      "support": 224.0
+    },
+    "marigold": {
+      "precision": 1.0,
+      "recall": 0.9916666666666667,
+      "f1-score": 0.99581589958159,
+      "support": 120.0
+    },
+    "melon": {
+      "precision": 0.9615384615384616,
+      "recall": 1.0,
+      "f1-score": 0.9803921568627451,
+      "support": 25.0
+    },
+    "orchid": {
+      "precision": 0.9840637450199203,
+      "recall": 0.9959677419354839,
+      "f1-score": 0.9899799599198397,
+      "support": 248.0
+    },
+    "rose": {
+      "precision": 1.0,
+      "recall": 0.9976275207591934,
+      "f1-score": 0.998812351543943,
+      "support": 843.0
+    },
+    "spinach": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 300.0
+    },
+    "strawberry": {
+      "precision": 0.9830508474576272,
+      "recall": 1.0,
+      "f1-score": 0.9914529914529915,
+      "support": 174.0
+    },
+    "tomato": {
+      "precision": 0.9889538661468485,
+      "recall": 0.9915309446254071,
+      "f1-score": 0.9902407286922577,
+      "support": 1535.0
+    },
+    "zucchini": {
+      "precision": 0.5357142857142857,
+      "recall": 0.7692307692307693,
+      "f1-score": 0.631578947368421,
+      "support": 39.0
+    },
+    "accuracy": 0.984102662325225,
+    "macro avg": {
+      "precision": 0.9296610166095126,
+      "recall": 0.9505702630438003,
+      "f1-score": 0.9381001701404357,
+      "support": 5221.0
+    },
+    "weighted avg": {
+      "precision": 0.9857570140143513,
+      "recall": 0.984102662325225,
+      "f1-score": 0.9846771328013603,
+      "support": 5221.0
+    }
+  }
+}

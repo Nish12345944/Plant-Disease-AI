@@ -1,0 +1,35 @@
+{
+  "model_name": "model1_crop_classifier",
+  "architecture": "EfficientNet-B2",
+  "num_classes": 22,
+  "input_tensor": "input",
+  "output_tensor": "logits",
+  "input_shape": [
+    1,
+    3,
+    224,
+    224
+  ],
+  "image_size": [
+    224,
+    224
+  ],
+  "normalization": {
+    "mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "std": [
+      0.229,
+      0.224,
+      0.225
+    ]
+  },
+  "opset_version": 17,
+  "supported_runtimes": [
+    "onnxruntime",
+    "onnxruntime-mobile",
+    "flutter_onnx"
+  ]
+}

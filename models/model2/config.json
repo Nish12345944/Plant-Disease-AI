@@ -1,0 +1,16 @@
+{
+  "model_name": "yolox_s",
+  "depth": 0.33,
+  "width": 0.5,
+  "num_classes": 115,
+  "input_size": [
+    640,
+    640
+  ],
+  "batch_size": 8,
+  "effective_batch_size": 16,
+  "max_epoch": 50,
+  "lr": 0.002,
+  "amp": true,
+  "pretrained_weights": "models/pretrained/yolox_s.pth"
+}

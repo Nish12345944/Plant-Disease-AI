@@ -1,0 +1,110 @@
+{
+  "best_model.pth": [
+    "app\\backend\\config.py",
+    "model1_test\\app.py",
+    "model1_test\\README.md",
+    "model1_test_app\\inference.py",
+    "model1_test_app\\README.md",
+    "model2\\config.py",
+    "model2\\generate_reports.py",
+    "model2\\test_model2.py",
+    "scripts\\evaluate_model1_final.py",
+    "scripts\\eval_test_model1.py",
+    "scripts\\train_and_eval_model1.py",
+    "scripts\\train_model1_final.py",
+    "legacy_flask_app.py"
+  ],
+  "model1_test": [
+    "app\\backend\\config.py",
+    "app\\backend\\services.py",
+    "model1_test\\README.md",
+    "model1_test_app\\app.py",
+    "model1_test_app\\README.md",
+    "model1_test_app\\video_inference.py",
+    "scripts\\test_model1_app_validation.py",
+    "scripts\\test_video_24_frames.py"
+  ],
+  "temp_multimodal_uploads": [
+    "app\\backend\\config.py"
+  ],
+  "audio_test_app": [
+    "audio_test_app\\README.md"
+  ],
+  "video_debug": [
+    "model1_test_app\\video_inference.py"
+  ],
+  "model2_dataset": [
+    "model2\\config.py",
+    "model2\\dataset.py",
+    "model2\\test_model2.py",
+    "scripts\\audit_model2_environment.py",
+    "scripts\\audit_model2_readonly.py",
+    "scripts\\build_model2_dataset.py",
+    "scripts\\fix_model2_leakage.py",
+    "scripts\\prepare_model2_yolox_coco.py",
+    "scripts\\validate_model2_dataset.py",
+    "scripts\\visualize_model2_dataset.py",
+    "scripts\\write_model2_build_report.py"
+  ],
+  "model2_yolox": [
+    "model2\\config.py",
+    "model2\\dataset.py",
+    "scripts\\prepare_model2_yolox_coco.py"
+  ],
+  "last_model.pth": [
+    "model2\\config.py",
+    "scripts\\train_and_eval_model1.py"
+  ],
+  "yolox_s.pth": [
+    "model2\\config.py",
+    "models\\model2\\config.json"
+  ],
+  "model1_efficientnet_b2.pth": [
+    "scripts\\03_train_model1_efficientnet_b2.py",
+    "scripts\\04_test_model1.py",
+    "scripts\\05_model1_upload_test.py",
+    "scripts\\06_eval_model1_per_class.py"
+  ],
+  "data/external": [
+    "scripts\\07_audit_existing_missing_classes.py",
+    "scripts\\11_clean_organize_plant_parts.py",
+    "scripts\\audit_model2_readonly.py",
+    "scripts\\build_final_model1.py",
+    "scripts\\build_model1_balanced.py",
+    "scripts\\generate_full_report.py",
+    "scripts\\plant_part_rules.py",
+    "scripts\\write_model2_build_report.py"
+  ],
+  "plant_part_dataset": [
+    "scripts\\11_clean_organize_plant_parts.py",
+    "scripts\\12_split_plant_part_dataset.py",
+    "scripts\\13_validate_plant_part_dataset.py",
+    "scripts\\prepare_model1_dataset.py"
+  ],
+  "plant_part_dataset_split": [
+    "scripts\\12_split_plant_part_dataset.py",
+    "scripts\\13_validate_plant_part_dataset.py"
+  ],
+  "model1_dataset": [
+    "scripts\\build_final_model1.py",
+    "scripts\\build_model1_balanced.py",
+    "scripts\\eval_test_model1.py",
+    "scripts\\prepare_model1_dataset.py",
+    "scripts\\train_and_eval_model1.py"
+  ],
+  "model1_balanced": [
+    "scripts\\build_model1_balanced.py",
+    "scripts\\evaluate_model1_final.py",
+    "scripts\\test_model1_app_validation.py",
+    "scripts\\test_video_24_frames.py",
+    "scripts\\train_model1_final.py"
+  ],
+  "data/downloads": [
+    "scripts\\test_multimodal_app.py"
+  ],
+  "test_multimodal_assets": [
+    "scripts\\test_multimodal_app.py"
+  ],
+  "data/raw": [],
+  "legacy_flask_app": []
+}

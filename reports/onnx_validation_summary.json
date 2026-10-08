@@ -1,0 +1,66 @@
+{
+  "model1": {
+    "fp32": {
+      "top1_agreement_pct": 100.0,
+      "top1_matches": 18,
+      "total_evaluated": 18,
+      "max_logit_diff": 1.049041748046875e-05,
+      "avg_mean_logit_diff": 1.8482613957833867e-06,
+      "max_prob_diff": 8.913048077374697e-11,
+      "avg_mean_prob_diff": 9.727444982232984e-13,
+      "status": "PASSED"
+    },
+    "fp16": {
+      "top1_agreement_pct": 100.0,
+      "top1_matches": 18,
+      "total_evaluated": 18,
+      "max_logit_diff": 0.016909122467041016,
+      "avg_mean_logit_diff": 0.00367768307397556,
+      "max_prob_diff": 1.1920928955078125e-07,
+      "avg_mean_prob_diff": 1.300014248883698e-09,
+      "status": "PASSED"
+    },
+    "int8": {
+      "top1_agreement_pct": 22.22222222222222,
+      "top1_matches": 4,
+      "total_evaluated": 18,
+      "max_logit_diff": 17.88912010192871,
+      "avg_mean_logit_diff": 3.7331256601545544,
+      "max_prob_diff": 0.999868631362915,
+      "avg_mean_prob_diff": 0.07316642452497035,
+      "status": "DRIFT / REJECT"
+    }
+  },
+  "model2_v2": {
+    "fp32": {
+      "top1_agreement_pct": 100.0,
+      "top1_matches": 15,
+      "total_evaluated": 15,
+      "max_logit_diff": 0.00020647048950195312,
+      "avg_mean_logit_diff": 1.0381602570911734e-05,
+      "max_prob_diff": 2.5900080800056458e-06,
+      "avg_mean_prob_diff": 8.664524476890978e-09,
+      "status": "PASSED"
+    },
+    "fp16": {
+      "top1_agreement_pct": 100.0,
+      "top1_matches": 15,
+      "total_evaluated": 15,
+      "max_logit_diff": 0.04082679748535156,
+      "avg_mean_logit_diff": 0.010000592578823369,
+      "max_prob_diff": 0.0011008977890014648,
+      "avg_mean_prob_diff": 5.269116558537234e-06,
+      "status": "PASSED"
+    },
+    "int8": {
+      "top1_agreement_pct": 33.33333333333333,
+      "top1_matches": 5,
+      "total_evaluated": 15,
+      "max_logit_diff": 26.018966674804688,
+      "avg_mean_logit_diff": 5.634491964181264,
+      "max_prob_diff": 0.993171215057373,
+      "avg_mean_prob_diff": 0.01567031890153885,
+      "status": "DRIFT / REJECT"
+    }
+  }
+}

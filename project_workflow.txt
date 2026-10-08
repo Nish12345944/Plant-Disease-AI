@@ -1,0 +1,155 @@
+                         USER INPUT
+                             │
+             ┌───────────────┼─────────────┐
+             │                   │             	   │
+           IMAGE                VIDEO            AUDIO
+             │                   │                │
+             │             OpenCV + FFmpeg        │
+             │             Frame extraction       │
+             │                   │                │
+             │                   ▼                │
+             │               VISUAL FRAMES        │
+             │                                    │
+             │                                 Whisper /
+             │                              faster-whisper
+             │                                    │
+             │                                    ▼
+             │                                 TEXT QUERY
+             │                                    │
+             └───────────────┬────────────┘
+                             ▼
+                  ┌─────────────────────┐
+                  │    QUERY UNDERSTANDING    │
+                  │     / ROUTER              │
+                  └──────────┬──────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              ▼              ▼              ▼
+          PLANT TYPE       DISEASE       TREATMENT /
+           QUESTION       QUESTION       INFORMATION
+              │              │              │
+              ▼              ▼              ▼
+          MODEL 1         MODEL 1         MODEL 1
+       EfficientNet-B2       │               │
+              │              ▼               ▼
+              │           MODEL 2          MODEL 2
+              │            YOLOX             │
+              │              │               ▼
+              │              │              RAG
+              │              │               │
+              └──────────────┴───────────────┘
+                             │
+                             ▼
+                    RESPONSE GENERATOR
+                         Local LLM
+                             │
+                             ▼
+                       FINAL RESPONSE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                         USER
+                           │
+             ┌─────────────┼─────────────┐
+             │             │             │
+             ↓             ↓             ↓
+          TEXT          MICROPHONE     IMAGE/VIDEO
+             │             │             │
+             │             ↓             ↓
+             │        Speech-to-Text   Image/Frames
+             │             │             │
+             └─────────────┼─────────────┘
+                           ↓
+                  INPUT PROCESSOR
+                           │
+                    ┌──────┴──────┐
+                    │             │
+                    ↓             ↓
+              Original Text   Normalized Text
+                    │             │
+                    │       Language Detection
+                    │             │
+                    │       Translation/Normalization
+                    │             │
+                    └──────┬──────┘
+                           ↓
+                    QUERY ROUTER
+                           ↓
+             ┌─────────────┼──────────────┐
+             ↓             ↓              ↓
+          MODEL 1        MODEL 2          RAG
+       EfficientNet-B2     YOLOX       FAISS + ST
+       Crop/Plant ID    Disease +      Treatment/
+                         Location       Knowledge
+             │             │              │
+             └─────────────┼──────────────┘
+                           ↓
+                    RESPONSE BUILDER
+                           ↓
+                     LOCAL LLM
+                           ↓
+                    FINAL RESPONSE
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

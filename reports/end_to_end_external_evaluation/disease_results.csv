@@ -1,0 +1,16 @@
+crop,disease,external_support,correct,incorrect,accuracy,avg_confidence
+banana,banana__black_leaf_streak,1,0,1,0.0,0.9726
+banana,banana__bunchy_top,3,0,3,0.0,0.9683
+banana,banana__cordana_leaf_spot,20,0,20,0.0,0.7009
+bean,bean__rust,2,1,1,50.0,0.5083
+cucumber,cucumber__powdery_mildew,20,3,17,15.0,0.6154
+peach,peach__brown_rot,4,0,4,0.0,0.9412
+soybean,soybean__frog_eye_leaf_spot,2,0,2,0.0,0.8306
+tomato,tomato__early_blight,20,4,16,20.0,0.4997
+tomato,tomato__late_blight,20,4,16,20.0,0.5178
+tomato,tomato__leaf_mold,20,15,5,75.0,0.7474
+tomato,tomato__septoria_leaf_spot,20,8,12,40.0,0.6387
+wheat,wheat__head_scab,4,0,4,0.0,0.956
+wheat,wheat__loose_smut,1,0,1,0.0,0.9464
+wheat,wheat__stripe_rust,3,0,3,0.0,0.9012
+zucchini,zucchini__powdery_mildew,18,4,14,22.22,0.6484

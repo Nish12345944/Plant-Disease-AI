@@ -1,0 +1,16 @@
+check_id,check_name,status,details
+1,Total image count exact match,PASS,"Orig: 19253, Org: 19253"
+2,Train/Val/Test split counts match exactly,PASS,"Orig: {'train': 15252, 'test': 2304, 'val': 1697}, Org: {'train': 15252, 'test': 2304, 'val': 1697}"
+3,Physical existence of all organized files on disk,PASS,Missing: 0
+4,Zero duplicate destination image paths,PASS,Duplicates: 0
+5,"All records have valid, non-null split, crop, disease, and class",PASS,Null fields: 0
+6,"Test set immutability (Exactly 2,304 images with 100% matching SHA-256 hashes)",PASS,"Test count: 2304, Hash diff: 0"
+7,Zero cross-split SHA-256 hash leakage,PASS,"Train-Val: 0, Train-Test: 0, Val-Test: 0"
+8,All 117 Model 2 classes preserved with 100% taxonomy match,PASS,Org classes: 117
+9,Physical folder path perfectly matches split/crop/disease/ hierarchy,PASS,Mismatches: 0
+10,Healthy images correctly resolved to host crops with disease='healthy',PASS,Healthy count: 6939
+11,Per-class image counts match original V2 dataset across all 117 classes,PASS,
+12,Disease classes strictly mapped to their corresponding host crops,PASS,Mismatches: 0
+13,Total distinct crop families represented (39 crops),PASS,Crops: 39
+14,Zero unresolved or quarantined images in clean dataset,PASS,
+15,Original source datasets and manifests remain completely preserved,PASS,

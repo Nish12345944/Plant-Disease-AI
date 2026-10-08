@@ -1,0 +1,443 @@
+{
+  "anthurium": {
+    "yamls": [],
+    "subdirs": [],
+    "subdirs_total": 0,
+    "img_count": 105,
+    "exts": {
+      ".jpg": 105
+    }
+  },
+  "basil": {
+    "yamls": [],
+    "subdirs": [
+      "basil downy mildew"
+    ],
+    "subdirs_total": 1,
+    "img_count": 63,
+    "exts": {
+      ".jpg": 63
+    }
+  },
+  "blueberry": {
+    "yamls": [],
+    "subdirs": [
+      "blueberry_fruit_disease",
+      "Blueberry_leaf"
+    ],
+    "subdirs_total": 2,
+    "img_count": 329,
+    "exts": {
+      ".jpg": 329
+    }
+  },
+  "broccoli_new": {
+    "yamls": [],
+    "subdirs": [
+      "black_rot",
+      "broccoli alternaria leaf spot",
+      "broccoli downy mildew",
+      "broccoli ring spot",
+      "healthy"
+    ],
+    "subdirs_total": 5,
+    "img_count": 476,
+    "exts": {
+      ".jpg": 476
+    }
+  },
+  "cabbage": {
+    "yamls": [],
+    "subdirs": [
+      "Cabbage Alternaria leaf spot",
+      "cabbage black rot",
+      "cabbage downy mildew",
+      "Cabbage Grey mould disease",
+      "Cabbage Healthy leaf",
+      "Cabbage Tip burn"
+    ],
+    "subdirs_total": 6,
+    "img_count": 583,
+    "exts": {
+      ".jpg": 583
+    }
+  },
+  "carnation": {
+    "yamls": [],
+    "subdirs": [
+      "carnation_flower_healthy"
+    ],
+    "subdirs_total": 1,
+    "img_count": 52,
+    "exts": {
+      ".jpg": 52
+    }
+  },
+  "cauliflower": {
+    "yamls": [],
+    "subdirs": [
+      "cauliflower alternaria leaf spot",
+      "cauliflower bacterial soft rot",
+      "Cauliflower Healthy leaf",
+      "Cauliflower Yellow virus"
+    ],
+    "subdirs_total": 4,
+    "img_count": 237,
+    "exts": {
+      ".jpg": 237
+    }
+  },
+  "celery": {
+    "yamls": [],
+    "subdirs": [
+      "celery anthracnose",
+      "celery early blight"
+    ],
+    "subdirs_total": 2,
+    "img_count": 65,
+    "exts": {
+      ".jpg": 65
+    }
+  },
+  "cherry_tomato": {
+    "yamls": [],
+    "subdirs": [],
+    "subdirs_total": 0,
+    "img_count": 0,
+    "exts": {}
+  },
+  "coriander_leaf": {
+    "yamls": [],
+    "subdirs": [
+      "Aftabnagar",
+      "Banasree",
+      "Brahmanbaria",
+      "Narsingdi",
+      "Uttara Diabari"
+    ],
+    "subdirs_total": 5,
+    "img_count": 838,
+    "exts": {
+      ".jpg": 838
+    }
+  },
+  "cucumber": {
+    "yamls": [],
+    "subdirs": [
+      "cucumber angular leaf spot",
+      "cucumber bacterial wilt",
+      "Cucumber Disease Recognition Dataset",
+      "cucumber powdery mildew",
+      "cucumber_disease"
+    ],
+    "subdirs_total": 5,
+    "img_count": 13923,
+    "exts": {
+      ".jpg": 13923
+    }
+  },
+  "dutch_rose": {
+    "yamls": [],
+    "subdirs": [],
+    "subdirs_total": 0,
+    "img_count": 0,
+    "exts": {}
+  },
+  "Fruits Model.v1i.yolov11": {
+    "yamls": [
+      "data.yaml"
+    ],
+    "subdirs": [
+      "test",
+      "train",
+      "valid"
+    ],
+    "subdirs_total": 3,
+    "img_count": 772,
+    "exts": {
+      ".jpg": 772
+    }
+  },
+  "geranium": {
+    "yamls": [],
+    "subdirs": [
+      "test",
+      "train",
+      "val"
+    ],
+    "subdirs_total": 3,
+    "img_count": 223,
+    "exts": {
+      ".jpg": 223
+    }
+  },
+  "gerbera_commons": {
+    "yamls": [],
+    "subdirs": [],
+    "subdirs_total": 0,
+    "img_count": 3,
+    "exts": {
+      ".jpg": 3
+    }
+  },
+  "gypsophila": {
+    "yamls": [],
+    "subdirs": [],
+    "subdirs_total": 0,
+    "img_count": 0,
+    "exts": {}
+  },
+  "herbal_classification_pool": {
+    "yamls": [],
+    "subdirs": [
+      "basil",
+      "celery",
+      "chilli",
+      "chrysanthemum",
+      "cucumber",
+      "marigold",
+      "muskmelon",
+      "oregano",
+      "papaya",
+      "rose",
+      "rosemary",
+      "thyme",
+      "tomato"
+    ],
+    "subdirs_total": 13,
+    "img_count": 4667,
+    "exts": {
+      ".jpg": 4667
+    }
+  },
+  "Herbal_Dataset.v11i.yolov11": {
+    "yamls": [
+      "data.yaml"
+    ],
+    "subdirs": [
+      "test",
+      "train",
+      "valid"
+    ],
+    "subdirs_total": 3,
+    "img_count": 20938,
+    "exts": {
+      ".jpg": 20938
+    }
+  },
+  "herbs.v4i.yolov11": {
+    "yamls": [
+      "data.yaml"
+    ],
+    "subdirs": [
+      "test",
+      "train",
+      "valid"
+    ],
+    "subdirs_total": 3,
+    "img_count": 937,
+    "exts": {
+      ".jpg": 937
+    }
+  },
+  "lettuce-disease.v6i.folder": {
+    "yamls": [],
+    "subdirs": [
+      "lettuce downy mildew",
+      "lettuce mosaic virus",
+      "test",
+      "train",
+      "valid"
+    ],
+    "subdirs_total": 5,
+    "img_count": 2274,
+    "exts": {
+      ".jpg": 2274
+    }
+  },
+  "lilium": {
+    "yamls": [],
+    "subdirs": [],
+    "subdirs_total": 0,
+    "img_count": 0,
+    "exts": {}
+  },
+  "Marigold_new": {
+    "yamls": [],
+    "subdirs": [
+      "marigold_flower",
+      "marigold_leaves"
+    ],
+    "subdirs_total": 2,
+    "img_count": 756,
+    "exts": {
+      ".jpg": 756
+    }
+  },
+  "medicinal_plants": {
+    "yamls": [],
+    "subdirs": [
+      "by_class"
+    ],
+    "subdirs_total": 1,
+    "img_count": 5613,
+    "exts": {
+      ".jpg": 5613
+    }
+  },
+  "Orchid_source": {
+    "yamls": [],
+    "subdirs": [
+      "C_ensifolium",
+      "C_faberi",
+      "C_floribundum",
+      "C_goeringii",
+      "C_hybrid",
+      "C_kanran",
+      "C_lancifolium",
+      "C_sinense",
+      "C_szechuanicum",
+      "C_var_longibracteatum",
+      "C_var_serratum",
+      "C_var_tortisepalum",
+      "data",
+      "Non_Cymbidium_Orchidaceae_plants",
+      "Non_Orchidaceae_plants"
+    ],
+    "subdirs_total": 16,
+    "img_count": 31429,
+    "exts": {
+      ".jpg": 31429
+    }
+  },
+  "Original Image": {
+    "yamls": [],
+    "subdirs": [],
+    "subdirs_total": 0,
+    "img_count": 0,
+    "exts": {}
+  },
+  "pepper_bell": {
+    "yamls": [],
+    "subdirs": [
+      "bell pepper blossom end rot",
+      "Bell_pepper_leaf"
+    ],
+    "subdirs_total": 2,
+    "img_count": 2830,
+    "exts": {
+      ".jpg": 2829,
+      ".png": 1
+    }
+  },
+  "plantseg": {
+    "yamls": [],
+    "subdirs": [
+      "plantseg"
+    ],
+    "subdirs_total": 1,
+    "img_count": 15548,
+    "exts": {
+      ".png": 7774,
+      ".jpg": 7774
+    }
+  },
+  "raspberry": {
+    "yamls": [],
+    "subdirs": [
+      "Raspberry_leaf"
+    ],
+    "subdirs_total": 1,
+    "img_count": 119,
+    "exts": {
+      ".jpg": 119
+    }
+  },
+  "rose_new": {
+    "yamls": [],
+    "subdirs": [
+      "rose_flower",
+      "rose_leaves"
+    ],
+    "subdirs_total": 2,
+    "img_count": 8260,
+    "exts": {
+      ".jpg": 8260
+    }
+  },
+  "spinach_disease": {
+    "yamls": [],
+    "subdirs": [
+      "Anthracnose",
+      "Bacterial-Spot",
+      "Downy-Mildew",
+      "Healthy-Leaf",
+      "Pest-Damage"
+    ],
+    "subdirs_total": 5,
+    "img_count": 3006,
+    "exts": {
+      ".jpg": 3006
+    }
+  },
+  "strawberry": {
+    "yamls": [],
+    "subdirs": [
+      "strawberry_fruit",
+      "Strawberry_leaf"
+    ],
+    "subdirs_total": 2,
+    "img_count": 185,
+    "exts": {
+      ".jpg": 185
+    }
+  },
+  "strawberry_clean": {
+    "yamls": [],
+    "subdirs": [],
+    "subdirs_total": 0,
+    "img_count": 1565,
+    "exts": {
+      ".jpg": 1565
+    }
+  },
+  "tomato": {
+    "yamls": [],
+    "subdirs": [
+      "tomato_fruit",
+      "tomato_leaf"
+    ],
+    "subdirs_total": 2,
+    "img_count": 15176,
+    "exts": {
+      ".jpg": 15176
+    }
+  },
+  "turnip": {
+    "yamls": [],
+    "subdirs": [
+      "Turnip Alternaria leaf spot",
+      "Turnip Black rot",
+      "Turnip Healthy leaf"
+    ],
+    "subdirs_total": 3,
+    "img_count": 480,
+    "exts": {
+      ".jpg": 480
+    }
+  },
+  "zuchhini": {
+    "yamls": [],
+    "subdirs": [
+      "zucchini bacterial wilt",
+      "zucchini downy mildew",
+      "zucchini powdery mildew",
+      "zucchini yellow mosaic virus"
+    ],
+    "subdirs_total": 4,
+    "img_count": 444,
+    "exts": {
+      ".jpg": 444
+    }
+  }
+}

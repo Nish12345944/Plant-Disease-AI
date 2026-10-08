@@ -1,0 +1,515 @@
+MODEL 2 ORGANIZED DATASET HIERARCHICAL TREE
+============================================================
+
+[TRAIN]
+  ├── apple/
+  │    ├── black_rot/ (66 images)
+  │    ├── mosaic_virus/ (70 images)
+  │    ├── rust/ (112 images)
+  │    ├── scab/ (208 images)
+  ├── banana/
+  │    ├── anthracnose/ (56 images)
+  │    ├── black_leaf_streak/ (127 images)
+  │    ├── bunchy_top/ (115 images)
+  │    ├── cigar_end_rot/ (47 images)
+  │    ├── cordana_leaf_spot/ (42 images)
+  │    ├── panama_disease/ (49 images)
+  ├── basil/
+  │    ├── downy_mildew/ (51 images)
+  ├── bean/
+  │    ├── angular_leaf_spot/ (330 images)
+  │    ├── halo_blight/ (45 images)
+  │    ├── healthy/ (330 images)
+  │    ├── mosaic_virus/ (47 images)
+  │    ├── rust/ (471 images)
+  ├── bell_pepper/
+  │    ├── bacterial_spot/ (55 images)
+  │    ├── blossom_end_rot/ (87 images)
+  │    ├── frogeye_leaf_spot/ (22 images)
+  │    ├── healthy/ (546 images)
+  │    ├── powdery_mildew/ (22 images)
+  ├── blueberry/
+  │    ├── anthracnose/ (32 images)
+  │    ├── botrytis_blight/ (29 images)
+  │    ├── mummy_berry/ (38 images)
+  │    ├── rust/ (34 images)
+  │    ├── scorch/ (33 images)
+  ├── broccoli/
+  │    ├── alternaria_leaf_spot/ (49 images)
+  │    ├── downy_mildew/ (23 images)
+  │    ├── healthy/ (91 images)
+  │    ├── ring_spot/ (8 images)
+  ├── cabbage/
+  │    ├── alternaria_leaf_spot/ (47 images)
+  │    ├── black_rot/ (96 images)
+  │    ├── downy_mildew/ (68 images)
+  │    ├── healthy/ (9 images)
+  ├── capsicum/
+  │    ├── healthy/ (608 images)
+  ├── carrot/
+  │    ├── alternaria_leaf_blight/ (47 images)
+  │    ├── cavity_spot/ (59 images)
+  │    ├── cercospora_leaf_blight/ (13 images)
+  ├── cauliflower/
+  │    ├── alternaria_leaf_spot/ (35 images)
+  │    ├── bacterial_soft_rot/ (27 images)
+  │    ├── healthy/ (21 images)
+  ├── celery/
+  │    ├── anthracnose/ (25 images)
+  │    ├── early_blight/ (28 images)
+  ├── cherry/
+  │    ├── leaf_spot/ (86 images)
+  │    ├── powdery_mildew/ (27 images)
+  ├── citrus/
+  │    ├── canker/ (306 images)
+  │    ├── greening_disease/ (107 images)
+  ├── coffee/
+  │    ├── berry_blotch/ (86 images)
+  │    ├── black_rot/ (5 images)
+  │    ├── brown_eye_spot/ (12 images)
+  │    ├── leaf_rust/ (129 images)
+  ├── corn/
+  │    ├── gray_leaf_spot/ (85 images)
+  │    ├── northern_leaf_blight/ (104 images)
+  │    ├── rust/ (143 images)
+  │    ├── smut/ (165 images)
+  ├── cucumber/
+  │    ├── angular_leaf_spot/ (144 images)
+  │    ├── bacterial_wilt/ (85 images)
+  │    ├── healthy/ (134 images)
+  │    ├── powdery_mildew/ (148 images)
+  ├── eggplant/
+  │    ├── cercospora_leaf_spot/ (47 images)
+  │    ├── phomopsis_fruit_rot/ (36 images)
+  │    ├── phytophthora_blight/ (26 images)
+  ├── garlic/
+  │    ├── leaf_blight/ (72 images)
+  │    ├── rust/ (85 images)
+  ├── ginger/
+  │    ├── leaf_spot/ (19 images)
+  │    ├── sheath_blight/ (52 images)
+  ├── grape/
+  │    ├── black_rot/ (97 images)
+  │    ├── downy_mildew/ (221 images)
+  │    ├── grapevine_leafroll_disease/ (59 images)
+  │    ├── leaf_spot/ (70 images)
+  ├── lettuce/
+  │    ├── downy_mildew/ (67 images)
+  │    ├── healthy/ (338 images)
+  │    ├── mosaic_virus/ (31 images)
+  ├── maple/
+  │    ├── tar_spot/ (95 images)
+  ├── marigold/
+  │    ├── healthy/ (202 images)
+  ├── peach/
+  │    ├── anthracnose/ (11 images)
+  │    ├── brown_rot/ (137 images)
+  │    ├── leaf_curl/ (148 images)
+  │    ├── rust/ (6 images)
+  │    ├── scab/ (60 images)
+  ├── plum/
+  │    ├── bacterial_spot/ (13 images)
+  │    ├── brown_rot/ (64 images)
+  │    ├── pocket_disease/ (48 images)
+  │    ├── pox_virus/ (25 images)
+  │    ├── rust/ (29 images)
+  ├── potato/
+  │    ├── early_blight/ (103 images)
+  │    ├── late_blight/ (93 images)
+  ├── raspberry/
+  │    ├── fire_blight/ (24 images)
+  │    ├── gray_mold/ (32 images)
+  │    ├── leaf_spot/ (15 images)
+  │    ├── yellow_rust/ (29 images)
+  ├── rice/
+  │    ├── blast/ (68 images)
+  │    ├── sheath_blight/ (58 images)
+  ├── rose/
+  │    ├── healthy/ (334 images)
+  ├── soybean/
+  │    ├── bacterial_blight/ (70 images)
+  │    ├── brown_spot/ (49 images)
+  │    ├── downy_mildew/ (111 images)
+  │    ├── frog_eye_leaf_spot/ (170 images)
+  │    ├── mosaic/ (92 images)
+  │    ├── rust/ (455 images)
+  ├── spinach/
+  │    ├── healthy/ (1064 images)
+  ├── squash/
+  │    ├── powdery_mildew/ (139 images)
+  ├── strawberry/
+  │    ├── anthracnose/ (48 images)
+  │    ├── healthy/ (289 images)
+  │    ├── leaf_scorch/ (32 images)
+  ├── tobacco/
+  │    ├── blue_mold/ (45 images)
+  │    ├── brown_spot/ (49 images)
+  │    ├── frogeye_leaf_spot/ (15 images)
+  │    ├── mosaic_virus/ (32 images)
+  ├── tomato/
+  │    ├── bacterial_leaf_spot/ (85 images)
+  │    ├── early_blight/ (140 images)
+  │    ├── healthy/ (1202 images)
+  │    ├── late_blight/ (131 images)
+  │    ├── leaf_mold/ (126 images)
+  │    ├── mosaic_virus/ (50 images)
+  │    ├── septoria_leaf_spot/ (98 images)
+  │    ├── yellow_leaf_curl_virus/ (72 images)
+  ├── turnip/
+  │    ├── healthy/ (140 images)
+  ├── wheat/
+  │    ├── bacterial_leaf_streak_(black_chaff)/ (92 images)
+  │    ├── head_scab/ (221 images)
+  │    ├── leaf_rust/ (105 images)
+  │    ├── loose_smut/ (154 images)
+  │    ├── powdery_mildew/ (211 images)
+  │    ├── septoria_blotch/ (164 images)
+  │    ├── stem_rust/ (111 images)
+  │    ├── stripe_rust/ (264 images)
+  ├── zucchini/
+  │    ├── bacterial_wilt/ (53 images)
+  │    ├── downy_mildew/ (34 images)
+  │    ├── powdery_mildew/ (164 images)
+  │    ├── yellow_mosaic_virus/ (77 images)
+
+[VAL]
+  ├── apple/
+  │    ├── black_rot/ (7 images)
+  │    ├── mosaic_virus/ (8 images)
+  │    ├── rust/ (12 images)
+  │    ├── scab/ (23 images)
+  ├── banana/
+  │    ├── anthracnose/ (6 images)
+  │    ├── black_leaf_streak/ (14 images)
+  │    ├── bunchy_top/ (13 images)
+  │    ├── cigar_end_rot/ (5 images)
+  │    ├── cordana_leaf_spot/ (5 images)
+  │    ├── panama_disease/ (6 images)
+  ├── basil/
+  │    ├── downy_mildew/ (6 images)
+  ├── bean/
+  │    ├── angular_leaf_spot/ (37 images)
+  │    ├── halo_blight/ (5 images)
+  │    ├── healthy/ (34 images)
+  │    ├── mosaic_virus/ (5 images)
+  │    ├── rust/ (52 images)
+  ├── bell_pepper/
+  │    ├── bacterial_spot/ (6 images)
+  │    ├── blossom_end_rot/ (10 images)
+  │    ├── frogeye_leaf_spot/ (2 images)
+  │    ├── healthy/ (71 images)
+  │    ├── powdery_mildew/ (2 images)
+  ├── blueberry/
+  │    ├── anthracnose/ (4 images)
+  │    ├── botrytis_blight/ (3 images)
+  │    ├── mummy_berry/ (4 images)
+  │    ├── rust/ (4 images)
+  │    ├── scorch/ (4 images)
+  ├── broccoli/
+  │    ├── alternaria_leaf_spot/ (5 images)
+  │    ├── downy_mildew/ (2 images)
+  │    ├── healthy/ (8 images)
+  │    ├── ring_spot/ (1 images)
+  ├── cabbage/
+  │    ├── alternaria_leaf_spot/ (5 images)
+  │    ├── black_rot/ (11 images)
+  │    ├── downy_mildew/ (8 images)
+  │    ├── healthy/ (1 images)
+  ├── capsicum/
+  │    ├── healthy/ (76 images)
+  ├── carrot/
+  │    ├── alternaria_leaf_blight/ (5 images)
+  │    ├── cavity_spot/ (6 images)
+  │    ├── cercospora_leaf_blight/ (1 images)
+  ├── cauliflower/
+  │    ├── alternaria_leaf_spot/ (4 images)
+  │    ├── bacterial_soft_rot/ (3 images)
+  │    ├── healthy/ (1 images)
+  ├── celery/
+  │    ├── anthracnose/ (3 images)
+  │    ├── early_blight/ (3 images)
+  ├── cherry/
+  │    ├── leaf_spot/ (10 images)
+  │    ├── powdery_mildew/ (3 images)
+  ├── citrus/
+  │    ├── canker/ (34 images)
+  │    ├── greening_disease/ (12 images)
+  ├── coffee/
+  │    ├── berry_blotch/ (10 images)
+  │    ├── black_rot/ (1 images)
+  │    ├── brown_eye_spot/ (1 images)
+  │    ├── leaf_rust/ (14 images)
+  ├── corn/
+  │    ├── gray_leaf_spot/ (10 images)
+  │    ├── northern_leaf_blight/ (12 images)
+  │    ├── rust/ (16 images)
+  │    ├── smut/ (18 images)
+  ├── cucumber/
+  │    ├── angular_leaf_spot/ (16 images)
+  │    ├── bacterial_wilt/ (10 images)
+  │    ├── healthy/ (10 images)
+  │    ├── powdery_mildew/ (16 images)
+  ├── eggplant/
+  │    ├── cercospora_leaf_spot/ (5 images)
+  │    ├── phomopsis_fruit_rot/ (4 images)
+  │    ├── phytophthora_blight/ (3 images)
+  ├── garlic/
+  │    ├── leaf_blight/ (8 images)
+  │    ├── rust/ (9 images)
+  ├── ginger/
+  │    ├── leaf_spot/ (2 images)
+  │    ├── sheath_blight/ (6 images)
+  ├── grape/
+  │    ├── black_rot/ (11 images)
+  │    ├── downy_mildew/ (25 images)
+  │    ├── grapevine_leafroll_disease/ (7 images)
+  │    ├── leaf_spot/ (8 images)
+  ├── lettuce/
+  │    ├── downy_mildew/ (7 images)
+  │    ├── healthy/ (35 images)
+  │    ├── mosaic_virus/ (4 images)
+  ├── maple/
+  │    ├── tar_spot/ (10 images)
+  ├── marigold/
+  │    ├── healthy/ (25 images)
+  ├── peach/
+  │    ├── anthracnose/ (1 images)
+  │    ├── brown_rot/ (15 images)
+  │    ├── leaf_curl/ (16 images)
+  │    ├── rust/ (1 images)
+  │    ├── scab/ (7 images)
+  ├── plum/
+  │    ├── bacterial_spot/ (2 images)
+  │    ├── brown_rot/ (7 images)
+  │    ├── pocket_disease/ (5 images)
+  │    ├── pox_virus/ (3 images)
+  │    ├── rust/ (3 images)
+  ├── potato/
+  │    ├── early_blight/ (11 images)
+  │    ├── late_blight/ (10 images)
+  ├── raspberry/
+  │    ├── fire_blight/ (3 images)
+  │    ├── gray_mold/ (4 images)
+  │    ├── leaf_spot/ (2 images)
+  │    ├── yellow_rust/ (3 images)
+  ├── rice/
+  │    ├── blast/ (8 images)
+  │    ├── sheath_blight/ (6 images)
+  ├── rose/
+  │    ├── healthy/ (29 images)
+  ├── soybean/
+  │    ├── bacterial_blight/ (8 images)
+  │    ├── brown_spot/ (5 images)
+  │    ├── downy_mildew/ (12 images)
+  │    ├── frog_eye_leaf_spot/ (19 images)
+  │    ├── mosaic/ (10 images)
+  │    ├── rust/ (51 images)
+  ├── spinach/
+  │    ├── healthy/ (128 images)
+  ├── squash/
+  │    ├── powdery_mildew/ (15 images)
+  ├── strawberry/
+  │    ├── anthracnose/ (5 images)
+  │    ├── healthy/ (32 images)
+  │    ├── leaf_scorch/ (4 images)
+  ├── tobacco/
+  │    ├── blue_mold/ (5 images)
+  │    ├── brown_spot/ (6 images)
+  │    ├── frogeye_leaf_spot/ (2 images)
+  │    ├── mosaic_virus/ (4 images)
+  ├── tomato/
+  │    ├── bacterial_leaf_spot/ (9 images)
+  │    ├── early_blight/ (16 images)
+  │    ├── healthy/ (127 images)
+  │    ├── late_blight/ (15 images)
+  │    ├── leaf_mold/ (14 images)
+  │    ├── mosaic_virus/ (6 images)
+  │    ├── septoria_leaf_spot/ (11 images)
+  │    ├── yellow_leaf_curl_virus/ (8 images)
+  ├── turnip/
+  │    ├── healthy/ (13 images)
+  ├── wheat/
+  │    ├── bacterial_leaf_streak_(black_chaff)/ (10 images)
+  │    ├── head_scab/ (24 images)
+  │    ├── leaf_rust/ (12 images)
+  │    ├── loose_smut/ (17 images)
+  │    ├── powdery_mildew/ (24 images)
+  │    ├── septoria_blotch/ (18 images)
+  │    ├── stem_rust/ (12 images)
+  │    ├── stripe_rust/ (29 images)
+  ├── zucchini/
+  │    ├── bacterial_wilt/ (6 images)
+  │    ├── downy_mildew/ (4 images)
+  │    ├── powdery_mildew/ (18 images)
+  │    ├── yellow_mosaic_virus/ (9 images)
+
+[TEST]
+  ├── apple/
+  │    ├── black_rot/ (10 images)
+  │    ├── mosaic_virus/ (11 images)
+  │    ├── rust/ (14 images)
+  │    ├── scab/ (25 images)
+  ├── banana/
+  │    ├── anthracnose/ (7 images)
+  │    ├── black_leaf_streak/ (17 images)
+  │    ├── bunchy_top/ (11 images)
+  │    ├── cigar_end_rot/ (4 images)
+  │    ├── cordana_leaf_spot/ (4 images)
+  │    ├── panama_disease/ (8 images)
+  ├── basil/
+  │    ├── downy_mildew/ (6 images)
+  ├── bean/
+  │    ├── angular_leaf_spot/ (65 images)
+  │    ├── halo_blight/ (6 images)
+  │    ├── healthy/ (63 images)
+  │    ├── mosaic_virus/ (5 images)
+  │    ├── rust/ (77 images)
+  ├── bell_pepper/
+  │    ├── bacterial_spot/ (7 images)
+  │    ├── blossom_end_rot/ (11 images)
+  │    ├── frogeye_leaf_spot/ (4 images)
+  │    ├── healthy/ (91 images)
+  │    ├── powdery_mildew/ (2 images)
+  ├── blueberry/
+  │    ├── anthracnose/ (4 images)
+  │    ├── botrytis_blight/ (3 images)
+  │    ├── mummy_berry/ (4 images)
+  │    ├── rust/ (5 images)
+  │    ├── scorch/ (5 images)
+  ├── broccoli/
+  │    ├── alternaria_leaf_spot/ (8 images)
+  │    ├── downy_mildew/ (4 images)
+  │    ├── healthy/ (11 images)
+  │    ├── ring_spot/ (1 images)
+  ├── cabbage/
+  │    ├── alternaria_leaf_spot/ (6 images)
+  │    ├── black_rot/ (13 images)
+  │    ├── downy_mildew/ (8 images)
+  │    ├── healthy/ (2 images)
+  ├── capsicum/
+  │    ├── healthy/ (120 images)
+  ├── carrot/
+  │    ├── alternaria_leaf_blight/ (7 images)
+  │    ├── cavity_spot/ (7 images)
+  │    ├── cercospora_leaf_blight/ (3 images)
+  ├── cauliflower/
+  │    ├── alternaria_leaf_spot/ (4 images)
+  │    ├── bacterial_soft_rot/ (2 images)
+  │    ├── healthy/ (7 images)
+  ├── celery/
+  │    ├── anthracnose/ (1 images)
+  │    ├── early_blight/ (5 images)
+  ├── cherry/
+  │    ├── leaf_spot/ (10 images)
+  │    ├── powdery_mildew/ (3 images)
+  ├── citrus/
+  │    ├── canker/ (48 images)
+  │    ├── greening_disease/ (14 images)
+  ├── coffee/
+  │    ├── berry_blotch/ (9 images)
+  │    ├── brown_eye_spot/ (1 images)
+  │    ├── leaf_rust/ (16 images)
+  ├── corn/
+  │    ├── gray_leaf_spot/ (12 images)
+  │    ├── northern_leaf_blight/ (14 images)
+  │    ├── rust/ (18 images)
+  │    ├── smut/ (19 images)
+  ├── cucumber/
+  │    ├── angular_leaf_spot/ (22 images)
+  │    ├── bacterial_wilt/ (13 images)
+  │    ├── healthy/ (24 images)
+  │    ├── powdery_mildew/ (22 images)
+  ├── eggplant/
+  │    ├── cercospora_leaf_spot/ (6 images)
+  │    ├── phomopsis_fruit_rot/ (5 images)
+  │    ├── phytophthora_blight/ (4 images)
+  ├── garlic/
+  │    ├── leaf_blight/ (12 images)
+  │    ├── rust/ (12 images)
+  ├── ginger/
+  │    ├── leaf_spot/ (4 images)
+  │    ├── sheath_blight/ (8 images)
+  ├── grape/
+  │    ├── black_rot/ (13 images)
+  │    ├── downy_mildew/ (32 images)
+  │    ├── grapevine_leafroll_disease/ (5 images)
+  │    ├── leaf_spot/ (10 images)
+  ├── lettuce/
+  │    ├── downy_mildew/ (8 images)
+  │    ├── healthy/ (74 images)
+  │    ├── mosaic_virus/ (4 images)
+  ├── maple/
+  │    ├── tar_spot/ (8 images)
+  ├── marigold/
+  │    ├── healthy/ (43 images)
+  ├── peach/
+  │    ├── anthracnose/ (1 images)
+  │    ├── brown_rot/ (14 images)
+  │    ├── leaf_curl/ (18 images)
+  │    ├── rust/ (1 images)
+  │    ├── scab/ (8 images)
+  ├── plum/
+  │    ├── bacterial_spot/ (1 images)
+  │    ├── brown_rot/ (5 images)
+  │    ├── pocket_disease/ (4 images)
+  │    ├── pox_virus/ (4 images)
+  │    ├── rust/ (2 images)
+  ├── potato/
+  │    ├── early_blight/ (10 images)
+  │    ├── late_blight/ (12 images)
+  ├── raspberry/
+  │    ├── fire_blight/ (4 images)
+  │    ├── gray_mold/ (2 images)
+  │    ├── leaf_spot/ (1 images)
+  │    ├── yellow_rust/ (4 images)
+  ├── rice/
+  │    ├── blast/ (7 images)
+  │    ├── sheath_blight/ (8 images)
+  ├── rose/
+  │    ├── healthy/ (69 images)
+  ├── soybean/
+  │    ├── bacterial_blight/ (9 images)
+  │    ├── brown_spot/ (7 images)
+  │    ├── downy_mildew/ (11 images)
+  │    ├── frog_eye_leaf_spot/ (21 images)
+  │    ├── mosaic/ (13 images)
+  │    ├── rust/ (9 images)
+  ├── spinach/
+  │    ├── healthy/ (207 images)
+  ├── squash/
+  │    ├── powdery_mildew/ (20 images)
+  ├── strawberry/
+  │    ├── anthracnose/ (5 images)
+  │    ├── healthy/ (46 images)
+  │    ├── leaf_scorch/ (3 images)
+  ├── tobacco/
+  │    ├── blue_mold/ (5 images)
+  │    ├── brown_spot/ (7 images)
+  │    ├── frogeye_leaf_spot/ (3 images)
+  │    ├── mosaic_virus/ (5 images)
+  ├── tomato/
+  │    ├── bacterial_leaf_spot/ (13 images)
+  │    ├── early_blight/ (22 images)
+  │    ├── healthy/ (256 images)
+  │    ├── late_blight/ (17 images)
+  │    ├── leaf_mold/ (16 images)
+  │    ├── mosaic_virus/ (7 images)
+  │    ├── septoria_leaf_spot/ (14 images)
+  │    ├── yellow_leaf_curl_virus/ (9 images)
+  ├── turnip/
+  │    ├── healthy/ (28 images)
+  ├── wheat/
+  │    ├── bacterial_leaf_streak_(black_chaff)/ (13 images)
+  │    ├── head_scab/ (30 images)
+  │    ├── leaf_rust/ (11 images)
+  │    ├── loose_smut/ (19 images)
+  │    ├── powdery_mildew/ (27 images)
+  │    ├── septoria_blotch/ (19 images)
+  │    ├── stem_rust/ (13 images)
+  │    ├── stripe_rust/ (32 images)
+  ├── zucchini/
+  │    ├── bacterial_wilt/ (9 images)
+  │    ├── downy_mildew/ (5 images)
+  │    ├── powdery_mildew/ (18 images)
+  │    ├── yellow_mosaic_virus/ (9 images)
+

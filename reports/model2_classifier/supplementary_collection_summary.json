@@ -1,0 +1,254 @@
+{
+  "manifest_date": "2026-10-07",
+  "baseline_metrics": {
+    "test_accuracy": 0.8429,
+    "test_top3_accuracy": 0.9457,
+    "test_macro_f1": 0.6101,
+    "disease_only_macro_f1": 0.6015,
+    "healthy_f1": 0.9924
+  },
+  "collection_summary": {
+    "total_disease_classes": 116,
+    "critical_priority_classes": 20,
+    "high_priority_classes": 29,
+    "medium_priority_classes": 21,
+    "low_priority_classes": 46,
+    "total_additional_images_recommended": 4601,
+    "critical_tier_images": 1569,
+    "high_tier_images": 1807,
+    "medium_tier_images": 1225
+  },
+  "crop_specific_analyses": {
+    "ginger": [
+      {
+        "class_name": "ginger__sheath_blight",
+        "crop": "Ginger",
+        "current_train_count": 40,
+        "current_val_count": 9,
+        "current_test_count": 8,
+        "test_precision": 0.2222,
+        "test_recall": 0.25,
+        "test_f1": 0.2353,
+        "priority": "CRITICAL",
+        "recommended_target_train_count": 100,
+        "additional_images_needed": 60,
+        "top_confusion_targets": "rice__sheath_blight (5), eggplant__phomopsis_fruit_rot (1)"
+      },
+      {
+        "class_name": "ginger__leaf_spot",
+        "crop": "Ginger",
+        "current_train_count": 15,
+        "current_val_count": 3,
+        "current_test_count": 4,
+        "test_precision": 0.5,
+        "test_recall": 0.5,
+        "test_f1": 0.5,
+        "priority": "HIGH",
+        "recommended_target_train_count": 100,
+        "additional_images_needed": 85,
+        "top_confusion_targets": "ginger__sheath_blight (1), corn__gray_leaf_spot (1)"
+      }
+    ],
+    "banana": [
+      {
+        "class_name": "banana__cordana_leaf_spot",
+        "crop": "Banana",
+        "current_train_count": 20,
+        "current_val_count": 4,
+        "current_test_count": 4,
+        "test_precision": 0.3333,
+        "test_recall": 0.25,
+        "test_f1": 0.2857,
+        "priority": "CRITICAL",
+        "recommended_target_train_count": 100,
+        "additional_images_needed": 80,
+        "top_confusion_targets": "banana__black_leaf_streak (1), corn__gray_leaf_spot (1), banana__cigar_end_rot (1)"
+      },
+      {
+        "class_name": "banana__cigar_end_rot",
+        "crop": "Banana",
+        "current_train_count": 22,
+        "current_val_count": 5,
+        "current_test_count": 4,
+        "test_precision": 0.6,
+        "test_recall": 0.75,
+        "test_f1": 0.6667,
+        "priority": "MEDIUM",
+        "recommended_target_train_count": 100,
+        "additional_images_needed": 78,
+        "top_confusion_targets": "banana__anthracnose (1)"
+      },
+      {
+        "class_name": "banana__black_leaf_streak",
+        "crop": "Banana",
+        "current_train_count": 76,
+        "current_val_count": 16,
+        "current_test_count": 17,
+        "test_precision": 0.75,
+        "test_recall": 0.8824,
+        "test_f1": 0.8108,
+        "priority": "LOW",
+        "recommended_target_train_count": 76,
+        "additional_images_needed": 0,
+        "top_confusion_targets": "banana__panama_disease (1), banana__cordana_leaf_spot (1)"
+      },
+      {
+        "class_name": "banana__panama_disease",
+        "crop": "Banana",
+        "current_train_count": 34,
+        "current_val_count": 7,
+        "current_test_count": 8,
+        "test_precision": 0.875,
+        "test_recall": 0.875,
+        "test_f1": 0.875,
+        "priority": "LOW",
+        "recommended_target_train_count": 34,
+        "additional_images_needed": 0,
+        "top_confusion_targets": "banana__black_leaf_streak (1)"
+      },
+      {
+        "class_name": "banana__anthracnose",
+        "crop": "Banana",
+        "current_train_count": 34,
+        "current_val_count": 7,
+        "current_test_count": 7,
+        "test_precision": 0.875,
+        "test_recall": 1.0,
+        "test_f1": 0.9333,
+        "priority": "LOW",
+        "recommended_target_train_count": 34,
+        "additional_images_needed": 0,
+        "top_confusion_targets": "None"
+      },
+      {
+        "class_name": "banana__bunchy_top",
+        "crop": "Banana",
+        "current_train_count": 50,
+        "current_val_count": 11,
+        "current_test_count": 11,
+        "test_precision": 1.0,
+        "test_recall": 0.9091,
+        "test_f1": 0.9524,
+        "priority": "LOW",
+        "recommended_target_train_count": 50,
+        "additional_images_needed": 0,
+        "top_confusion_targets": "banana__cordana_leaf_spot (1)"
+      }
+    ],
+    "garlic": [
+      {
+        "class_name": "garlic__leaf_blight",
+        "crop": "Garlic",
+        "current_train_count": 55,
+        "current_val_count": 12,
+        "current_test_count": 12,
+        "test_precision": 0.4375,
+        "test_recall": 0.5833,
+        "test_f1": 0.5,
+        "priority": "HIGH",
+        "recommended_target_train_count": 100,
+        "additional_images_needed": 45,
+        "top_confusion_targets": "ginger__sheath_blight (2), garlic__rust (1), wheat__septoria_blotch (1)"
+      },
+      {
+        "class_name": "garlic__rust",
+        "crop": "Garlic",
+        "current_train_count": 56,
+        "current_val_count": 12,
+        "current_test_count": 12,
+        "test_precision": 0.6,
+        "test_recall": 0.75,
+        "test_f1": 0.6667,
+        "priority": "MEDIUM",
+        "recommended_target_train_count": 100,
+        "additional_images_needed": 44,
+        "top_confusion_targets": "garlic__leaf_blight (2), wheat__stripe_rust (1)"
+      }
+    ]
+  },
+  "hard_confusion_pairs": [
+    {
+      "pair": "Tomato Bacterial Leaf Spot \u2194 Tomato Septoria Leaf Spot",
+      "class_a": "tomato__bacterial_leaf_spot",
+      "class_b": "tomato__septoria_leaf_spot",
+      "crop": "Tomato",
+      "mutual_errors": 8,
+      "diagnostic_challenge": "Both produce small, pinpoint circular dark necrotic lesions with yellow halos on tomato foliage.",
+      "collection_strategy": "Collect high-resolution macro-photography capturing mature lesions with pycnidia (black dots in center for Septoria) vs water-soaked angular borders (Bacterial Spot)."
+    },
+    {
+      "pair": "Bean Angular Leaf Spot \u2194 Bean Rust",
+      "class_a": "bean__angular_leaf_spot",
+      "class_b": "bean__rust",
+      "crop": "Bean",
+      "mutual_errors": 8,
+      "diagnostic_challenge": "Both present as angular or circular reddish-brown necrotic spots across Phaseolus foliage.",
+      "collection_strategy": "Collect distinct underside foliar imagery emphasizing raised powdery rust urediniospores vs vein-delimited angular necrotic patches."
+    },
+    {
+      "pair": "Wheat Leaf Rust \u2194 Wheat Stripe Rust",
+      "class_a": "wheat__leaf_rust",
+      "class_b": "wheat__stripe_rust",
+      "crop": "Wheat",
+      "mutual_errors": 6,
+      "diagnostic_challenge": "Early stage uredinial pustules exhibit overlapping orange-brown discoloration before distinct striping occurs.",
+      "collection_strategy": "Collect field images showing elongated linear stripe patterns along leaf veins (Stripe Rust) vs randomly scattered oval pustules (Leaf Rust)."
+    },
+    {
+      "pair": "Corn Gray Leaf Spot \u2194 Corn Rust",
+      "class_a": "corn__gray_leaf_spot",
+      "class_b": "corn__rust",
+      "crop": "Corn",
+      "mutual_errors": 4,
+      "diagnostic_challenge": "Lesions on maize foliage can appear similar in early stages under bright outdoor lighting.",
+      "collection_strategy": "Collect mature rectangular vein-bounded gray-brown lesions (Gray Leaf Spot) vs raised cinnamon-brown pustules that rupture epidermal tissue (Rust)."
+    },
+    {
+      "pair": "Soybean Bacterial Blight \u2194 Soybean Rust",
+      "class_a": "soybean__bacterial_blight",
+      "class_b": "soybean__rust",
+      "crop": "Soybean",
+      "mutual_errors": 4,
+      "diagnostic_challenge": "Small angular brown lesions on Glycine max leaves overlap visually in low contrast frames.",
+      "collection_strategy": "Collect backlit leaves highlighting translucent yellow water-soaked halos (Bacterial Blight) vs abaxial surface raised pustules (Soybean Rust)."
+    }
+  ],
+  "onion_future_taxonomy": [
+    {
+      "class_name": "onion__purple_blotch",
+      "disease": "Purple Blotch (Alternaria porri)",
+      "target_images": 100,
+      "priority": "HIGH_FUTURE"
+    },
+    {
+      "class_name": "onion__downy_mildew",
+      "disease": "Downy Mildew (Peronospora destructor)",
+      "target_images": 100,
+      "priority": "HIGH_FUTURE"
+    },
+    {
+      "class_name": "onion__black_mold",
+      "disease": "Black Mold (Aspergillus niger)",
+      "target_images": 100,
+      "priority": "MEDIUM_FUTURE"
+    },
+    {
+      "class_name": "onion__stemphylium_leaf_blight",
+      "disease": "Stemphylium Leaf Blight (Stemphylium vesicarium)",
+      "target_images": 100,
+      "priority": "HIGH_FUTURE"
+    },
+    {
+      "class_name": "onion__bacterial_soft_rot",
+      "disease": "Bacterial Soft Rot (Pectobacterium carotovorum)",
+      "target_images": 80,
+      "priority": "MEDIUM_FUTURE"
+    },
+    {
+      "class_name": "healthy",
+      "disease": "Onion Clean Foliage / Bulbs",
+      "target_images": 150,
+      "priority": "MANDATORY_FUTURE"
+    }
+  ]
+}

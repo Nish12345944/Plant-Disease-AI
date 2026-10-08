@@ -1,0 +1,32 @@
+{
+  "source": "PlantSeg (COCO masks + Metadata.csv)",
+  "source_images": 7774,
+  "source_annotations": 77394,
+  "usable_images": 7631,
+  "usable_annotations": 54562,
+  "excluded": {
+    "orphan_annotations": 21580,
+    "invalid_annotations": 248,
+    "images_removed_for_leakage": 127,
+    "images_without_valid_boxes": 15,
+    "boxes_out_of_bounds": 233
+  },
+  "crops": 34,
+  "diseases": 115,
+  "images_per_split": {
+    "train": 5353,
+    "val": 809,
+    "test": 1469
+  },
+  "annotations_per_split": {
+    "train": 38074,
+    "val": 6106,
+    "test": 10382
+  },
+  "hash_leakage": {
+    "cross_split_hashes_before": 123,
+    "files_removed": 127,
+    "cross_split_after": 0,
+    "same_split_duplicate_groups_retained": 149
+  }
+}

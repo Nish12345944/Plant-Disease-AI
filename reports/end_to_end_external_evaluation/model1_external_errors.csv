@@ -1,0 +1,179 @@
+image,ground_truth_crop,predicted_crop,confidence,correct,error_type,notes
+data/external/end_to_end_test/banana/banana_banana_bunchy_top_0001.jpg,banana,orchid,0.8055,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_bunchy_top_0002.jpg,banana,orchid,0.9743,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_bunchy_top_0003.jpg,banana,zucchini,0.5433,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/peach/peach_peach_brown_rot_0001.jpg,peach,tomato,0.6668,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'peach' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/peach/peach_peach_brown_rot_0002.jpg,peach,tomato,0.9565,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'peach' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/peach/peach_peach_brown_rot_0003.jpg,peach,tomato,0.9145,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'peach' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/soybean/soybean_soybean_frog_eye_leaf_spot_0001.jpg,soybean,french_bean,0.692,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'soybean' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/bean/bean_bean_rust_0001.jpg,bean,spinach,0.688,False,Moderate Confidence Misclassification,Supported crop 'bean' predicted as 'spinach' (0.69).
+data/external/end_to_end_test/wheat/wheat_wheat_head_scab_0001.jpg,wheat,lettuce,0.8246,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'wheat' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/wheat/wheat_wheat_head_scab_0002.jpg,wheat,zucchini,0.5499,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'wheat' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/wheat/wheat_wheat_head_scab_0003.jpg,wheat,lettuce,0.8998,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'wheat' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/wheat/wheat_wheat_loose_smut_0001.jpg,wheat,blueberry,0.9873,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'wheat' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/wheat/wheat_wheat_stripe_rust_0001.jpg,wheat,orchid,0.7322,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'wheat' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/wheat/wheat_wheat_stripe_rust_0002.jpg,wheat,zucchini,0.507,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'wheat' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/wheat/wheat_wheat_stripe_rust_0003.jpg,wheat,french_bean,0.7607,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'wheat' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0001.jpg,zucchini,zucchini,0.9994,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0002.jpg,zucchini,zucchini,0.9961,True,None (Correct),
+data/external/end_to_end_test/banana/banana_banana_black_leaf_streak_0001.jpg,banana,zucchini,0.7619,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/peach/peach_peach_brown_rot_0004.jpg,peach,melon,0.9056,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'peach' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/soybean/soybean_soybean_frog_eye_leaf_spot_0002.jpg,soybean,french_bean,0.9805,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'soybean' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/bean/bean_bean_rust_0002.jpg,bean,french_bean,0.9968,True,None (Correct),
+data/external/end_to_end_test/wheat/wheat_wheat_head_scab_0004.jpg,wheat,zucchini,0.7802,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'wheat' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0001.jpg,tomato,tomato,0.9999,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0002.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0003.jpg,tomato,tomato,0.9994,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0004.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0005.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0006.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0007.jpg,tomato,tomato,0.9991,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0008.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0009.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0010.jpg,tomato,tomato,0.9992,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0011.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0012.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0013.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0014.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0015.jpg,tomato,tomato,0.9999,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0016.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0017.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0018.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0019.jpg,tomato,tomato,0.9999,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_early_blight_0020.jpg,tomato,tomato,0.9938,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0001.jpg,tomato,capsicum,0.8746,False,High Confidence Misclassification,Supported crop 'tomato' predicted as 'capsicum' with high confidence (0.87). Visual domain shift.
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0002.jpg,tomato,tomato,0.8577,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0003.jpg,tomato,tomato,0.9981,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0004.jpg,tomato,tomato,0.9979,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0005.jpg,tomato,tomato,0.9998,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0006.jpg,tomato,tomato,0.9866,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0007.jpg,tomato,tomato,0.9926,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0008.jpg,tomato,tomato,0.9993,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0009.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0010.jpg,tomato,tomato,0.9891,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0011.jpg,tomato,tomato,0.9999,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0012.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0013.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0014.jpg,tomato,tomato,0.9954,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0015.jpg,tomato,tomato,0.9936,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0016.jpg,tomato,tomato,0.9927,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0017.jpg,tomato,cucumber,0.3094,False,Low Confidence Misclassification,Supported crop 'tomato' predicted as 'cucumber' with low confidence (0.31).
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0018.jpg,tomato,tomato,0.9973,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0019.jpg,tomato,tomato,0.9999,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_late_blight_0020.jpg,tomato,tomato,0.9946,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0001.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0002.jpg,tomato,tomato,0.9987,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0003.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0004.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0005.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0006.jpg,tomato,tomato,0.9997,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0007.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0008.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0009.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0010.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0011.jpg,tomato,tomato,0.9999,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0012.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0013.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0014.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0015.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0016.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0017.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0018.jpg,tomato,tomato,0.9998,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0019.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_leaf_mold_0020.jpg,tomato,tomato,0.9991,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0001.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0002.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0003.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0004.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0005.jpg,tomato,tomato,0.9999,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0006.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0007.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0008.jpg,tomato,tomato,0.9997,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0009.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0010.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0011.jpg,tomato,tomato,0.9999,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0012.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0013.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0014.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0015.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0016.jpg,tomato,tomato,0.9995,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0017.jpg,tomato,tomato,0.9997,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0018.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0019.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/tomato/tomato_tomato_septoria_leaf_spot_0020.jpg,tomato,tomato,1.0,True,None (Correct),
+data/external/end_to_end_test/banana/banana_banana_healthy_0001.jpeg,banana,french_bean,0.4443,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0002.jpeg,banana,orchid,0.54,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0003.jpeg,banana,orchid,0.8259,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0004.jpeg,banana,melon,0.7,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0005.jpeg,banana,orchid,0.9741,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0006.jpeg,banana,orchid,0.8904,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0007.jpeg,banana,orchid,0.9682,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0008.jpeg,banana,orchid,0.3293,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0009.jpeg,banana,orchid,0.6403,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0010.jpeg,banana,french_bean,0.8624,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0011.jpeg,banana,orchid,0.9609,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0012.jpeg,banana,orchid,0.9676,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0013.jpeg,banana,melon,0.9504,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0014.jpeg,banana,melon,0.9803,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0015.jpeg,banana,lettuce,0.9915,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0016.jpeg,banana,melon,0.5599,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0017.jpeg,banana,orchid,0.5628,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0018.jpeg,banana,lettuce,0.6928,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0019.jpeg,banana,lettuce,0.7597,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_healthy_0020.jpeg,banana,broccoli,0.2822,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0003.jpg,zucchini,zucchini,1.0,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0004.jpg,zucchini,zucchini,0.9998,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0005.jpg,zucchini,zucchini,0.9015,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0006.jpg,zucchini,zucchini,1.0,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0007.jpg,zucchini,zucchini,0.9999,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0008.jpg,zucchini,zucchini,0.9999,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0009.jpg,zucchini,zucchini,1.0,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0010.jpg,zucchini,zucchini,0.9999,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0011.jpg,zucchini,zucchini,0.9995,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0012.jpg,zucchini,zucchini,0.9823,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0013.jpg,zucchini,zucchini,0.9999,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0014.jpg,zucchini,zucchini,1.0,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0015.jpg,zucchini,zucchini,0.9952,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0016.jpg,zucchini,zucchini,0.9314,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0017.jpg,zucchini,zucchini,0.9983,True,None (Correct),
+data/external/end_to_end_test/zucchini/zucchini_zucchini_powdery_mildew_0018.jpg,zucchini,zucchini,1.0,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0001.jpg,cucumber,zucchini,0.9658,False,High Confidence Misclassification,Supported crop 'cucumber' predicted as 'zucchini' with high confidence (0.97). Visual domain shift.
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0002.jpg,cucumber,cucumber,0.9833,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0003.jpg,cucumber,cucumber,1.0,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0004.jpg,cucumber,cucumber,0.9792,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0005.jpg,cucumber,cucumber,0.8673,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0006.jpg,cucumber,cucumber,1.0,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0007.jpg,cucumber,cucumber,0.9979,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0008.jpg,cucumber,cucumber,1.0,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0009.jpg,cucumber,cucumber,0.9999,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0010.jpg,cucumber,cucumber,0.9998,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0011.jpg,cucumber,cucumber,0.9997,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0012.jpg,cucumber,cucumber,1.0,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0013.jpg,cucumber,cucumber,0.9795,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0014.jpg,cucumber,cucumber,0.99,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0015.jpg,cucumber,cucumber,1.0,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0016.jpg,cucumber,cucumber,1.0,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0017.jpg,cucumber,cucumber,1.0,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0018.jpg,cucumber,cucumber,1.0,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0019.jpg,cucumber,cucumber,1.0,True,None (Correct),
+data/external/end_to_end_test/cucumber/cucumber_cucumber_powdery_mildew_0020.jpg,cucumber,cucumber,0.9999,True,None (Correct),
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0001.jpeg,banana,lettuce,0.9488,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0002.jpeg,banana,orchid,0.9168,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0003.jpeg,banana,lettuce,0.9863,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0004.jpeg,banana,orchid,0.4459,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0005.jpeg,banana,lettuce,0.9404,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0006.jpeg,banana,lettuce,0.9229,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0007.jpeg,banana,lettuce,0.2914,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0008.jpeg,banana,melon,0.2743,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0009.jpeg,banana,capsicum,0.3959,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0010.jpeg,banana,lettuce,0.9095,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0011.jpeg,banana,orchid,0.9679,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0012.jpeg,banana,cucumber,0.8263,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0013.jpeg,banana,orchid,0.9047,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0014.jpeg,banana,lettuce,0.3712,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0015.jpeg,banana,orchid,0.842,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0016.jpeg,banana,orchid,0.7173,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0017.jpeg,banana,orchid,0.9248,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0018.jpeg,banana,lettuce,0.9671,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0019.jpeg,banana,orchid,0.7727,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.
+data/external/end_to_end_test/banana/banana_banana_cordana_leaf_spot_0020.jpeg,banana,french_bean,0.5469,False,Out of Taxonomy (Crop Not in Model 1),Model 1 trained on 22 greenhouse crops. 'banana' is an unsupported broad-acre/orchard crop.

@@ -1,0 +1,218 @@
+{
+  "safe_to_delete": [
+    {
+      "path": "models/model1_efficientnet_b2.pth",
+      "size_bytes": 31383849,
+      "size_formatted": "29.93 MB",
+      "type": "model_checkpoint",
+      "reason": "Obsolete early Model 1 checkpoint from experiment 03_train_model1_efficientnet_b2.py. Active production checkpoint is models/model1/best_model.pth.",
+      "confidence": 1.0,
+      "safety": "GREEN"
+    },
+    {
+      "path": "reports/video_debug",
+      "size_bytes": 21170790,
+      "size_formatted": "20.19 MB",
+      "type": "temporary_debug_frames",
+      "reason": "Temporary frame crops and ROI debug dumps generated during previous video inference testing sessions.",
+      "confidence": 1.0,
+      "safety": "GREEN"
+    },
+    {
+      "path": "scratch/all_video_frames",
+      "size_bytes": 5400192,
+      "size_formatted": "5.15 MB",
+      "type": "temporary_debug_frames",
+      "reason": "Extracted temporary test frames from sample video analysis.",
+      "confidence": 1.0,
+      "safety": "GREEN"
+    },
+    {
+      "path": "scratch/roi_visualizations",
+      "size_bytes": 1478492,
+      "size_formatted": "1.41 MB",
+      "type": "temporary_debug_frames",
+      "reason": "Temporary visualization snapshots from ROI extraction testing.",
+      "confidence": 1.0,
+      "safety": "GREEN"
+    },
+    {
+      "path": "scratch/video_test_frames",
+      "size_bytes": 1363148,
+      "size_formatted": "1.30 MB",
+      "type": "temporary_debug_frames",
+      "reason": "Temporary test frames from video processing tests.",
+      "confidence": 1.0,
+      "safety": "GREEN"
+    },
+    {
+      "path": "data/external/cherry_tomato",
+      "size_bytes": 0,
+      "size_formatted": "0 B",
+      "type": "empty_directory",
+      "reason": "Empty directory with 0 files.",
+      "confidence": 1.0,
+      "safety": "GREEN"
+    },
+    {
+      "path": "data/external/dutch_rose",
+      "size_bytes": 0,
+      "size_formatted": "0 B",
+      "type": "empty_directory",
+      "reason": "Empty directory with 0 files.",
+      "confidence": 1.0,
+      "safety": "GREEN"
+    },
+    {
+      "path": "data/external/gypsophila",
+      "size_bytes": 0,
+      "size_formatted": "0 B",
+      "type": "empty_directory",
+      "reason": "Empty directory with 0 files.",
+      "confidence": 1.0,
+      "safety": "GREEN"
+    },
+    {
+      "path": "data/external/lilium",
+      "size_bytes": 0,
+      "size_formatted": "0 B",
+      "type": "empty_directory",
+      "reason": "Empty directory with 0 files.",
+      "confidence": 1.0,
+      "safety": "GREEN"
+    },
+    {
+      "path": "data/external/Original Image",
+      "size_bytes": 0,
+      "size_formatted": "0 B",
+      "type": "empty_directory",
+      "reason": "Empty directory with 0 files.",
+      "confidence": 1.0,
+      "safety": "GREEN"
+    },
+    {
+      "path": "requirements.txt",
+      "size_bytes": 0,
+      "size_formatted": "0 B",
+      "type": "empty_file",
+      "reason": "Empty 0-byte file in project root.",
+      "confidence": 1.0,
+      "safety": "GREEN"
+    }
+  ],
+  "keep": [
+    "models/model1/best_model.pth",
+    "models/model1/config.json",
+    "models/model1/class_mapping.json",
+    "models/model1/class_names.json",
+    "models/model1/last_model.pth",
+    "models/model2/best_model.pth",
+    "models/model2/config.json",
+    "models/model2/class_mapping.json",
+    "models/model2/last_model.pth",
+    "models/model2/training_summary.json",
+    "models/pretrained/yolox_s.pth",
+    "data/processed/model1_balanced",
+    "data/processed/model1_balanced_manifest.csv",
+    "data/processed/model1_balanced_summary.json",
+    "data/processed/model1_balanced_report.md",
+    "data/processed/model2_dataset",
+    "data/processed/model2_yolox",
+    "app",
+    "audio",
+    "audio_test_app",
+    "model1_test",
+    "model1_test_app",
+    "model2",
+    "pipeline",
+    "router",
+    "scripts",
+    "video",
+    "venv",
+    "reports/model1",
+    "reports/model2",
+    "reports/model2_diagnostics",
+    "reports/model2_predictions",
+    "reports/model2_samples",
+    "reports/video_samples",
+    "reports/video_test_report.md",
+    "reports/model2_visual_report.md",
+    "test_multimodal_assets"
+  ],
+  "needs_review": [
+    {
+      "path": "data/processed/model1_dataset",
+      "size_bytes": 13711904768,
+      "size_formatted": "12.77 GB",
+      "type": "interim_dataset",
+      "reason": "Unbalanced interim 22-class dataset from prepare_model1_dataset.py. model1_balanced was created from this. If model1_balanced is sufficient, this can free 12.77 GB.",
+      "safety": "YELLOW"
+    },
+    {
+      "path": "data/processed/plant_part_dataset",
+      "size_bytes": 18092490752,
+      "size_formatted": "16.85 GB",
+      "type": "interim_dataset",
+      "reason": "Cleaned plant parts dataset from 11_clean_organize_plant_parts.py. Used to construct model1_dataset.",
+      "safety": "YELLOW"
+    },
+    {
+      "path": "data/processed/plant_part_dataset_split",
+      "size_bytes": 8600494080,
+      "size_formatted": "8.01 GB",
+      "type": "interim_dataset",
+      "reason": "Train/val/test split of plant part dataset from 12_split_plant_part_dataset.py.",
+      "safety": "YELLOW"
+    },
+    {
+      "path": "data/downloads",
+      "size_bytes": 1051615232,
+      "size_formatted": "1002.91 MB",
+      "type": "raw_downloads",
+      "reason": "Raw downloaded archives (beans, flowers-102).",
+      "safety": "YELLOW"
+    },
+    {
+      "path": "data/external",
+      "size_bytes": 20057456640,
+      "size_formatted": "18.68 GB",
+      "type": "raw_external_sources",
+      "reason": "Original scraped/downloaded image sources across 30 crops. If future data expansion is required, keep; otherwise can be archived.",
+      "safety": "YELLOW"
+    },
+    {
+      "path": "legacy_flask_app.py",
+      "size_bytes": 4167,
+      "size_formatted": "4.07 KB",
+      "type": "legacy_source",
+      "reason": "Legacy Flask demo script. Alexa Farms now runs on FastAPI + React (app/).",
+      "safety": "YELLOW"
+    }
+  ],
+  "duplicate_groups": [
+    {
+      "canonical": "models/model1/best_model.pth",
+      "duplicate_or_obsolete": "models/model1_efficientnet_b2.pth",
+      "size": "29.93 MB",
+      "reason": "models/model1_efficientnet_b2.pth is an obsolete earlier training checkpoint; models/model1/best_model.pth is the active production model referenced by the runtime service layer."
+    }
+  ],
+  "protected_paths": [
+    "models/model1/best_model.pth",
+    "models/model1/class_mapping.json",
+    "models/model1/config.json",
+    "models/model2/best_model.pth",
+    "models/model2/class_mapping.json",
+    "models/model2/config.json",
+    "models/pretrained/yolox_s.pth",
+    "data/processed/model1_balanced",
+    "data/processed/model2_dataset",
+    "data/processed/model2_yolox",
+    "app",
+    "audio",
+    "video",
+    "router",
+    "pipeline",
+    "venv"
+  ]
+}

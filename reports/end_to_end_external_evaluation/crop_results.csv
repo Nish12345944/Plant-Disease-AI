@@ -1,0 +1,9 @@
+crop,sample_count,model1_crop_accuracy,disease_accuracy,complete_diagnosis_accuracy
+banana,44,0.0,0.0,0.0
+bean,2,50.0,50.0,50.0
+cucumber,20,95.0,15.0,15.0
+peach,4,0.0,0.0,0.0
+soybean,2,0.0,0.0,0.0
+tomato,80,97.5,38.75,38.75
+wheat,8,0.0,0.0,0.0
+zucchini,18,100.0,22.22,22.22
