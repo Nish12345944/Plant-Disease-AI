@@ -121,11 +121,6 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
           )}
         </div>
 
-        {/* General conversational text if no model inference */}
-        {!hasPlantResult && message.text && (
-          <p className="assistant-summary-text">{message.text}</p>
-        )}
-
         {/* ========================================================
             SECTION 1: 🌱 PLANT IDENTIFICATION (Model 1)
             ======================================================== */}
@@ -144,6 +139,12 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                   <span className="result-field-label">Crop:</span>
                   <span className="result-field-value plant-highlight">{cropName || 'Unknown'}</span>
                 </div>
+                {cropConfidencePct && (
+                  <div className="result-field-row">
+                    <span className="result-field-label">Confidence:</span>
+                    <span className="result-field-value">{cropConfidencePct}%</span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -168,6 +169,12 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                     <span className="result-field-label">Disease:</span>
                     <span className="result-field-value disease-highlight">{diseaseName}</span>
                   </div>
+                  {diseaseConfidencePct && (
+                    <div className="result-field-row">
+                      <span className="result-field-label">Confidence:</span>
+                      <span className="result-field-value">{diseaseConfidencePct}%</span>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="result-field-group">
@@ -175,6 +182,12 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                     <span className="result-field-label">Disease:</span>
                     <span className="result-field-value text-emerald">No disease detected</span>
                   </div>
+                  {diseaseConfidencePct && (
+                    <div className="result-field-row">
+                      <span className="result-field-label">Confidence:</span>
+                      <span className="result-field-value">{diseaseConfidencePct}%</span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -219,6 +232,25 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
               <span>Show All Extracted Frames ({videoInference.frames_processed})</span>
               <ChevronRight size={15} />
             </button>
+          </div>
+        )}
+
+        {/* Grounded Agricultural Assistant Guidance & Explanation */}
+        {message.text && (
+          <div className="assistant-guidance-container">
+            <div className="assistant-text-body">
+              {message.text.split('\n\n').map((paragraph, idx) => (
+                <p key={idx} className="assistant-paragraph">{paragraph}</p>
+              ))}
+            </div>
+            {data.knowledge_sources && data.knowledge_sources.length > 0 && (
+              <div className="knowledge-sources-row">
+                <span className="sources-label">Sources:</span>
+                {data.knowledge_sources.map((src, idx) => (
+                  <span key={idx} className="source-citation-badge">{src}</span>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

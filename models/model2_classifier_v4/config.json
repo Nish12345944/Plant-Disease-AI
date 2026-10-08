@@ -1,0 +1,23 @@
+{
+  "model_name": "model2_classifier_v4",
+  "architecture": "efficientnet_b2",
+  "num_classes": 117,
+  "image_size": [
+    260,
+    260
+  ],
+  "batch_size": 32,
+  "effective_batch_size": 64,
+  "learning_rate": 0.0001,
+  "weight_decay": 0.0001,
+  "max_epochs": 20,
+  "best_epoch": 18,
+  "best_val_macro_f1": 0.7101477600140702,
+  "initialization_checkpoint": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\models\\model2_classifier_v3\\best_model.pth",
+  "train_images": 15852,
+  "val_images": 1764,
+  "test_images": 2304,
+  "new_field_images": 667,
+  "device": "cuda",
+  "random_seed": 42
+}

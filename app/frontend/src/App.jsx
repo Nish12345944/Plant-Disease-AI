@@ -11,13 +11,17 @@ import {
   sendChatMessage,
   routeQuery
 } from './services/api';
+import { validateMediaFile } from './services/fileValidation';
+import { UploadCloud } from 'lucide-react';
 
 export default function App() {
   const [messages, setMessages] = useState([]);
+  const [sessionId, setSessionId] = useState(() => 'sess_' + Math.random().toString(36).substring(2, 10));
   const [inputText, setInputText] = useState('');
   const [stagedMedia, setStagedMedia] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [backendStatus, setBackendStatus] = useState(null);
+  const [isWindowDragActive, setIsWindowDragActive] = useState(false);
 
   // Modals & Panels
   const [isDebugOpen, setIsDebugOpen] = useState(false);
@@ -34,6 +38,7 @@ export default function App() {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const timerIntervalRef = useRef(null);
+  const dragCounterRef = useRef(0);
 
   // Check backend health on mount
   useEffect(() => {
@@ -62,6 +67,88 @@ export default function App() {
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
   }, [isRecording]);
+
+  /**
+   * Unified file validator and stager for both drag-and-drop and click-browse
+   */
+  const handleStageFile = (file) => {
+    if (!file) return;
+
+    const validation = validateMediaFile(file);
+    if (!validation.valid) {
+      alert(`Upload Error: ${validation.error}`);
+      return;
+    }
+
+    if (validation.type === 'audio') {
+      handleProcessAudioBlob(file, file.name);
+      return;
+    }
+
+    // Revoke previous object URL if any
+    if (stagedMedia?.url) {
+      URL.revokeObjectURL(stagedMedia.url);
+    }
+
+    const previewUrl = URL.createObjectURL(file);
+    setStagedMedia({
+      type: validation.type,
+      file,
+      url: previewUrl,
+      name: file.name,
+      size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
+    });
+  };
+
+  // Global window drag and drop listener
+  useEffect(() => {
+    const handleDragEnter = (e) => {
+      e.preventDefault();
+      dragCounterRef.current += 1;
+      if (e.dataTransfer?.types?.includes('Files')) {
+        setIsWindowDragActive(true);
+      }
+    };
+
+    const handleDragLeave = (e) => {
+      e.preventDefault();
+      dragCounterRef.current -= 1;
+      if (dragCounterRef.current <= 0) {
+        dragCounterRef.current = 0;
+        setIsWindowDragActive(false);
+      }
+    };
+
+    const handleDragOver = (e) => {
+      e.preventDefault();
+      if (e.dataTransfer) {
+        e.dataTransfer.dropEffect = 'copy';
+      }
+    };
+
+    const handleDrop = (e) => {
+      e.preventDefault();
+      dragCounterRef.current = 0;
+      setIsWindowDragActive(false);
+
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        handleStageFile(files[0]);
+      }
+    };
+
+    window.addEventListener('dragenter', handleDragEnter);
+    window.addEventListener('dragleave', handleDragLeave);
+    window.addEventListener('dragover', handleDragOver);
+    window.addEventListener('drop', handleDrop);
+
+    return () => {
+      window.removeEventListener('dragenter', handleDragEnter);
+      window.removeEventListener('dragleave', handleDragLeave);
+      window.removeEventListener('dragover', handleDragOver);
+      window.removeEventListener('drop', handleDrop);
+    };
+  }, [stagedMedia]);
 
   /**
    * Start microphone recording via HTML5 MediaRecorder
@@ -125,7 +212,7 @@ export default function App() {
       const result = await transcribeAudio(fileToUpload);
 
       if (result.text) {
-        // As required: Place transcribed text DIRECTLY into the composer prompt box
+        // Place transcribed text directly into the composer prompt box
         setInputText((prev) => {
           const trimmed = prev.trim();
           return trimmed ? `${trimmed} ${result.text.trim()}` : result.text.trim();
@@ -180,6 +267,7 @@ export default function App() {
         text,
         file,
         inputType,
+        sessionId,
       });
 
       // Update telemetry data for the Developer Debug Panel
@@ -210,6 +298,8 @@ export default function App() {
           model1: response.model1,
           video_inference: response.video_inference,
           model2: response.model2 || response.video_inference?.model2 || response.model1?.model2,
+          knowledge: response.knowledge,
+          knowledge_sources: response.knowledge_sources,
           annotated_preview_url: response.annotated_preview_url || response.model2?.annotated_preview_url || response.model1?.annotated_preview_url,
           original_image_url: (media && media.type === 'image' ? media.url : null) || response.image_url || response.model1?.image_preview_url || null,
           media_type: media?.type || null,
@@ -243,6 +333,7 @@ export default function App() {
       setMessages([]);
       setInputText('');
       setStagedMedia(null);
+      setSessionId('sess_' + Math.random().toString(36).substring(2, 10));
     }
   };
 
@@ -260,6 +351,17 @@ export default function App() {
 
   return (
     <div className="app-container">
+      {/* Global Drag-and-Drop Active Overlay */}
+      {isWindowDragActive && (
+        <div className="global-drag-overlay animate-fade-in">
+          <div className="global-drag-card animate-scale-up">
+            <UploadCloud size={56} className="global-drag-icon text-emerald" />
+            <h3 className="global-drag-title">Drag &amp; drop an image or video here</h3>
+            <p className="global-drag-subtitle">or release to analyze with Model 1 + Model 2 V4</p>
+          </div>
+        </div>
+      )}
+
       {/* Top Header */}
       <Header
         onToggleDebug={() => setIsDebugOpen(!isDebugOpen)}
@@ -275,6 +377,7 @@ export default function App() {
           onSelectPrompt={handleSelectPrompt}
           onOpenFramesModal={(videoData) => setSelectedVideoData(videoData)}
           onInspectTelemetry={handleInspectTelemetry}
+          onFileDrop={handleStageFile}
           isLoading={isLoading}
         />
 
@@ -295,6 +398,7 @@ export default function App() {
         onSendMessage={handleSendMessage}
         onOpenLiveCamera={() => setIsWebcamOpen(true)}
         onTranscribeAudioFile={(file) => handleProcessAudioBlob(file, file.name)}
+        onFileDrop={handleStageFile}
         isRecording={isRecording}
         isTranscribing={isTranscribing}
         recordingTime={recordingTime}
@@ -314,17 +418,7 @@ export default function App() {
       <WebcamModal
         isOpen={isWebcamOpen}
         onClose={() => setIsWebcamOpen(false)}
-        onCapture={(file) => {
-          console.log(file);
-          const previewUrl = URL.createObjectURL(file);
-          setStagedMedia({
-            type: 'image',
-            file,
-            url: previewUrl,
-            name: file.name,
-            size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
-          });
-        }}
+        onCapture={(file) => handleStageFile(file)}
       />
     </div>
   );

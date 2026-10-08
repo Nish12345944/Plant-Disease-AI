@@ -1,0 +1,54 @@
+model1_crop,normalized_crop,model2_class_name,disease_name,is_healthy_class,train_count,val_count,test_count,total_count,is_compatible_with_crop,coverage_status,priority
+anthurium,anthurium,None (Healthy Only / No Model 2 Class),none,False,0,0,0,0,False,NO_DISEASE_COVERAGE,P3
+blueberry,blueberry,blueberry__anthracnose,anthracnose,False,32,4,4,40,True,PARTIAL,P1
+blueberry,blueberry,blueberry__botrytis_blight,botrytis_blight,False,29,3,3,35,True,PARTIAL,P1
+blueberry,blueberry,blueberry__mummy_berry,mummy_berry,False,38,4,4,46,True,PARTIAL,P1
+blueberry,blueberry,blueberry__rust,rust,False,34,4,5,43,True,PARTIAL,P1
+blueberry,blueberry,blueberry__scorch,scorch,False,33,4,5,42,True,PARTIAL,P1
+broccoli,broccoli,broccoli__alternaria_leaf_spot,alternaria_leaf_spot,False,49,5,8,62,True,PARTIAL,P1
+broccoli,broccoli,broccoli__downy_mildew,downy_mildew,False,23,2,4,29,True,PARTIAL,P1
+broccoli,broccoli,broccoli__ring_spot,ring_spot,False,8,1,1,10,True,PARTIAL,P1
+capsicum,bell_pepper,bell_pepper__bacterial_spot,bacterial_spot,False,55,6,7,68,True,PARTIAL,P1
+capsicum,bell_pepper,bell_pepper__blossom_end_rot,blossom_end_rot,False,87,10,11,108,True,PARTIAL,P1
+capsicum,bell_pepper,bell_pepper__frogeye_leaf_spot,frogeye_leaf_spot,False,22,2,4,28,True,PARTIAL,P1
+capsicum,bell_pepper,bell_pepper__powdery_mildew,powdery_mildew,False,22,2,2,26,True,PARTIAL,P1
+carnation,carnation,None (Healthy Only / No Model 2 Class),none,False,0,0,0,0,False,NO_DISEASE_COVERAGE,P3
+cherry_tomato,tomato,tomato__bacterial_leaf_spot,bacterial_leaf_spot,False,85,9,13,107,True,COMPLETE,P0
+cherry_tomato,tomato,tomato__early_blight,early_blight,False,275,31,22,328,True,COMPLETE,P0
+cherry_tomato,tomato,tomato__late_blight,late_blight,False,254,29,17,300,True,COMPLETE,P0
+cherry_tomato,tomato,tomato__leaf_mold,leaf_mold,False,198,22,16,236,True,COMPLETE,P0
+cherry_tomato,tomato,tomato__mosaic_virus,mosaic_virus,False,50,6,7,63,True,COMPLETE,P0
+cherry_tomato,tomato,tomato__septoria_leaf_spot,septoria_leaf_spot,False,233,26,14,273,True,COMPLETE,P0
+cherry_tomato,tomato,tomato__yellow_leaf_curl_virus,yellow_leaf_curl_virus,False,72,8,9,89,True,COMPLETE,P0
+chrysanthemum,chrysanthemum,None (Healthy Only / No Model 2 Class),none,False,0,0,0,0,False,NO_DISEASE_COVERAGE,P3
+cucumber,cucumber,cucumber__angular_leaf_spot,angular_leaf_spot,False,144,16,22,182,True,PARTIAL,P1
+cucumber,cucumber,cucumber__bacterial_wilt,bacterial_wilt,False,85,10,13,108,True,PARTIAL,P1
+cucumber,cucumber,cucumber__powdery_mildew,powdery_mildew,False,283,31,22,336,True,PARTIAL,P1
+french_bean,bean,bean__angular_leaf_spot,angular_leaf_spot,False,330,37,65,432,True,COMPLETE,P0
+french_bean,bean,bean__halo_blight,halo_blight,False,45,5,6,56,True,COMPLETE,P0
+french_bean,bean,bean__mosaic_virus,mosaic_virus,False,47,5,5,57,True,COMPLETE,P0
+french_bean,bean,bean__rust,rust,False,471,52,77,600,True,COMPLETE,P0
+geranium,geranium,None (Healthy Only / No Model 2 Class),none,False,0,0,0,0,False,NO_DISEASE_COVERAGE,P3
+gerbera,gerbera,None (Healthy Only / No Model 2 Class),none,False,0,0,0,0,False,NO_DISEASE_COVERAGE,P3
+gypsophila,gypsophila,None (Healthy Only / No Model 2 Class),none,False,0,0,0,0,False,NO_DISEASE_COVERAGE,P3
+lettuce,lettuce,lettuce__downy_mildew,downy_mildew,False,67,7,8,82,True,PARTIAL,P2
+lettuce,lettuce,lettuce__mosaic_virus,mosaic_virus,False,31,4,4,39,True,PARTIAL,P2
+lilium,lilium,None (Healthy Only / No Model 2 Class),none,False,0,0,0,0,False,NO_DISEASE_COVERAGE,P3
+marigold,marigold,None (Healthy Only / No Model 2 Class),none,True,202,25,43,270,True,HEALTHY_ONLY,P1
+melon,melon,None (Healthy Only / No Model 2 Class),none,False,0,0,0,0,False,NO_DISEASE_COVERAGE,P3
+orchid,orchid,None (Healthy Only / No Model 2 Class),none,False,0,0,0,0,False,NO_DISEASE_COVERAGE,P3
+rose,rose,None (Healthy Only / No Model 2 Class),none,True,334,29,69,432,True,HEALTHY_ONLY,P1
+spinach,spinach,None (Healthy Only / No Model 2 Class),none,True,1064,128,207,1399,True,HEALTHY_ONLY,P1
+strawberry,strawberry,strawberry__anthracnose,anthracnose,False,48,5,5,58,True,PARTIAL,P2
+strawberry,strawberry,strawberry__leaf_scorch,leaf_scorch,False,32,4,3,39,True,PARTIAL,P2
+tomato,tomato,tomato__bacterial_leaf_spot,bacterial_leaf_spot,False,85,9,13,107,True,COMPLETE,P0
+tomato,tomato,tomato__early_blight,early_blight,False,275,31,22,328,True,COMPLETE,P0
+tomato,tomato,tomato__late_blight,late_blight,False,254,29,17,300,True,COMPLETE,P0
+tomato,tomato,tomato__leaf_mold,leaf_mold,False,198,22,16,236,True,COMPLETE,P0
+tomato,tomato,tomato__mosaic_virus,mosaic_virus,False,50,6,7,63,True,COMPLETE,P0
+tomato,tomato,tomato__septoria_leaf_spot,septoria_leaf_spot,False,233,26,14,273,True,COMPLETE,P0
+tomato,tomato,tomato__yellow_leaf_curl_virus,yellow_leaf_curl_virus,False,72,8,9,89,True,COMPLETE,P0
+zucchini,zucchini,zucchini__bacterial_wilt,bacterial_wilt,False,53,6,9,68,True,COMPLETE,P0
+zucchini,zucchini,zucchini__downy_mildew,downy_mildew,False,34,4,5,43,True,COMPLETE,P0
+zucchini,zucchini,zucchini__powdery_mildew,powdery_mildew,False,164,18,18,200,True,COMPLETE,P0
+zucchini,zucchini,zucchini__yellow_mosaic_virus,yellow_mosaic_virus,False,77,9,9,95,True,COMPLETE,P0

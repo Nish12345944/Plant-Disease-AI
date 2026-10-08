@@ -85,12 +85,14 @@ export async function routeQuery(text) {
  * @param {File} [params.file]
  * @param {string} [params.inputType] - 'text' | 'image' | 'video' | 'audio'
  * @param {string} [params.language]
+ * @param {string} [params.sessionId]
  */
-export async function sendChatMessage({ text = '', file = null, inputType = 'text', language = null }) {
+export async function sendChatMessage({ text = '', file = null, inputType = 'text', language = null, sessionId = null }) {
   const formData = new FormData();
   formData.append('text', text);
   formData.append('input_type', inputType);
   if (language) formData.append('language', language);
+  if (sessionId) formData.append('session_id', sessionId);
   if (file) {
     const defaultName = inputType === 'video' ? 'video.mp4' : inputType === 'audio' ? 'audio.wav' : 'image.jpg';
     formData.append('file', file, file.name || defaultName);

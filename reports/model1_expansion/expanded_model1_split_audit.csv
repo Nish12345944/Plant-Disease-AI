@@ -1,0 +1,4 @@
+split,image_count,percentage,target_ratio,status
+train,12407,79.71%,80%,PASS
+val,1579,10.14%,10%,PASS
+test,1580,10.15%,10%,PASS

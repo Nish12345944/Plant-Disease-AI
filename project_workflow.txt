@@ -137,6 +137,47 @@
 
 
 
+✅ Model 1
+   ↓
+✅ Model 2 V4
+   ↓
+✅ Crop–disease compatibility
+   ↓
+✅ Query understanding
+   ↓
+✅ Intent router
+   ↓
+✅ Knowledge engine
+   ↓
+🔵 1. Integrate everything into one diagnosis pipeline
+   ↓
+🔵 2. Test image → diagnosis → knowledge → response
+   ↓
+🔵 3. Test video pipeline
+   ↓
+🔵 4. Test audio → STT → router → response
+   ↓
+🔵 5. Test conversational follow-ups
+   ↓
+🔵 6. Add uncertainty/error handling
+   ↓
+🔵 7. Build complete E2E evaluation suite
+   ↓
+🔵 8. Fix integration bugs
+   ↓
+🔵 9. Freeze V4 production version
+   ↓
+🟡 10. Expand disease taxonomy
+   ↓
+🟡 11. Collect new datasets
+   ↓
+🟡 12. Build V5
+   ↓
+🟡 13. Compare V4 vs V5
+   ↓
+🟢 14. Final deployment/packaging
+
+
 
 
 

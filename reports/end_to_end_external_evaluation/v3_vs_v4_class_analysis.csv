@@ -1,0 +1,17 @@
+crop,class_name,is_priority_class,support,v3_correct,v4_correct,v3_accuracy_pct,v4_accuracy_pct,accuracy_diff_pct,v3_raw_correct,v4_raw_correct,v3_raw_accuracy_pct,v4_raw_accuracy_pct,v3_avg_confidence,v4_avg_confidence
+cucumber,cucumber__powdery_mildew,True,20,3,4,15.0,20.0,5.0,4,5,20.0,25.0,0.6154,0.7841
+tomato,tomato__early_blight,True,20,4,18,20.0,90.0,70.0,8,18,40.0,90.0,0.4997,0.942
+tomato,tomato__late_blight,True,20,4,11,20.0,55.0,35.0,4,13,20.0,65.0,0.5178,0.9136
+tomato,tomato__leaf_mold,True,20,15,20,75.0,100.0,25.0,15,20,75.0,100.0,0.7474,0.9653
+tomato,tomato__septoria_leaf_spot,True,20,8,19,40.0,95.0,55.0,8,19,40.0,95.0,0.6387,0.958
+zucchini,zucchini__powdery_mildew,True,18,4,4,22.22,22.22,0.0,4,4,22.22,22.22,0.6484,0.863
+banana,banana__cordana_leaf_spot,False,20,0,0,0.0,0.0,0.0,16,16,80.0,80.0,0.7009,0.7556
+all_crops,healthy,False,20,0,0,0.0,0.0,0.0,0,0,0.0,0.0,0.4809,0.6758
+peach,peach__brown_rot,False,4,0,0,0.0,0.0,0.0,4,4,100.0,100.0,0.9411,0.9934
+wheat,wheat__head_scab,False,4,0,0,0.0,0.0,0.0,4,4,100.0,100.0,0.956,0.9983
+banana,banana__bunchy_top,False,3,0,0,0.0,0.0,0.0,3,3,100.0,100.0,0.9683,0.9976
+wheat,wheat__stripe_rust,False,3,0,0,0.0,0.0,0.0,3,3,100.0,100.0,0.9012,0.9619
+bean,bean__rust,False,2,1,1,50.0,50.0,0.0,1,2,50.0,100.0,0.5083,0.9891
+soybean,soybean__frog_eye_leaf_spot,False,2,0,0,0.0,0.0,0.0,2,2,100.0,100.0,0.8306,0.9888
+banana,banana__black_leaf_streak,False,1,0,0,0.0,0.0,0.0,1,1,100.0,100.0,0.9726,0.9978
+wheat,wheat__loose_smut,False,1,0,0,0.0,0.0,0.0,1,1,100.0,100.0,0.9464,0.9635

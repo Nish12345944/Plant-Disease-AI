@@ -1,0 +1,47 @@
+canonical_name,display_name,model2_compatibility_mapping,disease_count,knowledge_base_coverage,reason_for_inclusion
+anthurium,Anthurium,None (Healthy only in M2),0,No V4 diseases (Floriculture),Retain baseline greenhouse ornamental class
+blueberry,Blueberry,blueberry,5,5/5 V4 records active,Retain baseline berry crop; 5 high-impact diseases
+broccoli,Broccoli,broccoli,3,3/3 V4 records active,Retain baseline brassica crop; 3 diseases
+capsicum,Capsicum (Bell Pepper),"bell_pepper, capsicum",4,4/4 V4 records active,Retain baseline solanaceous crop; aliased to bell_pepper
+carnation,Carnation,None (Healthy only in M2),0,No V4 diseases (Floriculture),Retain baseline greenhouse ornamental class
+cherry_tomato,Cherry Tomato,tomato,7,7/7 V4 records active (via tomato),Retain baseline cultivar class; aliased to tomato
+chrysanthemum,Chrysanthemum,None (Healthy only in M2),0,No V4 diseases (Floriculture),Retain baseline greenhouse ornamental class
+cucumber,Cucumber,cucumber,3,3/3 V4 records active,Retain baseline cucurbit crop; 3 diseases
+french_bean,French Bean (Common Bean),bean,4,4/4 V4 records active,Retain baseline legume crop; aliased to bean
+geranium,Geranium,None (Healthy only in M2),0,No V4 diseases (Floriculture),Retain baseline greenhouse ornamental class
+gerbera,Gerbera Daisy,None (Healthy only in M2),0,No V4 diseases (Floriculture),Retain baseline greenhouse ornamental class
+gypsophila,Baby's Breath (Gypsophila),None (Healthy only in M2),0,No V4 diseases (Floriculture),Retain baseline greenhouse ornamental class
+lettuce,Lettuce,lettuce,2,2/2 V4 records active,Retain baseline leafy salad crop; 2 diseases
+lilium,Lily (Lilium),None (Healthy only in M2),0,No V4 diseases (Floriculture),Retain baseline greenhouse ornamental class
+marigold,Marigold,marigold,0,No V4 diseases (Healthy only),Retain baseline floriculture/companion crop
+melon,Melon,None (Healthy only in M2),0,No V4 diseases (Cucurbit),Retain baseline cucurbit crop (distinct from cucumber/zucchini)
+orchid,Orchid,None (Healthy only in M2),0,No V4 diseases (Floriculture),Retain baseline greenhouse ornamental class
+rose,Rose,rose,0,No V4 diseases (Healthy only),Retain baseline ornamental woody shrub
+spinach,Spinach,spinach,0,No V4 diseases (Healthy only),Retain baseline leafy green crop
+strawberry,Strawberry,strawberry,2,2/2 V4 records active,Retain baseline berry crop; 2 diseases
+tomato,Tomato,tomato,7,7/7 V4 records active,Retain baseline solanaceous staple; 7 diseases
+zucchini,Zucchini & Summer Squash,"zucchini, squash",5,5/5 V4 records active (4 zucchini + 1 squash),Retain baseline cucurbit; encompasses squash powdery mildew
+apple,Apple,apple,4,4/4 V4 records active,New class: High-value pome fruit tree; activates 4 M2 diseases
+banana,Banana,banana,6,6/6 V4 records active,New class: Critical tropical fruit staple; activates 6 M2 diseases
+basil,Basil,basil,1,1/1 V4 records active,New class: High-value culinary herb; activates downy mildew
+cabbage,Cabbage,cabbage,3,3/3 V4 records active,New class: Major brassica head vegetable; activates 3 M2 diseases
+carrot,Carrot,carrot,3,3/3 V4 records active,New class: Major root vegetable; activates 3 M2 diseases
+cauliflower,Cauliflower,cauliflower,2,2/2 V4 records active,New class: Major brassica curd vegetable; activates 2 M2 diseases
+celery,Celery,celery,2,2/2 V4 records active,New class: Major petiole vegetable; activates 2 M2 diseases
+cherry,Cherry,cherry,2,2/2 V4 records active,New class: Stone fruit tree; activates 2 M2 diseases
+citrus,"Citrus (Orange, Lemon, Lime)",citrus,2,2/2 V4 records active,New class: Subtropical fruit family; activates canker & greening
+coffee,Coffee,coffee,4,4/4 V4 records active,New class: Global commercial beverage crop; activates 4 M2 diseases
+corn,Corn (Maize),corn,4,4/4 V4 records active,New class: Major global staple cereal; activates 4 M2 diseases
+eggplant,Eggplant (Aubergine),eggplant,3,3/3 V4 records active,New class: Solanaceous fruit vegetable; activates 3 M2 diseases
+garlic,Garlic,garlic,2,2/2 V4 records active,New class: Allium bulb crop; activates leaf blight & rust
+ginger,Ginger,ginger,2,2/2 V4 records active,New class: Rhizome spice crop; activates leaf spot & sheath blight
+grape,Grape (Grapevine),grape,4,4/4 V4 records active,New class: Viticulture woody vine; activates 4 M2 diseases
+maple,Maple,maple,1,1/1 V4 records active,New class: Landscape/shade tree; activates tar spot
+peach,Peach,peach,5,5/5 V4 records active,New class: Stone fruit tree; activates 5 M2 diseases
+plum,Plum,plum,5,5/5 V4 records active,New class: Stone fruit tree; activates 5 M2 diseases
+potato,Potato,potato,2,2/2 V4 records active,New class: Major staple food tuber; activates early & late blight
+raspberry,Raspberry,raspberry,4,4/4 V4 records active,New class: Cane fruit crop; activates 4 M2 diseases
+rice,Rice,rice,2,2/2 V4 records active,New class: Primary staple cereal; activates blast & sheath blight
+soybean,Soybean,soybean,6,6/6 V4 records active,New class: Major global oilseed legume; activates 6 M2 diseases
+tobacco,Tobacco,tobacco,4,4/4 V4 records active,New class: Solanaceous industrial crop; activates 4 M2 diseases
+wheat,Wheat,wheat,8,8/8 V4 records active,New class: Primary staple cereal (highest M2 disease count); activates 8 diseases

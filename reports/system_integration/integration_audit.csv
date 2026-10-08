@@ -1,0 +1,16 @@
+component,file_path,status,evidence,issue,recommended_fix,severity
+Model 1 Vision Checkpoint,models/model1/best_model.pth,PASS,Loaded in app/backend/services.py:72,None,None,INFO
+Model 2 V4 Vision Checkpoint,models/model2_classifier_v4/best_model.pth,PASS,Loaded in app/backend/services.py:89,None,None,INFO
+Old YOLOX Model 2 Exclusion,models/model2_classifier_v4/predict.py,PASS,Zero YOLOX imports in active codebase,None,None,INFO
+Model 2 V4 Class Mapping,models/model2_classifier_v4/class_mapping.json,PASS,117 classes loaded (0=healthy; 116 diseases),None,None,INFO
+Crop-Disease Compatibility Gate,data/processed/model2_organized_crop_disease_mapping.json,PASS,Mask applied in predict_crop_aware() at models/model2_classifier_v4/predict.py:100,None,None,INFO
+Healthy Specimen Contract,models/model2_classifier_v4/predict.py,PASS,Class 0 sets status='healthy' and disease=null,None,None,INFO
+Uncertainty Rejection Gate,models/model2_classifier_v4/predict.py,PASS,Rejects conf < 0.40 or margin < 0.05 as status='uncertain',None,None,INFO
+Audio STT Transcription,audio/test_audio.py,PASS,faster-whisper model processes audio bytes before query routing,None,None,INFO
+Multi-Frame Video Ingestion,model1_test_app/video_inference.py,PASS,Samples 16-24 frames with Laplacian blur filtering and Model 1 aggregation,None,None,INFO
+Query Intent & Entity Router,router/query_router.py,PASS,Deterministic regex + dictionary entity extraction across 12 agronomic intents,None,None,INFO
+Agricultural Knowledge Engine,knowledge/assistant.py,PASS,Deterministic 8-stage assistant with rule-based planner and zero LLMs,None,None,INFO
+Chat Endpoint Knowledge Delegation,app/backend/main.py,PARTIAL,Returns template routing string for text queries at line 429,Text queries do not call AgriculturalAssistant.answer_query(),Wire AgriculturalAssistant into /api/chat endpoint,MEDIUM
+Follow-up Dialogue Memory,app/backend/main.py,PARTIAL,No session_id passed or stored across HTTP turns in /api/chat,Multi-turn dialogue resets every request,Add session_id parameter and session assistant cache in backend,MEDIUM
+Frontend UI Diagnostics Display,app/frontend/src/components/MessageItem.jsx,PASS,Renders Model 1 crop badges Model 2 V4 diagnosis cards and telemetry,None,Add rich treatment and prevention fact cards,LOW
+Deterministic Response Verification,knowledge/response_builder.py,PASS,Zero external LLM API calls verified across all endpoints,None,None,INFO

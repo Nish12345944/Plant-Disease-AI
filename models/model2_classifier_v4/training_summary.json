@@ -1,0 +1,31 @@
+{
+  "v3_test_metrics": {
+    "top1_accuracy": 87.63,
+    "top3_accuracy": 96.27,
+    "macro_f1": 68.61,
+    "weighted_f1": 87.38,
+    "disease_macro_f1": 67.75,
+    "healthy_f1": 99.52
+  },
+  "v4_test_metrics": {
+    "top1_accuracy": 87.15277777777779,
+    "top3_accuracy": 96.18055555555556,
+    "macro_f1": 69.22165447651383,
+    "weighted_f1": 86.89256669565589,
+    "disease_macro_f1": 68.36497085292437,
+    "healthy_f1": 99.37530033637674
+  },
+  "deltas": {
+    "top1_accuracy": -0.4772222222222098,
+    "top3_accuracy": -0.08944444444443889,
+    "macro_f1": 0.6116544765138343,
+    "weighted_f1": -0.48743330434410836,
+    "disease_macro_f1": 0.6149708529243725,
+    "healthy_f1": -0.14469966362325692
+  },
+  "field_val_metrics": {
+    "accuracy": 91.04477611940298,
+    "macro_f1": 76.50723371785989,
+    "count": 67
+  }
+}

@@ -1,0 +1,45 @@
+ground_truth,predicted_as,is_priority_pair,v3_raw_error_count,v4_raw_error_count,change_in_errors,status
+tomato__early_blight,tomato__septoria_leaf_spot,True,6,1,-5,IMPROVED (fewer errors)
+cucumber__powdery_mildew,zucchini__powdery_mildew,True,1,1,0,UNCHANGED
+tomato__early_blight,tomato__late_blight,True,1,1,0,UNCHANGED
+zucchini__powdery_mildew,cucumber__powdery_mildew,True,1,1,0,UNCHANGED
+tomato__late_blight,tomato__early_blight,True,0,2,2,REGRESSED (more errors)
+healthy,banana__bunchy_top,False,11,11,0,UNCHANGED
+cucumber__powdery_mildew,cucumber__angular_leaf_spot,False,8,11,3,REGRESSED (more errors)
+tomato__septoria_leaf_spot,healthy,False,7,0,-7,IMPROVED (fewer errors)
+tomato__late_blight,healthy,False,6,0,-6,IMPROVED (fewer errors)
+healthy,banana__black_leaf_streak,False,5,3,-2,IMPROVED (fewer errors)
+zucchini__powdery_mildew,cucumber__bacterial_wilt,False,5,3,-2,IMPROVED (fewer errors)
+zucchini__powdery_mildew,zucchini__bacterial_wilt,False,5,7,2,REGRESSED (more errors)
+tomato__leaf_mold,healthy,False,4,0,-4,IMPROVED (fewer errors)
+banana__cordana_leaf_spot,banana__black_leaf_streak,False,3,3,0,UNCHANGED
+cucumber__powdery_mildew,lettuce__downy_mildew,False,3,3,0,UNCHANGED
+tomato__early_blight,healthy,False,3,0,-3,IMPROVED (fewer errors)
+tomato__late_blight,potato__late_blight,False,3,0,-3,IMPROVED (fewer errors)
+healthy,wheat__bacterial_leaf_streak_(black_chaff),False,2,2,0,UNCHANGED
+tomato__early_blight,potato__early_blight,False,2,0,-2,IMPROVED (fewer errors)
+tomato__late_blight,tomato__mosaic_virus,False,2,0,-2,IMPROVED (fewer errors)
+tomato__septoria_leaf_spot,strawberry__leaf_scorch,False,2,0,-2,IMPROVED (fewer errors)
+zucchini__powdery_mildew,squash__powdery_mildew,False,2,2,0,UNCHANGED
+banana__cordana_leaf_spot,corn__northern_leaf_blight,False,1,0,-1,IMPROVED (fewer errors)
+bean__rust,soybean__rust,False,1,0,-1,IMPROVED (fewer errors)
+cucumber__powdery_mildew,broccoli__downy_mildew,False,1,0,-1,IMPROVED (fewer errors)
+cucumber__powdery_mildew,tobacco__brown_spot,False,1,0,-1,IMPROVED (fewer errors)
+cucumber__powdery_mildew,tomato__leaf_mold,False,1,0,-1,IMPROVED (fewer errors)
+cucumber__powdery_mildew,zucchini__downy_mildew,False,1,0,-1,IMPROVED (fewer errors)
+healthy,banana__cordana_leaf_spot,False,1,2,1,REGRESSED (more errors)
+healthy,corn__gray_leaf_spot,False,1,0,-1,IMPROVED (fewer errors)
+tomato__late_blight,celery__anthracnose,False,1,0,-1,IMPROVED (fewer errors)
+tomato__late_blight,lettuce__mosaic_virus,False,1,0,-1,IMPROVED (fewer errors)
+tomato__late_blight,peach__leaf_curl,False,1,0,-1,IMPROVED (fewer errors)
+tomato__late_blight,plum__pocket_disease,False,1,0,-1,IMPROVED (fewer errors)
+tomato__late_blight,tomato__leaf_mold,False,1,4,3,REGRESSED (more errors)
+tomato__leaf_mold,tomato__late_blight,False,1,0,-1,IMPROVED (fewer errors)
+tomato__septoria_leaf_spot,grape__leaf_spot,False,1,0,-1,IMPROVED (fewer errors)
+tomato__septoria_leaf_spot,potato__early_blight,False,1,0,-1,IMPROVED (fewer errors)
+tomato__septoria_leaf_spot,tomato__early_blight,False,1,1,0,UNCHANGED
+zucchini__powdery_mildew,cucumber__angular_leaf_spot,False,1,0,-1,IMPROVED (fewer errors)
+banana__cordana_leaf_spot,coffee__leaf_rust,False,0,1,1,REGRESSED (more errors)
+healthy,corn__rust,False,0,2,2,REGRESSED (more errors)
+tomato__late_blight,tomato__septoria_leaf_spot,False,0,1,1,REGRESSED (more errors)
+zucchini__powdery_mildew,zucchini__downy_mildew,False,0,1,1,REGRESSED (more errors)

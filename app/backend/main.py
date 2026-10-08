@@ -29,10 +29,34 @@ from app.backend.services import (
     start_server_microphone,
     stop_server_microphone,
 )
+from knowledge.assistant import AgriculturalAssistant
+from knowledge.database import get_knowledge_base
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger(__name__)
+
+# Active conversational sessions registry
+_SESSIONS: dict[str, AgriculturalAssistant] = {}
+_DEFAULT_ASSISTANT: Optional[AgriculturalAssistant] = None
+
+
+def get_session_assistant(session_id: Optional[str] = None) -> AgriculturalAssistant:
+    """Retrieve or create an AgriculturalAssistant instance for a conversational session."""
+    global _DEFAULT_ASSISTANT, _SESSIONS
+    if not session_id or not session_id.strip():
+        if _DEFAULT_ASSISTANT is None:
+            _DEFAULT_ASSISTANT = AgriculturalAssistant(kb=get_knowledge_base())
+        return _DEFAULT_ASSISTANT
+
+    clean_sid = session_id.strip()
+    if clean_sid not in _SESSIONS:
+        if len(_SESSIONS) > 100:
+            oldest = next(iter(_SESSIONS))
+            _SESSIONS.pop(oldest, None)
+        _SESSIONS[clean_sid] = AgriculturalAssistant(kb=get_knowledge_base())
+
+    return _SESSIONS[clean_sid]
 
 app = FastAPI(
     title="Alexa Farms Multimodal API",
@@ -52,20 +76,24 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def on_startup():
-    """Warm up Model 1 and Model 2 V3 on startup so subsequent requests are fast."""
+    """Warm up Model 1 and Model 2 V4 on startup so subsequent requests are fast."""
     try:
         logger.info("Initializing Model 1 neural weights...")
         get_model1()
         logger.info("Model 1 initialized successfully.")
     except Exception as exc:
-        logger.warning(f"Model 1 initialization deferred: {exc}")
+        logger.error(f"CRITICAL: Model 1 initialization failed: {exc}", exc_info=True)
+        raise exc
 
     try:
-        logger.info("Initializing Model 2 V3 EfficientNet-B2 classifier weights...")
+        logger.info("Initializing Model 2 V4 EfficientNet-B2 classifier weights...")
         m2 = get_model2()
-        logger.info(f"Model 2 V3 initialized successfully with {m2.num_classes} classes from {m2.checkpoint_path}.")
+        logger.info(f"Model 2 version: V4")
+        logger.info(f"Model 2 checkpoint: {m2.checkpoint_path}")
+        logger.info(f"Model 2 V4 initialized successfully with {m2.num_classes} classes.")
     except Exception as exc:
-        logger.warning(f"Model 2 V3 initialization deferred: {exc}")
+        logger.error(f"CRITICAL: Model 2 V4 initialization failed: {exc}", exc_info=True)
+        raise exc
 
 
 @app.get("/")
@@ -80,7 +108,7 @@ async def root():
         "frontend_url": "http://localhost:5173",
         "models": {
             "model1": "Plant Identification (Model 1 - EfficientNet-B2 22 crops)",
-            "model2": "Disease & Healthy Classification (Model 2 V3 - EfficientNet-B2 117 classes)",
+            "model2": "Disease & Healthy Classification (Model 2 V4 - EfficientNet-B2 117 classes)",
             "audio": "faster-whisper"
         }
     }
@@ -236,6 +264,7 @@ async def unified_chat_endpoint(
     text: Optional[str] = Form(None),
     input_type: Optional[str] = Form(None),
     language: Optional[str] = Form(None),
+    session_id: Optional[str] = Form(None),
     file: Optional[UploadFile] = File(None),
     audio_file: Optional[UploadFile] = File(None),
     image_file: Optional[UploadFile] = File(None),
@@ -248,9 +277,10 @@ async def unified_chat_endpoint(
     1. Validate input presence and media file extensions.
     2. Audio speech-to-text if audio is supplied.
     3. Combines typed and transcribed queries.
-    4. Runs Model 1 inference if image or video is attached.
+    4. Runs Model 1 and Model 2 V4 inference if image or video is attached.
     5. Routes query intent using the router.
-    6. Returns structured user and assistant response objects with debug telemetry.
+    6. Executes AgriculturalAssistant for deterministic, grounded agronomic reasoning and knowledge retrieval.
+    7. Returns structured user, assistant, vision, and knowledge response objects with debug telemetry.
     """
     message_id = str(uuid.uuid4())
 
@@ -372,57 +402,83 @@ async def unified_chat_endpoint(
     if video_result:
         m2_data = video_result.get("model2")
 
-    # Generate assistant summary message
-    if video_result:
-        crop_label = video_result.get("predicted_crop", "Unknown")
-        conf_pct = (video_result.get("confidence", 0.0) or 0.0) * 100
-        frames_count = video_result.get("frames_processed", 24)
-        
-        if m2_data and m2_data.get("has_disease"):
-            dis_name = m2_data.get("primary_disease", "Disease Detected")
-            dis_conf = m2_data.get("percentage", "N/A")
-            assistant_message = (
-                f"Identified crop from video ({frames_count} frames): {crop_label} ({conf_pct:.1f}% confidence).\n"
-                f"Diagnosis: {dis_name} ({dis_conf} confidence)."
-            )
-        elif video_result.get("status") == "valid":
-            assistant_message = (
-                f"Identified crop from video ({frames_count} frames): {crop_label} ({conf_pct:.1f}% confidence).\n"
-                f"Diagnosis: Healthy Foliage (No disease symptoms detected)."
-            )
+    # Standardize visual evidence for the Agricultural Knowledge Assistant
+    visual_evidence = None
+    if image_result:
+        m1 = image_result.get("model1", {}) or {}
+        m2 = image_result.get("model2", {}) or {}
+        m1_status = m1.get("status", "valid")
+        m2_status = m2.get("status", "uncertain")
+
+        if m1_status != "valid":
+            eff_status = "uncertain"
+        elif m2_status == "healthy":
+            eff_status = "healthy"
+        elif m2_status == "detected" and m2.get("has_disease"):
+            eff_status = "diseased"
         else:
-            assistant_message = f"Video analysis: {video_result.get('final_prediction', {}).get('reason', 'No clear plant found.')}"
-    elif image_result:
-        crop_label = m1_data.get("predicted_crop", "Unknown") if m1_data else "Unknown"
-        conf_pct = ((m1_data.get("confidence", 0.0) or 0.0) * 100) if m1_data else 0.0
-        
-        if m1_data and m1_data.get("status") == "valid":
-            m2_status = m2_data.get("status") if m2_data else "unknown"
-            if m2_status == "healthy":
-                assistant_message = (
-                    f"Identified plant: {crop_label} ({conf_pct:.1f}% confidence).\n"
-                    f"Diagnosis: Healthy Foliage (No disease symptoms detected)."
-                )
-            elif m2_status == "detected" and m2_data.get("has_disease"):
-                dis_name = m2_data.get("primary_disease", "Disease Detected")
-                dis_conf = m2_data.get("percentage", "N/A")
-                assistant_message = (
-                    f"Identified plant: {crop_label} ({conf_pct:.1f}% confidence).\n"
-                    f"Diagnosis: {dis_name} ({dis_conf} confidence)."
-                )
-            elif m2_status == "uncertain":
-                assistant_message = (
-                    f"Identified plant: {crop_label} ({conf_pct:.1f}% confidence).\n"
-                    f"Diagnosis: Condition Uncertain (crop-disease compatibility or confidence threshold not met)."
-                )
-            else:
-                assistant_message = f"Identified plant: {crop_label} ({conf_pct:.1f}% confidence)."
-        elif m1_data and m1_data.get("status") == "blurry":
-            assistant_message = "The uploaded image is too blurry for reliable plant identification. Please take a clearer photo."
+            eff_status = "uncertain"
+
+        crop_name_vis = image_result.get("predicted_crop") or m1.get("predicted_crop")
+        disease_slug_vis = m2.get("primary_disease_slug") or m2.get("primary_disease")
+
+        visual_evidence = {
+            "crop": crop_name_vis,
+            "crop_confidence": image_result.get("confidence") or m1.get("confidence", 0.0),
+            "disease": disease_slug_vis,
+            "disease_name": m2.get("primary_disease"),
+            "disease_confidence": m2.get("confidence", 0.0),
+            "status": eff_status,
+            "incompatibility_flag": (m2_status == "uncertain" and not m2.get("has_disease")),
+        }
+    elif video_result:
+        m2 = video_result.get("model2", {}) or {}
+        vid_status = video_result.get("status", "valid")
+        m2_status = m2.get("status", "uncertain")
+
+        if vid_status != "valid":
+            eff_status = "uncertain"
+        elif m2_status == "healthy":
+            eff_status = "healthy"
+        elif m2_status == "detected" and m2.get("has_disease"):
+            eff_status = "diseased"
         else:
-            assistant_message = "No recognizable plant or crop was detected in the uploaded image."
-    else:
-        assistant_message = f"Intent understood as '{routing.get('intent', 'unknown')}'. Local multimodal test interface ready."
+            eff_status = "uncertain"
+
+        visual_evidence = {
+            "crop": video_result.get("predicted_crop"),
+            "crop_confidence": video_result.get("confidence", 0.0),
+            "disease": m2.get("primary_disease_slug") or m2.get("primary_disease"),
+            "disease_name": m2.get("primary_disease"),
+            "disease_confidence": m2.get("confidence", 0.0),
+            "status": eff_status,
+            "incompatibility_flag": (m2_status == "uncertain" and not m2.get("has_disease")),
+        }
+
+    # Execute deterministic AgriculturalAssistant reasoning and knowledge retrieval
+    assistant = get_session_assistant(session_id)
+    knowledge_data = None
+    knowledge_sources = []
+
+    try:
+        kb_resp = assistant.answer_query(
+            query=final_query,
+            visual_result=visual_evidence,
+        )
+        assistant_message = kb_resp.text
+        knowledge_data = kb_resp.to_dict()
+        knowledge_sources = kb_resp.sources
+    except Exception as exc:
+        logger.error(f"AgriculturalAssistant reasoning error: {exc}", exc_info=True)
+        assistant_message = (
+            "I encountered an issue processing the agricultural knowledge for your request. "
+            "Please try rephrasing your question or check the image clarity."
+        )
+        knowledge_data = {
+            "status": "error",
+            "error": str(exc),
+            "text": assistant_message,
+        }
 
     inputs_dict = {
         "text": has_text,
@@ -431,9 +487,10 @@ async def unified_chat_endpoint(
         "video": has_video,
     }
 
-    # Structured Response
+    # Structured API Response
     return {
         "id": message_id,
+        "session_id": session_id,
         "message": assistant_message,
         "query": final_query,
         "original_query": text or final_query,
@@ -451,6 +508,8 @@ async def unified_chat_endpoint(
             "status": "not_applicable",
             "message": "No visual media provided for disease detection.",
         },
+        "knowledge": knowledge_data,
+        "knowledge_sources": knowledge_sources,
         "annotated_preview_url": annotated_preview,
         "unified_state": {
             "input_types": inputs_dict,

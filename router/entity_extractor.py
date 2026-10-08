@@ -145,11 +145,13 @@ def extract_entities(normalized_text: str, language: str = "en") -> ExtractedEnt
 
     for c_title, disease_slug, clean_d_name in all_disease_candidates:
         if re.search(r"\b" + re.escape(clean_d_name) + r"\b", text):
-            # If crop matches or no crop found yet, bind this disease
-            if not entities.crop or entities.crop == c_title:
-                entities.disease = disease_slug
-                if not entities.crop:
-                    entities.crop = c_title
+            if entities.crop:
+                if entities.crop == c_title:
+                    entities.disease = disease_slug
+                    break
+            else:
+                # Do not invent/force an unmentioned crop; let session context/dialogue resolve crop
+                entities.disease = clean_d_name
                 break
 
     return entities

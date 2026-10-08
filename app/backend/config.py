@@ -22,10 +22,10 @@ MODEL1_CHECKPOINT = PROJECT_ROOT / "models" / "model1" / "best_model.pth"
 MODEL1_CLASS_MAPPING = PROJECT_ROOT / "models" / "model1" / "class_mapping.json"
 MODEL1_CONFIG = PROJECT_ROOT / "models" / "model1" / "config.json"
 
-# Model 2 Paths (EfficientNet-B2 V3 Disease/Healthy Classifier)
-MODEL2_CHECKPOINT = PROJECT_ROOT / "models" / "model2_classifier_v3" / "best_model.pth"
-MODEL2_CLASS_MAPPING = PROJECT_ROOT / "models" / "model2_classifier_v3" / "class_mapping.json"
-MODEL2_CONFIG = PROJECT_ROOT / "models" / "model2_classifier_v3" / "config.json"
+# Model 2 Paths (EfficientNet-B2 V4 Disease/Healthy Classifier)
+MODEL2_CHECKPOINT = PROJECT_ROOT / "models" / "model2_classifier_v4" / "best_model.pth"
+MODEL2_CLASS_MAPPING = PROJECT_ROOT / "models" / "model2_classifier_v4" / "class_mapping.json"
+MODEL2_CONFIG = PROJECT_ROOT / "models" / "model2_classifier_v4" / "config.json"
 CROP_DISEASE_MAPPING = PROJECT_ROOT / "data" / "processed" / "model2_organized_crop_disease_mapping.json"
 if not CROP_DISEASE_MAPPING.exists():
     CROP_DISEASE_MAPPING = PROJECT_ROOT / "data" / "processed" / "model2_classifier_crop_disease_mapping.json"

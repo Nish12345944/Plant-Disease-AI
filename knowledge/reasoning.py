@@ -95,7 +95,15 @@ def reason_agricultural_query(
     # -----------------------------------------------------------------------
     # RULE 2: Uncertain / Low-Confidence Visual Evidence
     # -----------------------------------------------------------------------
-    if effective_status == "uncertain":
+    _vis_is_uncertain = visual_result and (
+        visual_result.get("uncertain")
+        or visual_result.get("is_uncertain")
+    )
+    _vis_confidence = visual_result and min(
+        visual_result.get("disease_confidence", 1.0),
+        visual_result.get("confidence", 1.0),
+    )
+    if effective_status == "uncertain" or _vis_is_uncertain or (_vis_confidence is not None and _vis_confidence < 0.60):
         notes.append("Visual inference confidence is below diagnostic threshold. Model result is uncertain.")
         return StructuredReasoningResult(
             applicable_rule="RULE_2_UNCERTAIN_VISUAL_EVIDENCE",
@@ -145,7 +153,11 @@ def reason_agricultural_query(
     # -----------------------------------------------------------------------
     has_kb = False
     if effective_disease:
-        has_kb = kb.has_disease_knowledge(effective_disease)
+        d_rec = kb.get_disease(effective_disease)
+        if d_rec is not None:
+            has_kb = True
+            effective_disease = d_rec.disease_slug
+            effective_crop = effective_crop or d_rec.crop
     elif effective_crop:
         has_kb = kb.get_crop(effective_crop) is not None
 

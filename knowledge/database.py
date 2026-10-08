@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Optional
 
 from knowledge.data.pilot_knowledge import PILOT_CROPS, PILOT_DISEASES
+from knowledge.data.v4_disease_knowledge import V4_CROP_KNOWLEDGE, V4_DISEASE_KNOWLEDGE
 from knowledge.schema import CropRecord, DiseaseRecord
 from knowledge.sources import SOURCE_REGISTRY, SourceRecord
 
@@ -22,13 +23,15 @@ KNOWLEDGE_STORE_DIR = PROJECT_ROOT / "knowledge" / "store"
 class AgriculturalKnowledgeBase:
     """In-memory and file-backed verified agricultural knowledge repository."""
 
-    def __init__(self, load_pilot: bool = True):
+    def __init__(self, load_pilot: bool = True, load_v4: bool = True):
         self.diseases: dict[str, DiseaseRecord] = {}
         self.crops: dict[str, CropRecord] = {}
         self.sources: dict[str, SourceRecord] = SOURCE_REGISTRY
 
         if load_pilot:
             self.load_pilot_data()
+        if load_v4:
+            self.load_v4_data()
 
     def load_pilot_data(self):
         """Populate initial verified knowledge base from pilot dataset."""
@@ -37,12 +40,34 @@ class AgriculturalKnowledgeBase:
         for crop_name, c_rec in PILOT_CROPS.items():
             self.crops[crop_name.lower()] = c_rec
 
+    def load_v4_data(self):
+        """Populate full Model 2 V4 knowledge base covering all 116 disease classes."""
+        for slug, d_rec in V4_DISEASE_KNOWLEDGE.items():
+            self.diseases[slug.lower()] = d_rec
+        for crop_name, c_rec in V4_CROP_KNOWLEDGE.items():
+            self.crops[crop_name.lower()] = c_rec
+
     def get_disease(self, disease_slug: Optional[str]) -> Optional[DiseaseRecord]:
-        """Look up a disease record by slug (case-insensitive)."""
+        """Look up a disease record by slug or common name (case-insensitive)."""
         if not disease_slug:
             return None
         slug_clean = disease_slug.strip().lower()
-        return self.diseases.get(slug_clean)
+        if slug_clean in self.diseases:
+            return self.diseases[slug_clean]
+
+        # Fallback: match by common name or partial disease slug
+        slug_norm = slug_clean.replace(" ", "_")
+        for slug, rec in self.diseases.items():
+            if slug_norm == slug:
+                return rec
+            if "__" in slug:
+                _, d_part = slug.split("__", 1)
+                if slug_norm == d_part or slug_clean == d_part.replace("_", " "):
+                    return rec
+            if slug_clean == rec.common_name.lower():
+                return rec
+
+        return None
 
     def get_crop(self, crop_name: Optional[str]) -> Optional[CropRecord]:
         """Look up a crop record by name (case-insensitive)."""
@@ -60,7 +85,7 @@ class AgriculturalKnowledgeBase:
         """Check if verified knowledge exists for a specific disease."""
         if not disease_slug:
             return False
-        return disease_slug.strip().lower() in self.diseases
+        return self.get_disease(disease_slug) is not None
 
     def export_summary(self) -> dict:
         return {

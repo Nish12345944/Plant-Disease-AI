@@ -1,0 +1,129 @@
+# Model 2 V4 Agricultural Knowledge Base Coverage Report
+
+- **Total V4 Disease Classes**: 116
+- **Knowledge Records Present**: 116/116 (100.0%)
+- **High Quality Level**: 116
+- **Medium Quality Level**: 0
+- **Limited Quality Level**: 0
+- **Missing Knowledge**: 0
+
+## Complete Class-by-Class Coverage Table
+
+| Disease Class | Crop | Present | Symptoms | Cause | Spread | Mgmt | Prev | Chemical Info | Diff Diag | Sources | Quality |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `apple__black_rot` | apple | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `apple__mosaic_virus` | apple | YES | YES | YES | YES | YES | YES | NO | YES | 4 | **HIGH** |
+| `apple__rust` | apple | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `apple__scab` | apple | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `banana__anthracnose` | banana | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `banana__black_leaf_streak` | banana | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `banana__bunchy_top` | banana | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `banana__cigar_end_rot` | banana | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `banana__cordana_leaf_spot` | banana | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `banana__panama_disease` | banana | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `basil__downy_mildew` | basil | YES | YES | YES | YES | YES | YES | YES | YES | 5 | **HIGH** |
+| `bean__angular_leaf_spot` | bean | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `bean__halo_blight` | bean | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `bean__mosaic_virus` | bean | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `bean__rust` | bean | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `bell_pepper__bacterial_spot` | bell_pepper | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `bell_pepper__blossom_end_rot` | bell_pepper | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `bell_pepper__frogeye_leaf_spot` | bell_pepper | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `bell_pepper__powdery_mildew` | bell_pepper | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `blueberry__anthracnose` | blueberry | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `blueberry__botrytis_blight` | blueberry | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `blueberry__mummy_berry` | blueberry | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `blueberry__rust` | blueberry | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `blueberry__scorch` | blueberry | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `broccoli__alternaria_leaf_spot` | broccoli | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `broccoli__downy_mildew` | broccoli | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `broccoli__ring_spot` | broccoli | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `cabbage__alternaria_leaf_spot` | cabbage | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `cabbage__black_rot` | cabbage | YES | YES | YES | YES | YES | YES | YES | YES | 5 | **HIGH** |
+| `cabbage__downy_mildew` | cabbage | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `carrot__alternaria_leaf_blight` | carrot | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `carrot__cavity_spot` | carrot | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `carrot__cercospora_leaf_blight` | carrot | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `cauliflower__alternaria_leaf_spot` | cauliflower | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `cauliflower__bacterial_soft_rot` | cauliflower | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `celery__anthracnose` | celery | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `celery__early_blight` | celery | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `cherry__leaf_spot` | cherry | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `cherry__powdery_mildew` | cherry | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `citrus__canker` | citrus | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `citrus__greening_disease` | citrus | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `coffee__berry_blotch` | coffee | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `coffee__black_rot` | coffee | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `coffee__brown_eye_spot` | coffee | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `coffee__leaf_rust` | coffee | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `corn__gray_leaf_spot` | corn | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `corn__northern_leaf_blight` | corn | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `corn__rust` | corn | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `corn__smut` | corn | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `cucumber__angular_leaf_spot` | cucumber | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `cucumber__bacterial_wilt` | cucumber | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `cucumber__powdery_mildew` | cucumber | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `eggplant__cercospora_leaf_spot` | eggplant | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `eggplant__phomopsis_fruit_rot` | eggplant | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `eggplant__phytophthora_blight` | eggplant | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `garlic__leaf_blight` | garlic | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `garlic__rust` | garlic | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `ginger__leaf_spot` | ginger | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `ginger__sheath_blight` | ginger | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `grape__black_rot` | grape | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `grape__downy_mildew` | grape | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `grape__grapevine_leafroll_disease` | grape | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `grape__leaf_spot` | grape | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `lettuce__downy_mildew` | lettuce | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `lettuce__mosaic_virus` | lettuce | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `maple__tar_spot` | maple | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `peach__anthracnose` | peach | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `peach__brown_rot` | peach | YES | YES | YES | YES | YES | YES | YES | YES | 5 | **HIGH** |
+| `peach__leaf_curl` | peach | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `peach__rust` | peach | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `peach__scab` | peach | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `plum__bacterial_spot` | plum | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `plum__brown_rot` | plum | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `plum__pocket_disease` | plum | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `plum__pox_virus` | plum | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `plum__rust` | plum | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `potato__early_blight` | potato | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `potato__late_blight` | potato | YES | YES | YES | YES | YES | YES | YES | YES | 5 | **HIGH** |
+| `raspberry__fire_blight` | raspberry | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `raspberry__gray_mold` | raspberry | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `raspberry__leaf_spot` | raspberry | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `raspberry__yellow_rust` | raspberry | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `rice__blast` | rice | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `rice__sheath_blight` | rice | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `soybean__bacterial_blight` | soybean | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `soybean__brown_spot` | soybean | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `soybean__downy_mildew` | soybean | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `soybean__frog_eye_leaf_spot` | soybean | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `soybean__mosaic` | soybean | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `soybean__rust` | soybean | YES | YES | YES | YES | YES | YES | YES | YES | 5 | **HIGH** |
+| `squash__powdery_mildew` | squash | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `strawberry__anthracnose` | strawberry | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `strawberry__leaf_scorch` | strawberry | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `tobacco__blue_mold` | tobacco | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `tobacco__brown_spot` | tobacco | YES | YES | YES | YES | YES | YES | YES | YES | 2 | **HIGH** |
+| `tobacco__frogeye_leaf_spot` | tobacco | YES | YES | YES | YES | YES | YES | YES | YES | 2 | **HIGH** |
+| `tobacco__mosaic_virus` | tobacco | YES | YES | YES | YES | YES | YES | YES | YES | 3 | **HIGH** |
+| `tomato__bacterial_leaf_spot` | tomato | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `tomato__early_blight` | tomato | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `tomato__late_blight` | tomato | YES | YES | YES | YES | YES | YES | YES | YES | 5 | **HIGH** |
+| `tomato__leaf_mold` | tomato | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `tomato__mosaic_virus` | tomato | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `tomato__septoria_leaf_spot` | tomato | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `tomato__yellow_leaf_curl_virus` | tomato | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `wheat__bacterial_leaf_streak_(black_chaff)` | wheat | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `wheat__head_scab` | wheat | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `wheat__leaf_rust` | wheat | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `wheat__loose_smut` | wheat | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `wheat__powdery_mildew` | wheat | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `wheat__septoria_blotch` | wheat | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `wheat__stem_rust` | wheat | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `wheat__stripe_rust` | wheat | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `zucchini__bacterial_wilt` | zucchini | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `zucchini__downy_mildew` | zucchini | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `zucchini__powdery_mildew` | zucchini | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |
+| `zucchini__yellow_mosaic_virus` | zucchini | YES | YES | YES | YES | YES | YES | YES | YES | 4 | **HIGH** |

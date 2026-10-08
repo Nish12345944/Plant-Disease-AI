@@ -196,12 +196,12 @@ def run_knowledge_reasoning_test_suite():
     print("\n--- PART D: Unknown / Unverified Knowledge ---")
     assistant.reset_session()
 
-    # D1. Unverified disease not in KB (e.g. apple black rot)
-    resp_d1 = assistant.answer_query("what are the symptoms of apple black rot?")
+    # D1. Unverified disease not in KB (e.g. dragonfruit cosmic blight or avocado sunblotch)
+    resp_d1 = assistant.answer_query("what are the symptoms of dragonfruit cosmic blight?")
     assert_test(
         "D1. Unverified Disease -> Explicit Missing Knowledge Notice",
         resp_d1.status == "unverified"
-        and ("not yet present" in resp_d1.text.lower() or "verified" in resp_d1.text.lower())
+        and ("not yet present" in resp_d1.text.lower() or "verified" in resp_d1.text.lower() or "not in our verified" in resp_d1.text.lower())
         and not resp_d1.sources,
         f"Status: {resp_d1.status}, Text: {resp_d1.text[:100]}...",
     )

@@ -1,0 +1,31 @@
+source_id,organization,title,tier,url,year
+SRC_APS_PRESS,The American Phytopathological Society (APS),American Phytopathological Society (APS) Compendia of Plant Diseases,TIER_1,https://apsjournals.apsnet.org/series/compendia,2024
+SRC_CABI_CPC,Centre for Agriculture and Bioscience International (CABI),CABI Crop Protection Compendium and Plantwise Knowledge Bank,TIER_1,https://www.cabi.org/cpc/,2024
+SRC_CIMMYT,International Maize and Wheat Improvement Center (CIMMYT),CIMMYT International Maize and Wheat Improvement Center Disease Guides,TIER_1,https://www.cimmyt.org/,2023
+SRC_CORNELL_EXT,Cornell University College of Agriculture and Life Sciences,Cornell Cooperative Extension Vegetable Pathology and Diagnostic Factsheets,TIER_2,https://www.vegetables.cornell.edu/pest-management/disease-factsheets/,2024
+SRC_CTAHR_HAWAII,College of Tropical Agriculture and Human Resources (CTAHR),University of Hawaii at Manoa CTAHR Cooperative Extension Tropical Plant Pathology,TIER_2,https://www.ctahr.hawaii.edu/site/extprojects.aspx,2023
+SRC_EPPO_GLOBAL,European and Mediterranean Plant Protection Organization (EPPO),EPPO Global Database Plant Quarantine and Phytosanitary Factsheets,TIER_1,https://gd.eppo.int/,2024
+SRC_FAO_PLANT,Food and Agriculture Organization of the United Nations (FAO),FAO Integrated Pest and Disease Management Guidelines,TIER_1,https://www.fao.org/pest-and-pesticide-management/ipm/,2023
+SRC_ICAR_CPRI,Indian Council of Agricultural Research - CPRI,ICAR-Central Potato Research Institute Technical Bulletins,TIER_1,https://cpri.icar.gov.in/,2023
+SRC_ICAR_IARI,Indian Council of Agricultural Research - IARI,ICAR-Indian Agricultural Research Institute Division of Plant Pathology,TIER_1,https://www.iari.res.in/,2023
+SRC_ICAR_IISR,Indian Council of Agricultural Research - Indian Institute of Spices Research,ICAR-IISR Good Agricultural Practices and Disease Management in Spices,TIER_1,http://www.spices.res.in/publication/package-practices,2023
+SRC_ICAR_NRCC,Indian Council of Agricultural Research - CCRI (formerly NRCC),ICAR-Central Citrus Research Institute Disease Management Guidelines,TIER_1,https://ccri.icar.gov.in/,2023
+SRC_IOWA_STATE_EXT,Iowa State University Extension and Outreach,Iowa State University Extension Integrated Pest Management: Soybean Rust and Foliar Diseases,TIER_2,https://crops.extension.iastate.edu/cropnews,2024
+SRC_IRRI_RICE,International Rice Research Institute (IRRI),International Rice Research Institute (IRRI) Rice Knowledge Bank,TIER_1,http://www.knowledgebank.irri.org/,2023
+SRC_KSU_EXT,Kansas State University Agricultural Experiment Station,Kansas State University Extension Wheat & Cereal Disease Management Guides,TIER_2,https://www.plantpath.k-state.edu/extension/crop-diseases/,2024
+SRC_MSU_EXT,Michigan State University Extension,Michigan State University Extension Plant & Pest Management Factsheets,TIER_2,https://www.canr.msu.edu/pest_management/,2024
+SRC_NCSTATE_EXT,North Carolina State University Extension,NC State Extension Cucurbit Downy Mildew and Foliar Pathology Portal,TIER_2,https://content.ces.ncsu.edu/cucurbit-downy-mildew,2024
+SRC_OSU_EXT,Oregon State University Extension Service,Oregon State University Extension Pacific Northwest Plant Disease Management Handbook,TIER_2,https://pnwhandbooks.org/plantdisease,2024
+SRC_PENNSTATE_EXT,Pennsylvania State University College of Agricultural Sciences,Penn State Extension Tree Fruit and Vegetable Disease Management Guides,TIER_2,https://extension.psu.edu/plant-disease-management,2024
+SRC_PURDUE_EXT,Purdue University Cooperative Extension Service,Purdue Extension Plant and Pest Diagnostic Laboratory Disease Guides,TIER_2,https://extension.purdue.edu/programs/agriculture-natural-resources/,2023
+SRC_RUTGERS_EXT,Rutgers New Jersey Agricultural Experiment Station,Rutgers NJAES Plant Pathology and Commercial Vegetable Production Recommendations,TIER_2,https://plant-pest-advisory.rutgers.edu/,2024
+SRC_TAMU_EXT,Texas A&M AgriLife Extension Service,Texas A&M AgriLife Extension Plant Disease Handbook,TIER_2,https://plantdiseasehandbook.tamu.edu/,2023
+SRC_UC_IPM,University of California Agriculture and Natural Resources,University of California Statewide Integrated Pest Management Program (UC IPM),TIER_2,https://ipm.ucanr.edu/PMG/crops-agriculture.html,2024
+SRC_UF_IFAS,University of Florida Institute of Food and Agricultural Sciences,University of Florida IFAS Extension Plant Pathology Guidelines,TIER_2,https://edis.ifas.ufl.edu/topic_plant_diseases,2023
+SRC_UGA_EXT,University of Georgia Cooperative Extension,University of Georgia Extension Plant Disease Management Factsheets,TIER_2,https://extension.uga.edu/topic-areas/plant-diseases.html,2023
+SRC_UMN_EXT,University of Minnesota Extension,University of Minnesota Extension Plant Disease Management Library,TIER_2,https://extension.umn.edu/plant-diseases,2023
+SRC_UNL_EXT,University of Nebraska-Lincoln,University of Nebraska-Lincoln Extension CropWatch Rust Management,TIER_2,https://cropwatch.unl.edu/plantdisease,2023
+SRC_USDA_ARS,United States Department of Agriculture (USDA-ARS),USDA Agricultural Research Service Plant Disease Management Compendium,TIER_1,https://www.ars.usda.gov/research/plant-diseases/,2024
+SRC_WCR_COFFEE,World Coffee Research (WCR),World Coffee Research / International Coffee Organization Disease Control Manuals,TIER_1,https://worldcoffeeresearch.org/,2023
+SRC_WISCONSIN_EXT,University of Wisconsin-Madison Extension,University of Wisconsin-Madison Division of Extension Vegetable & Fruit Pathology,TIER_2,https://vegpath.plantpath.wisc.edu/,2024
+SRC_WSU_EXT,Washington State University Extension,Washington State University Extension Allium Disease and Pest Diagnostic Guide,TIER_2,https://extension.wsu.edu/allium-pathology,2023

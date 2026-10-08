@@ -1,0 +1,6 @@
+audit_check,expected,observed,status,notes
+Exact SHA-256 Duplicates in Dataset,0,0,PASS,Strict SHA-256 filter enforced during ingestion
+Cross-Split Exact Hash Leakage,0,0,PASS,No SHA-256 hash appears in multiple splits
+178-Image Benchmark Test Contamination,0,0,PASS,Zero benchmark hashes in Model 1 test set
+Model 2 V4 Immutable Test Contamination,0,0,PASS,Zero M2 V4 test hashes in Model 1 test set
+Corrupt or Zero-Byte Image Files,0,0,PASS,PIL verify() passed on 100% of images

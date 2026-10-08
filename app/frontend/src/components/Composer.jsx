@@ -10,7 +10,8 @@ import {
   Image as ImageIcon, 
   Video as VideoIcon, 
   FileAudio,
-  Radio
+  UploadCloud,
+  Sparkles
 } from 'lucide-react';
 import CameraMenu from './CameraMenu';
 import AudioMenu from './AudioMenu';
@@ -23,6 +24,7 @@ export default function Composer({
   onSendMessage,
   onOpenLiveCamera,
   onTranscribeAudioFile,
+  onFileDrop,
   isRecording,
   isTranscribing,
   recordingTime,
@@ -32,7 +34,9 @@ export default function Composer({
 }) {
   const [cameraMenuOpen, setCameraMenuOpen] = useState(false);
   const [audioMenuOpen, setAudioMenuOpen] = useState(false);
+  const [isComposerDragOver, setIsComposerDragOver] = useState(false);
   const inputRef = useRef(null);
+  const composerFileInputRef = useRef(null);
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -66,29 +70,18 @@ export default function Composer({
   };
 
   const handleSelectImage = (file) => {
-    const previewUrl = URL.createObjectURL(file);
-    setStagedMedia({
-      type: 'image',
-      file,
-      url: previewUrl,
-      name: file.name,
-      size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
-    });
+    if (onFileDrop) {
+      onFileDrop(file);
+    }
   };
 
   const handleSelectVideo = (file) => {
-    const previewUrl = URL.createObjectURL(file);
-    setStagedMedia({
-      type: 'video',
-      file,
-      url: previewUrl,
-      name: file.name,
-      size: (file.size / (1024 * 1024)).toFixed(2) + ' MB',
-    });
+    if (onFileDrop) {
+      onFileDrop(file);
+    }
   };
 
   const handleSelectAudioFile = (file) => {
-    // According to specs: uploaded audio triggers transcription into prompt box
     onTranscribeAudioFile(file);
   };
 
@@ -103,49 +96,115 @@ export default function Composer({
     return `${m}:${s}`;
   };
 
+  // Drag and Drop handlers on Composer
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsComposerDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsComposerDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsComposerDragOver(false);
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0 && onFileDrop) {
+      onFileDrop(files[0]);
+    }
+  };
+
   const canSend = (inputText.trim().length > 0 || stagedMedia !== null) && !isLoading && !isRecording && !isTranscribing;
 
   return (
-    <footer className="app-composer-wrapper">
+    <footer 
+      className={`app-composer-wrapper ${isComposerDragOver ? 'composer-drag-over' : ''}`}
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {/* Hidden file input for quick browse */}
+      <input 
+        type="file"
+        ref={composerFileInputRef}
+        style={{ display: 'none' }}
+        accept=".jpg,.jpeg,.png,.webp,.bmp,.mp4,.avi,.mov,.mkv,.webm,.m4v,image/*,video/*"
+        onChange={(e) => {
+          if (e.target.files?.[0] && onFileDrop) {
+            onFileDrop(e.target.files[0]);
+            e.target.value = '';
+          }
+        }}
+      />
+
       {/* Staged Media Bar above Composer */}
       {stagedMedia && (
         <div className="staged-media-chip animate-slide-up">
           <div className="staged-media-info">
             {stagedMedia.type === 'image' && (
               <>
-                <img src={stagedMedia.url} alt="Staged thumbnail" className="staged-thumb" />
-                <span className="staged-name">
-                  <ImageIcon size={14} color="var(--primary-emerald)" /> {stagedMedia.name}
-                </span>
+                <img src={stagedMedia.url} alt="Staged preview" className="staged-thumb" />
+                <div className="staged-details">
+                  <span className="staged-name">
+                    <ImageIcon size={14} color="var(--primary-emerald)" /> {stagedMedia.name}
+                  </span>
+                  <span className="staged-meta">{stagedMedia.size}</span>
+                </div>
               </>
             )}
             {stagedMedia.type === 'video' && (
               <>
-                <span className="staged-name">
-                  <VideoIcon size={14} color="var(--primary-emerald)" /> {stagedMedia.name} ({stagedMedia.size})
-                </span>
+                <video src={stagedMedia.url} className="staged-thumb staged-video-thumb" muted autoPlay loop playsInline />
+                <div className="staged-details">
+                  <span className="staged-name">
+                    <VideoIcon size={14} color="var(--primary-emerald)" /> {stagedMedia.name}
+                  </span>
+                  <span className="staged-meta">{stagedMedia.size}</span>
+                </div>
               </>
             )}
             {stagedMedia.type === 'audio' && (
               <>
-                <span className="staged-name">
-                  <FileAudio size={14} color="var(--primary-emerald)" /> {stagedMedia.name}
-                </span>
+                <div className="staged-audio-icon">
+                  <FileAudio size={18} color="var(--primary-emerald)" />
+                </div>
+                <div className="staged-details">
+                  <span className="staged-name">{stagedMedia.name}</span>
+                  <span className="staged-meta">{stagedMedia.size}</span>
+                </div>
               </>
             )}
           </div>
-          <button 
-            className="btn-remove-staged" 
-            onClick={handleRemoveStagedMedia}
-            title="Remove attachment"
-          >
-            <X size={14} />
-          </button>
+
+          <div className="staged-media-actions">
+            <button
+              className="btn-staged-analyze"
+              onClick={handleSubmit}
+              disabled={isLoading}
+              title="Run Model 1 + Model 2 V4 Diagnosis"
+            >
+              <Sparkles size={13} />
+              <span>Analyze</span>
+            </button>
+            <button 
+              className="btn-remove-staged" 
+              onClick={handleRemoveStagedMedia}
+              title="Remove attachment"
+            >
+              <X size={14} />
+            </button>
+          </div>
         </div>
       )}
 
       {/* Main Composer Box */}
-      <div className={`composer-box ${isRecording ? 'recording-active' : ''}`}>
+      <div className={`composer-box ${isRecording ? 'recording-active' : ''} ${isComposerDragOver ? 'border-emerald-glow' : ''}`}>
         {/* Left: Camera / Media Button */}
         <div className="composer-action-container">
           <button
@@ -203,7 +262,7 @@ export default function Composer({
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Ask about your farm..."
+              placeholder={stagedMedia ? "Add a message or press Enter / Analyze..." : "Ask about your farm or drop an image/video..."}
               disabled={isLoading}
             />
           </div>
@@ -246,7 +305,7 @@ export default function Composer({
             className={`composer-btn send-btn ${canSend ? 'active' : 'disabled'}`}
             onClick={handleSubmit}
             disabled={!canSend}
-            title="Send Query (Enter)"
+            title="Send Query / Analyze (Enter)"
           >
             <Send size={17} strokeWidth={2.5} />
           </button>

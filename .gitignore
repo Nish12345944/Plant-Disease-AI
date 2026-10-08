@@ -19,11 +19,18 @@ __pycache__/
 # Datasets
 data/downloads/
 data/external/
+!data/external/model1_expansion/README.md
 data/processed/
 
-# Runtime / logs
+# Runtime / logs / temp media
 *.log
 *.tmp
+temp_multimodal_uploads/
+temp_test_videos/
+reports/video_debug/
+*.mp4
+*.avi
+*.wav
 
 # IDE
 .vscode/

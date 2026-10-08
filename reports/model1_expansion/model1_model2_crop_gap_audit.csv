@@ -1,0 +1,40 @@
+model2_crop,number_of_disease_classes,disease_classes,healthy_available,currently_reachable_from_model1,recommended_model1_action
+apple,4,apple__black_rot;apple__mosaic_virus;apple__rust;apple__scab,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+banana,6,banana__anthracnose;banana__black_leaf_streak;banana__bunchy_top;banana__cigar_end_rot;banana__cordana_leaf_spot;banana__panama_disease,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+basil,1,basil__downy_mildew,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+bean,4,bean__angular_leaf_spot;bean__halo_blight;bean__mosaic_virus;bean__rust,True,YES (Aliased from french_bean),B. MAP TO EXISTING MODEL 1 CLASS (french_bean <-> bean)
+bell_pepper,4,bell_pepper__bacterial_spot;bell_pepper__blossom_end_rot;bell_pepper__frogeye_leaf_spot;bell_pepper__powdery_mildew,True,YES (Aliased from capsicum),B. MAP TO EXISTING MODEL 1 CLASS (capsicum <-> bell_pepper)
+blueberry,5,blueberry__anthracnose;blueberry__botrytis_blight;blueberry__mummy_berry;blueberry__rust;blueberry__scorch,False (Shared Class 0 only),YES (Direct M1 Class),RETAIN (Current Model 1 Class)
+broccoli,3,broccoli__alternaria_leaf_spot;broccoli__downy_mildew;broccoli__ring_spot,True,YES (Direct M1 Class),RETAIN (Current Model 1 Class)
+cabbage,3,cabbage__alternaria_leaf_spot;cabbage__black_rot;cabbage__downy_mildew,True,NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+capsicum,0,none,True,"YES (Healthy only, M1 recognized)",RETAIN (Current Model 1 Class)
+carrot,3,carrot__alternaria_leaf_blight;carrot__cavity_spot;carrot__cercospora_leaf_blight,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+cauliflower,2,cauliflower__alternaria_leaf_spot;cauliflower__bacterial_soft_rot,True,NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+celery,2,celery__anthracnose;celery__early_blight,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+cherry,2,cherry__leaf_spot;cherry__powdery_mildew,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+citrus,2,citrus__canker;citrus__greening_disease,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+coffee,4,coffee__berry_blotch;coffee__black_rot;coffee__brown_eye_spot;coffee__leaf_rust,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+corn,4,corn__gray_leaf_spot;corn__northern_leaf_blight;corn__rust;corn__smut,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+cucumber,3,cucumber__angular_leaf_spot;cucumber__bacterial_wilt;cucumber__powdery_mildew,True,YES (Direct M1 Class),RETAIN (Current Model 1 Class)
+eggplant,3,eggplant__cercospora_leaf_spot;eggplant__phomopsis_fruit_rot;eggplant__phytophthora_blight,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+garlic,2,garlic__leaf_blight;garlic__rust,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+ginger,2,ginger__leaf_spot;ginger__sheath_blight,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+grape,4,grape__black_rot;grape__downy_mildew;grape__grapevine_leafroll_disease;grape__leaf_spot,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+lettuce,2,lettuce__downy_mildew;lettuce__mosaic_virus,True,YES (Direct M1 Class),RETAIN (Current Model 1 Class)
+maple,1,maple__tar_spot,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+marigold,0,none,True,"YES (Healthy only, M1 recognized)",RETAIN (Current Model 1 Class)
+peach,5,peach__anthracnose;peach__brown_rot;peach__leaf_curl;peach__rust;peach__scab,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+plum,5,plum__bacterial_spot;plum__brown_rot;plum__pocket_disease;plum__pox_virus;plum__rust,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+potato,2,potato__early_blight;potato__late_blight,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+raspberry,4,raspberry__fire_blight;raspberry__gray_mold;raspberry__leaf_spot;raspberry__yellow_rust,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+rice,2,rice__blast;rice__sheath_blight,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+rose,0,none,True,"YES (Healthy only, M1 recognized)",RETAIN (Current Model 1 Class)
+soybean,6,soybean__bacterial_blight;soybean__brown_spot;soybean__downy_mildew;soybean__frog_eye_leaf_spot;soybean__mosaic;soybean__rust,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+spinach,0,none,True,"YES (Healthy only, M1 recognized)",RETAIN (Current Model 1 Class)
+squash,1,squash__powdery_mildew,False (Shared Class 0 only),NO (Unmapped to zucchini),B. MAP TO EXISTING MODEL 1 CLASS (squash -> zucchini)
+strawberry,2,strawberry__anthracnose;strawberry__leaf_scorch,True,YES (Direct M1 Class),RETAIN (Current Model 1 Class)
+tobacco,4,tobacco__blue_mold;tobacco__brown_spot;tobacco__frogeye_leaf_spot;tobacco__mosaic_virus,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+tomato,7,tomato__bacterial_leaf_spot;tomato__early_blight;tomato__late_blight;tomato__leaf_mold;tomato__mosaic_virus;tomato__septoria_leaf_spot;tomato__yellow_leaf_curl_virus,True,YES (Direct M1 Class),RETAIN (Current Model 1 Class)
+turnip,0,none,True,NO (0 disease classes in M2),C. DO NOT ADD (0 diseases in V4; healthy only; review for V5)
+wheat,8,wheat__bacterial_leaf_streak_(black_chaff);wheat__head_scab;wheat__leaf_rust;wheat__loose_smut;wheat__powdery_mildew;wheat__septoria_blotch;wheat__stem_rust;wheat__stripe_rust,False (Shared Class 0 only),NO (Absent from Model 1),A. ADD AS NEW MODEL 1 CLASS
+zucchini,4,zucchini__bacterial_wilt;zucchini__downy_mildew;zucchini__powdery_mildew;zucchini__yellow_mosaic_virus,False (Shared Class 0 only),YES (Direct M1 Class),RETAIN (Current Model 1 Class)
