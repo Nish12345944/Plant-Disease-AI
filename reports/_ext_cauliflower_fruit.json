@@ -1,0 +1,30 @@
+{
+ "Alternaria Brassicae": {
+  "files": 45,
+  "unique": 44
+ },
+ "Bacterial Soft Rot": {
+  "files": 201,
+  "unique": 200
+ },
+ "Bacterial Spot": {
+  "files": 405,
+  "unique": 403
+ },
+ "Bacterial spot rot": {
+  "files": 173,
+  "unique": 168
+ },
+ "Black Spot": {
+  "files": 251,
+  "unique": 251
+ },
+ "healthy": {
+  "files": 206,
+  "unique": 206
+ },
+ "Purple Tinges": {
+  "files": 153,
+  "unique": 153
+ }
+}

@@ -1,0 +1,28 @@
+{
+ "candidate_dataset": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\data\\processed\\carrot_model2_candidate",
+ "total_source_images": 1394,
+ "valid_annotated_images": 1394,
+ "verified_carrot_images": 0,
+ "images_included": 0,
+ "images_excluded": 1394,
+ "disease_classes_created": [],
+ "split_counts": {},
+ "deduplication": {
+  "internal_exact_dupe_groups": 0,
+  "internal_near_dupe_groups": 15,
+  "note": "No image was assigned to a class, so no train/val/test split was produced."
+ },
+ "leakage_check": {
+  "exact_overlap_with_model2_v4_carrot": 0,
+  "near_duplicate_overlap_with_model2_v4_carrot": 0,
+  "result": "NO overlap with existing Model 2 carrot images"
+ },
+ "annotation_validation_issues": {
+  "missing_label": 0,
+  "empty_label": 0,
+  "invalid_classid": 0,
+  "malformed": 0,
+  "invalid_coords": 0,
+  "odd_coord_count": 0
+ }
+}

@@ -1,0 +1,27 @@
+yolo_class_id,original_class_name,annotated_images,bounding_boxes,represents,belongs_to_carrot,in_carrot_model2_taxonomy,label_confidence,recommended_action
+0,anthracnose,75,207,"disease (generic produce, not confirmed carrot)",no,no,low (crop not confirmed; generic produce-defect labels),review
+1,anthracnose_fruit_rot,96,157,disease (FRUIT rot - not carrot leaf),no,no,low (crop not confirmed; generic produce-defect labels),review
+2,bacterial_spot,18,95,disease (NOT in carrot taxonomy),no,no,low (crop not confirmed; generic produce-defect labels),review
+3,black_rot,19,49,disease (NOT in carrot taxonomy),no,no,low (crop not confirmed; generic produce-defect labels),review
+4,bruise,26,30,physical defect (not a disease),no,no,low (crop not confirmed; generic produce-defect labels),exclude
+5,color,25,71,quality attribute (not a disease),no,no,low (crop not confirmed; generic produce-defect labels),exclude
+6,combined,17,73,meta/non-specific,no,no,low (crop not confirmed; generic produce-defect labels),exclude
+7,contamination,21,23,foreign matter (not a disease),no,no,low (crop not confirmed; generic produce-defect labels),exclude
+8,crack,67,75,physical defect (not a disease),no,no,low (crop not confirmed; generic produce-defect labels),exclude
+9,cut,17,23,physical handling defect,no,no,low (crop not confirmed; generic produce-defect labels),exclude
+10,defect,587,6647,meta/generic defect,no,no,low (crop not confirmed; generic produce-defect labels),exclude
+11,early_blight,20,152,disease (NOT in carrot taxonomy),no,no,low (crop not confirmed; generic produce-defect labels),review
+12,esca,19,125,disease (grapevine - WRONG crop),no,no,low (crop not confirmed; generic produce-defect labels),exclude
+13,faulty_imprint,41,42,packaging print defect,no,no,low (crop not confirmed; generic produce-defect labels),exclude
+14,gray_mold,104,154,disease (NOT in carrot taxonomy),no,no,low (crop not confirmed; generic produce-defect labels),review
+15,hole,18,24,physical defect / pest hole (ambiguous),no,no,low (crop not confirmed; generic produce-defect labels),exclude
+16,late_blight,19,30,disease (NOT in carrot taxonomy),no,no,low (crop not confirmed; generic produce-defect labels),review
+17,leaf scorch,20,79,disease (NOT in carrot taxonomy),no,no,low (crop not confirmed; generic produce-defect labels),review
+18,mold,20,58,"disease (generic mold, non-specific)",no,no,low (crop not confirmed; generic produce-defect labels),review
+19,mold-bread,30,119,bread mold (WRONG food product),no,no,low (crop not confirmed; generic produce-defect labels),exclude
+20,poke,21,22,physical handling defect,no,no,low (crop not confirmed; generic produce-defect labels),exclude
+21,print,17,73,packaging print defect,no,no,low (crop not confirmed; generic produce-defect labels),exclude
+22,rust,10,104,disease (NOT in carrot taxonomy),no,no,low (crop not confirmed; generic produce-defect labels),review
+23,scab,20,92,disease (NOT in carrot taxonomy),no,no,low (crop not confirmed; generic produce-defect labels),review
+24,scratch,47,54,physical handling defect,no,no,low (crop not confirmed; generic produce-defect labels),exclude
+25,squeeze,20,20,physical handling defect,no,no,low (crop not confirmed; generic produce-defect labels),exclude

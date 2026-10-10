@@ -1,0 +1,34 @@
+{
+ "banana": {
+  "files": 44,
+  "unique": 44
+ },
+ "bean": {
+  "files": 2,
+  "unique": 2
+ },
+ "cucumber": {
+  "files": 20,
+  "unique": 20
+ },
+ "peach": {
+  "files": 4,
+  "unique": 4
+ },
+ "soybean": {
+  "files": 2,
+  "unique": 2
+ },
+ "tomato": {
+  "files": 80,
+  "unique": 80
+ },
+ "wheat": {
+  "files": 8,
+  "unique": 8
+ },
+ "zucchini": {
+  "files": 18,
+  "unique": 18
+ }
+}

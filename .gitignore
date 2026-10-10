@@ -34,6 +34,14 @@ reports/video_debug/
 
 # IDE
 .vscode/
+# Local dataset backups & scratch work
+backups/
+scratch/
+
+# Cache
+.pytest_cache/
+.mypy_cache/
+
 .idea/
 
 # OS

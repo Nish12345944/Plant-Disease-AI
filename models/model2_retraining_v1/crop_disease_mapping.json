@@ -1,0 +1,216 @@
+{
+  "apple": [
+    "black_rot",
+    "mosaic_virus",
+    "rust",
+    "scab"
+  ],
+  "banana": [
+    "anthracnose",
+    "black_leaf_streak",
+    "bunchy_top",
+    "cigar_end_rot",
+    "cordana_leaf_spot",
+    "panama_disease"
+  ],
+  "basil": [
+    "downy_mildew"
+  ],
+  "bean": [
+    "angular_leaf_spot",
+    "halo_blight",
+    "mosaic_virus",
+    "rust"
+  ],
+  "bell_pepper": [
+    "bacterial_spot",
+    "blossom_end_rot",
+    "frogeye_leaf_spot",
+    "leaf_curl",
+    "powdery_mildew"
+  ],
+  "blueberry": [
+    "anthracnose",
+    "botrytis_blight",
+    "exobasidium",
+    "mummy_berry",
+    "rust",
+    "scorch",
+    "septoria_leaf_spot"
+  ],
+  "broccoli": [
+    "alternaria_leaf_spot",
+    "downy_mildew",
+    "ring_spot"
+  ],
+  "cabbage": [
+    "alternaria_leaf_spot",
+    "black_rot",
+    "downy_mildew"
+  ],
+  "carrot": [
+    "alternaria_leaf_blight",
+    "cavity_spot",
+    "cercospora_leaf_blight"
+  ],
+  "cauliflower": [
+    "alternaria_leaf_spot",
+    "bacterial_soft_rot",
+    "black_rot",
+    "downy_mildew",
+    "pest_damage"
+  ],
+  "celery": [
+    "anthracnose",
+    "early_blight"
+  ],
+  "cherry": [
+    "leaf_spot",
+    "powdery_mildew"
+  ],
+  "citrus": [
+    "canker",
+    "greening_disease"
+  ],
+  "coffee": [
+    "berry_blotch",
+    "black_rot",
+    "brown_eye_spot",
+    "leaf_rust"
+  ],
+  "corn": [
+    "gray_leaf_spot",
+    "northern_leaf_blight",
+    "rust",
+    "smut"
+  ],
+  "cucumber": [
+    "angular_leaf_spot",
+    "bacterial_wilt",
+    "powdery_mildew"
+  ],
+  "eggplant": [
+    "cercospora_leaf_spot",
+    "mosaic_virus",
+    "pest_damage",
+    "phomopsis_fruit_rot",
+    "phytophthora_blight",
+    "wilt_disease"
+  ],
+  "garlic": [
+    "leaf_blight",
+    "rust"
+  ],
+  "ginger": [
+    "leaf_blight",
+    "leaf_spot",
+    "pest_damage",
+    "sheath_blight"
+  ],
+  "grape": [
+    "black_rot",
+    "downy_mildew",
+    "grapevine_leafroll_disease",
+    "leaf_spot"
+  ],
+  "lettuce": [
+    "downy_mildew",
+    "mosaic_virus"
+  ],
+  "maple": [
+    "tar_spot"
+  ],
+  "peach": [
+    "anthracnose",
+    "brown_rot",
+    "leaf_curl",
+    "rust",
+    "scab"
+  ],
+  "plum": [
+    "bacterial_spot",
+    "brown_rot",
+    "pocket_disease",
+    "pox_virus",
+    "rust",
+    "shot_hole"
+  ],
+  "potato": [
+    "early_blight",
+    "late_blight"
+  ],
+  "raspberry": [
+    "fire_blight",
+    "gray_mold",
+    "leaf_spot",
+    "yellow_rust"
+  ],
+  "rice": [
+    "blast",
+    "sheath_blight"
+  ],
+  "rose": [
+    "black_spot",
+    "downy_mildew",
+    "mosaic_virus",
+    "pest_damage",
+    "powdery_mildew",
+    "rust"
+  ],
+  "soybean": [
+    "bacterial_blight",
+    "brown_spot",
+    "downy_mildew",
+    "frog_eye_leaf_spot",
+    "mosaic",
+    "rust"
+  ],
+  "spinach": [
+    "anthracnose",
+    "bacterial_spot",
+    "downy_mildew",
+    "pest_damage"
+  ],
+  "squash": [
+    "powdery_mildew"
+  ],
+  "strawberry": [
+    "angular_leaf_spot",
+    "anthracnose",
+    "gray_mold",
+    "leaf_scorch",
+    "leaf_spot",
+    "powdery_mildew"
+  ],
+  "tobacco": [
+    "blue_mold",
+    "brown_spot",
+    "frogeye_leaf_spot",
+    "mosaic_virus"
+  ],
+  "tomato": [
+    "bacterial_leaf_spot",
+    "early_blight",
+    "late_blight",
+    "leaf_mold",
+    "mosaic_virus",
+    "septoria_leaf_spot",
+    "yellow_leaf_curl_virus"
+  ],
+  "wheat": [
+    "bacterial_leaf_streak_(black_chaff)",
+    "head_scab",
+    "leaf_rust",
+    "loose_smut",
+    "powdery_mildew",
+    "septoria_blotch",
+    "stem_rust",
+    "stripe_rust"
+  ],
+  "zucchini": [
+    "bacterial_wilt",
+    "downy_mildew",
+    "powdery_mildew",
+    "yellow_mosaic_virus"
+  ]
+}

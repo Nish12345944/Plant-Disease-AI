@@ -1,0 +1,26 @@
+source_path,crop,disease_label,image_count,label_verification_status,represented_in_processed
+data/processed/model1_balanced,multi,22 crop classes (balanced),16537,verified (balanced/downsampled),yes
+data/processed/model1_expanded,multi,46 crop slots,15566,verified,yes
+data/processed/model2_v4,multi,116 diseases + shared healthy,19920,verified,yes
+data/external/Pepper Bell Leaf Disease/pepperbell_leaves/PepperBell_Bacterial Spot,bell_pepper,bacterial_spot,4080,"folder-named, unverified",no
+data/external/Pepper Bell Leaf Disease/pepperbell_leaves/PepperBell_Cercospora Leaf Spot,bell_pepper,cercospora_leaf_spot,1572,"folder-named, NOT in taxonomy",no
+data/external/Pepper Bell Leaf Disease/pepperbell_leaves/PepperBell_Healthy,bell_pepper,healthy,1524,"folder-named, crop-specific healthy",no
+data/external/Pepper Bell Leaf Disease/pepperbell_leaves/PepperBell_Leaf Curl,bell_pepper,leaf_curl,423,"folder-named, NOT in taxonomy",no
+data/external/Pepper Bell Leaf Disease/pepperbell_leaves/PepperBell_Nutrition Deficiency,bell_pepper,nutrition_deficiency,444,"abiotic, NOT a disease class",no
+data/external/Pepper Bell Leaf Disease/pepperbell_leaves/PepperBell_Powdery Mildew,bell_pepper,powdery_mildew,195,"folder-named, unverified",no
+data/external/Cauliflower Dataset/cauliflower_fruit/Alternaria Brassicae,cauliflower,alternaria_leaf_spot(fruit),44,folder-named; FRUIT part,no
+data/external/Cauliflower Dataset/cauliflower_fruit/Bacterial Soft Rot,cauliflower,bacterial_soft_rot(fruit),200,folder-named; FRUIT part,no
+data/external/Cauliflower Dataset/cauliflower_fruit/Bacterial Spot,cauliflower,bacterial_spot(fruit),403,NOT in cauliflower taxonomy,no
+data/external/Cauliflower Dataset/cauliflower_fruit/Bacterial spot rot,cauliflower,bacterial_spot_rot(fruit),168,AMBIGUOUS vs 'Bacterial Spot',no
+data/external/Cauliflower Dataset/cauliflower_fruit/Black Spot,cauliflower,black_spot(fruit),251,NOT in taxonomy,no
+data/external/Cauliflower Dataset/cauliflower_fruit/Purple Tinges,cauliflower,purple_tinges(fruit),153,"abiotic/disorder, NOT in taxonomy",no
+data/external/Cauliflower Dataset/cauliflower_fruit/healthy,cauliflower,healthy(fruit),206,crop-specific healthy,no
+data/external/Cauliflower Dataset/cauliflower_leaves/Alternaria Leaf Spot,cauliflower,alternaria_leaf_spot(leaf),304,folder-named; LEAF part,no
+data/external/Cauliflower Dataset/cauliflower_leaves/Black Rot,cauliflower,black_rot(leaf),1188,NOT in taxonomy (cabbage has black_rot),no
+data/external/Cauliflower Dataset/cauliflower_leaves/Downy Mildew,cauliflower,downy_mildew(leaf),434,NOT in cauliflower taxonomy,no
+data/external/Cauliflower Dataset/cauliflower_leaves/Healthy,cauliflower,healthy(leaf),1804,crop-specific healthy,no
+data/external/Cauliflower Dataset/cauliflower_leaves/Insect Hole,cauliflower,insect_hole(leaf),639,"pest damage, NOT a disease class",no
+data/external/end_to_end_test,multi,evaluation-only test images,218,"evaluation set, do not train",no
+data/external/model1_expansion/gerbera dataset,gerbera,crop ID (flower),248,"Roboflow staged, not in splits",no
+data/external/model1_expansion/Gypsophila Hydrangea Daisy.v1i.yolov11,gypsophila,mixed 3-class Roboflow,143,only ~47 usable gypsophila,no
+data/downloads/beans,french_bean,angular_leaf_spot/bean_rust/healthy,572,HuggingFace verified,yes

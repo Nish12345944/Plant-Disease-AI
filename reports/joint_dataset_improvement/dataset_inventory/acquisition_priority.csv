@@ -1,0 +1,138 @@
+priority,crop,model,disease_or_class,current_verified_unique,proposed_target,shortage,reason
+P1,coffee,Model2,coffee__black_rot,6,400,394,Model2 disease <100 (critical)
+P1,peach,Model2,peach__rust,8,400,392,Model2 disease <100 (critical)
+P1,broccoli,Model2,broccoli__ring_spot,10,400,390,Model2 disease <100 (critical)
+P1,peach,Model2,peach__anthracnose,13,400,387,Model2 disease <100 (critical)
+P1,coffee,Model2,coffee__brown_eye_spot,14,400,386,Model2 disease <100 (critical)
+P1,plum,Model2,plum__bacterial_spot,16,400,384,Model2 disease <100 (critical)
+P1,carrot,Model2,carrot__cercospora_leaf_blight,17,400,383,Model2 disease <100 (critical)
+P1,raspberry,Model2,raspberry__leaf_spot,18,400,382,Model2 disease <100 (critical)
+P1,tobacco,Model2,tobacco__frogeye_leaf_spot,20,400,380,Model2 disease <100 (critical)
+P1,ginger,Model2,ginger__leaf_spot,25,400,375,Model2 disease <100 (critical)
+P1,bell_pepper,Model2,bell_pepper__frogeye_leaf_spot,28,400,372,Model2 disease <100 (critical)
+P1,broccoli,Model2,broccoli__downy_mildew,29,400,371,Model2 disease <100 (critical)
+P1,celery,Model2,celery__anthracnose,29,400,371,Model2 disease <100 (critical)
+P1,raspberry,Model2,raspberry__fire_blight,31,400,369,Model2 disease <100 (critical)
+P1,plum,Model2,plum__pox_virus,32,400,368,Model2 disease <100 (critical)
+P1,cherry,Model2,cherry__powdery_mildew,33,400,367,Model2 disease <100 (critical)
+P1,eggplant,Model2,eggplant__phytophthora_blight,33,400,367,Model2 disease <100 (critical)
+P1,plum,Model2,plum__rust,34,400,366,Model2 disease <100 (critical)
+P1,blueberry,Model2,blueberry__botrytis_blight,35,400,365,Model2 disease <100 (critical)
+P1,celery,Model2,celery__early_blight,36,400,364,Model2 disease <100 (critical)
+P1,raspberry,Model2,raspberry__yellow_rust,36,400,364,Model2 disease <100 (critical)
+P1,raspberry,Model2,raspberry__gray_mold,38,400,362,Model2 disease <100 (critical)
+P1,lettuce,Model2,lettuce__mosaic_virus,39,400,361,Model2 disease <100 (critical)
+P1,strawberry,Model2,strawberry__leaf_scorch,39,400,361,Model2 disease <100 (critical)
+P1,blueberry,Model2,blueberry__anthracnose,40,400,360,Model2 disease <100 (critical)
+P1,tobacco,Model2,tobacco__mosaic_virus,41,400,359,Model2 disease <100 (critical)
+P1,blueberry,Model2,blueberry__scorch,42,400,358,Model2 disease <100 (critical)
+P1,blueberry,Model2,blueberry__rust,43,400,357,Model2 disease <100 (critical)
+P1,zucchini,Model2,zucchini__downy_mildew,43,400,357,Model2 disease <100 (critical)
+P1,lilium,Model1,lilium,45,400,355,Model1 crop below 400 target
+P1,eggplant,Model2,eggplant__phomopsis_fruit_rot,45,400,355,Model2 disease <100 (critical)
+P1,blueberry,Model2,blueberry__mummy_berry,46,400,354,Model2 disease <100 (critical)
+P1,gypsophila,Model1,gypsophila,47,400,353,Model1 crop below 400 target
+P1,carnation,Model1,carnation,51,400,349,Model1 crop below 400 target
+P1,banana,Model2,banana__cordana_leaf_spot,51,400,349,Model2 disease <100 (critical)
+P1,tobacco,Model2,tobacco__blue_mold,55,400,345,Model2 disease <100 (critical)
+P1,banana,Model2,banana__cigar_end_rot,56,400,344,Model2 disease <100 (critical)
+P1,bean,Model2,bean__halo_blight,56,400,344,Model2 disease <100 (critical)
+P1,bean,Model2,bean__mosaic_virus,57,400,343,Model2 disease <100 (critical)
+P1,plum,Model2,plum__pocket_disease,57,400,343,Model2 disease <100 (critical)
+P1,cabbage,Model2,cabbage__alternaria_leaf_spot,58,400,342,Model2 disease <100 (critical)
+P1,eggplant,Model2,eggplant__cercospora_leaf_spot,58,400,342,Model2 disease <100 (critical)
+P1,strawberry,Model2,strawberry__anthracnose,58,400,342,Model2 disease <100 (critical)
+P1,carrot,Model2,carrot__alternaria_leaf_blight,59,400,341,Model2 disease <100 (critical)
+P1,soybean,Model2,soybean__brown_spot,61,400,339,Model2 disease <100 (critical)
+P1,broccoli,Model2,broccoli__alternaria_leaf_spot,62,400,338,Model2 disease <100 (critical)
+P1,tobacco,Model2,tobacco__brown_spot,62,400,338,Model2 disease <100 (critical)
+P1,basil,Model1,basil,63,400,337,Model1 crop below 400 target
+P1,banana,Model2,banana__panama_disease,63,400,337,Model2 disease <100 (critical)
+P1,basil,Model2,basil__downy_mildew,63,400,337,Model2 disease <100 (critical)
+P1,tomato,Model2,tomato__mosaic_virus,63,400,337,Model2 disease <100 (critical)
+P1,celery,Model1,celery,65,400,335,Model1 crop below 400 target
+P1,ginger,Model2,ginger__sheath_blight,66,400,334,Model2 disease <100 (critical)
+P1,zucchini,Model2,zucchini__bacterial_wilt,68,400,332,Model2 disease <100 (critical)
+P1,banana,Model2,banana__anthracnose,69,400,331,Model2 disease <100 (critical)
+P1,grape,Model2,grape__grapevine_leafroll_disease,71,400,329,Model2 disease <100 (critical)
+P1,carrot,Model2,carrot__cavity_spot,72,400,328,Model2 disease <100 (critical)
+P1,rice,Model2,rice__sheath_blight,72,400,328,Model2 disease <100 (critical)
+P1,peach,Model2,peach__scab,75,400,325,Model2 disease <100 (critical)
+P1,plum,Model2,plum__brown_rot,76,400,324,Model2 disease <100 (critical)
+P1,lettuce,Model2,lettuce__downy_mildew,82,400,318,Model2 disease <100 (critical)
+P1,apple,Model2,apple__black_rot,83,400,317,Model2 disease <100 (critical)
+P1,rice,Model2,rice__blast,83,400,317,Model2 disease <100 (critical)
+P1,cabbage,Model2,cabbage__downy_mildew,84,400,316,Model2 disease <100 (critical)
+P1,soybean,Model2,soybean__bacterial_blight,87,400,313,Model2 disease <100 (critical)
+P1,grape,Model2,grape__leaf_spot,88,400,312,Model2 disease <100 (critical)
+P1,apple,Model2,apple__mosaic_virus,89,400,311,Model2 disease <100 (critical)
+P1,tomato,Model2,tomato__yellow_leaf_curl_virus,89,400,311,Model2 disease <100 (critical)
+P1,ginger,Model1,ginger,91,400,309,Model1 crop below 400 target
+P1,garlic,Model2,garlic__leaf_blight,92,400,308,Model2 disease <100 (critical)
+P1,zucchini,Model2,zucchini__yellow_mosaic_virus,95,400,305,Model2 disease <100 (critical)
+P2,anthurium,Model1,anthurium,104,400,296,Model1 crop below 400 target
+P2,cauliflower,Model1,cauliflower,104,400,296,Model1 crop below 400 target
+P2,coffee,Model2,coffee__berry_blotch,105,400,295,Model2 disease <250
+P2,cherry,Model2,cherry__leaf_spot,106,400,294,Model2 disease <250
+P2,garlic,Model2,garlic__rust,106,400,294,Model2 disease <250
+P2,corn,Model2,corn__gray_leaf_spot,107,400,293,Model2 disease <250
+P2,tomato,Model2,tomato__bacterial_leaf_spot,107,400,293,Model2 disease <250
+P2,bell_pepper,Model2,bell_pepper__blossom_end_rot,108,400,292,Model2 disease <250
+P2,cucumber,Model2,cucumber__bacterial_wilt,108,400,292,Model2 disease <250
+P2,maple,Model1,maple,113,400,287,Model1 crop below 400 target
+P2,maple,Model2,maple__tar_spot,113,400,287,Model2 disease <250
+P2,potato,Model2,potato__late_blight,115,400,285,Model2 disease <250
+P2,soybean,Model2,soybean__mosaic,115,400,285,Model2 disease <250
+P2,wheat,Model2,wheat__bacterial_leaf_streak_(black_chaff),115,400,285,Model2 disease <250
+P2,cabbage,Model2,cabbage__black_rot,120,400,280,Model2 disease <250
+P2,grape,Model2,grape__black_rot,121,400,279,Model2 disease <250
+P2,raspberry,Model1,raspberry,123,400,277,Model1 crop below 400 target
+P2,potato,Model2,potato__early_blight,124,400,276,Model2 disease <250
+P2,wheat,Model2,wheat__leaf_rust,128,400,272,Model2 disease <250
+P2,corn,Model2,corn__northern_leaf_blight,130,400,270,Model2 disease <250
+P2,citrus,Model2,citrus__greening_disease,133,400,267,Model2 disease <250
+P2,soybean,Model2,soybean__downy_mildew,134,400,266,Model2 disease <250
+P2,eggplant,Model1,eggplant,136,400,264,Model1 crop below 400 target
+P2,wheat,Model2,wheat__stem_rust,136,400,264,Model2 disease <250
+P2,apple,Model2,apple__rust,138,400,262,Model2 disease <250
+P2,cherry,Model1,cherry,139,400,261,Model1 crop below 400 target
+P2,banana,Model2,banana__bunchy_top,139,400,261,Model2 disease <250
+P2,carrot,Model1,carrot,148,400,252,Model1 crop below 400 target
+P2,rice,Model1,rice,155,400,245,Model1 crop below 400 target
+P2,banana,Model2,banana__black_leaf_streak,158,400,242,Model2 disease <250
+P2,coffee,Model2,coffee__leaf_rust,159,400,241,Model2 disease <250
+P2,peach,Model2,peach__brown_rot,166,400,234,Model2 disease <250
+P2,squash,Model2,squash__powdery_mildew,174,400,226,Model2 disease <250
+P2,corn,Model2,corn__rust,177,400,223,Model2 disease <250
+P2,tobacco,Model1,tobacco,178,400,222,Model1 crop below 400 target
+P2,cucumber,Model2,cucumber__angular_leaf_spot,182,400,218,Model2 disease <250
+P2,peach,Model2,peach__leaf_curl,182,400,218,Model2 disease <250
+P2,wheat,Model2,wheat__loose_smut,190,400,210,Model2 disease <250
+P2,garlic,Model1,garlic,198,400,202,Model1 crop below 400 target
+P2,zucchini,Model2,zucchini__powdery_mildew,200,400,200,Model2 disease <250
+P2,wheat,Model2,wheat__septoria_blotch,201,400,199,Model2 disease <250
+P2,corn,Model2,corn__smut,202,400,198,Model2 disease <250
+P2,soybean,Model2,soybean__frog_eye_leaf_spot,210,400,190,Model2 disease <250
+P2,plum,Model1,plum,215,400,185,Model1 crop below 400 target
+P2,bell_pepper,Model2,bell_pepper__powdery_mildew,221,400,179,Model2 disease <250
+P2,cauliflower,Model2,cauliflower__bacterial_soft_rot,232,400,168,Model2 disease <250
+P2,tomato,Model2,tomato__leaf_mold,236,400,164,Model2 disease <250
+P2,potato,Model1,potato,239,400,161,Model1 crop below 400 target
+P2,melon,Model1,melon,247,400,153,Model1 crop below 400 target
+P3,geranium,Model1,geranium,251,400,149,Model1 crop below 400 target
+P3,gerbera,Model1,gerbera,251,400,149,Model1 crop below 400 target
+P3,apple,Model2,apple__scab,256,400,144,Model2 disease below 400
+P3,wheat,Model2,wheat__powdery_mildew,262,400,138,Model2 disease below 400
+P3,tomato,Model2,tomato__septoria_leaf_spot,273,400,127,Model2 disease below 400
+P3,cabbage,Model1,cabbage,274,400,126,Model1 crop below 400 target
+P3,wheat,Model2,wheat__head_scab,275,400,125,Model2 disease below 400
+P3,grape,Model2,grape__downy_mildew,278,400,122,Model2 disease below 400
+P3,coffee,Model1,coffee,284,400,116,Model1 crop below 400 target
+P3,tomato,Model2,tomato__late_blight,300,400,100,Model2 disease below 400
+P3,blueberry,Model1,blueberry,314,400,86,Model1 crop below 400 target
+P3,wheat,Model2,wheat__stripe_rust,325,400,75,Model2 disease below 400
+P3,tomato,Model2,tomato__early_blight,328,400,72,Model2 disease below 400
+P3,cucumber,Model2,cucumber__powdery_mildew,336,400,64,Model2 disease below 400
+P3,citrus,Model2,citrus__canker,388,400,12,Model2 disease below 400
+P3,cauliflower,Model2,cauliflower__alternaria_leaf_spot,391,400,9,Model2 disease below 400
+P3,zucchini,Model1,zucchini,393,400,7,Model1 crop below 400 target

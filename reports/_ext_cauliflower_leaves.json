@@ -1,0 +1,22 @@
+{
+ "Alternaria Leaf Spot": {
+  "files": 308,
+  "unique": 304
+ },
+ "Black Rot": {
+  "files": 1188,
+  "unique": 1188
+ },
+ "Downy Mildew": {
+  "files": 587,
+  "unique": 434
+ },
+ "Healthy": {
+  "files": 1838,
+  "unique": 1804
+ },
+ "Insect Hole": {
+  "files": 639,
+  "unique": 639
+ }
+}

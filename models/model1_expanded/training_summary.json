@@ -1,0 +1,245 @@
+{
+  "status": "COMPLETED",
+  "best_epoch": 10,
+  "best_val_macro_f1": 0.8663,
+  "best_val_accuracy": 0.9094,
+  "test_results": {
+    "overall_46": {
+      "top1_acc": 0.9038,
+      "top3_acc": 0.9734,
+      "macro_f1": 0.8381,
+      "weighted_f1": 0.9029
+    },
+    "original_22": {
+      "top1_acc": 0.9553,
+      "top3_acc": 0.9828,
+      "macro_f1": 0.5442,
+      "weighted_f1": 0.9703
+    },
+    "new_24": {
+      "top1_acc": 0.8402,
+      "top3_acc": 0.9618,
+      "macro_f1": 0.6377,
+      "weighted_f1": 0.8495
+    }
+  },
+  "weakest_classes": [
+    {
+      "class_name": "gerbera",
+      "class_idx": 23,
+      "category": "ORIGINAL_22",
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1_score": 0.0,
+      "support": 1.0
+    },
+    {
+      "class_name": "cherry",
+      "class_idx": 12,
+      "category": "NEW_24",
+      "precision": 0.4545,
+      "recall": 0.3571,
+      "f1_score": 0.4,
+      "support": 14.0
+    },
+    {
+      "class_name": "cauliflower",
+      "class_idx": 10,
+      "category": "NEW_24",
+      "precision": 0.5556,
+      "recall": 0.5,
+      "f1_score": 0.5263,
+      "support": 10.0
+    },
+    {
+      "class_name": "basil",
+      "class_idx": 3,
+      "category": "NEW_24",
+      "precision": 0.5714,
+      "recall": 0.6667,
+      "f1_score": 0.6154,
+      "support": 6.0
+    },
+    {
+      "class_name": "ginger",
+      "class_idx": 24,
+      "category": "NEW_24",
+      "precision": 0.8333,
+      "recall": 0.5556,
+      "f1_score": 0.6667,
+      "support": 9.0
+    }
+  ],
+  "top_confusion_pairs": [
+    {
+      "actual_class": "wheat",
+      "predicted_class": "garlic",
+      "count": 6,
+      "actual_support": 65,
+      "error_rate_in_actual": 0.0923
+    },
+    {
+      "actual_class": "french_bean",
+      "predicted_class": "soybean",
+      "count": 5,
+      "actual_support": 65,
+      "error_rate_in_actual": 0.0769
+    },
+    {
+      "actual_class": "apple",
+      "predicted_class": "citrus",
+      "count": 4,
+      "actual_support": 57,
+      "error_rate_in_actual": 0.0702
+    },
+    {
+      "actual_class": "apple",
+      "predicted_class": "peach",
+      "count": 4,
+      "actual_support": 57,
+      "error_rate_in_actual": 0.0702
+    },
+    {
+      "actual_class": "cabbage",
+      "predicted_class": "broccoli",
+      "count": 4,
+      "actual_support": 27,
+      "error_rate_in_actual": 0.1481
+    },
+    {
+      "actual_class": "broccoli",
+      "predicted_class": "cabbage",
+      "count": 3,
+      "actual_support": 41,
+      "error_rate_in_actual": 0.0732
+    },
+    {
+      "actual_class": "cauliflower",
+      "predicted_class": "broccoli",
+      "count": 3,
+      "actual_support": 10,
+      "error_rate_in_actual": 0.3
+    },
+    {
+      "actual_class": "garlic",
+      "predicted_class": "wheat",
+      "count": 3,
+      "actual_support": 20,
+      "error_rate_in_actual": 0.15
+    },
+    {
+      "actual_class": "ginger",
+      "predicted_class": "rice",
+      "count": 3,
+      "actual_support": 9,
+      "error_rate_in_actual": 0.3333
+    },
+    {
+      "actual_class": "plum",
+      "predicted_class": "peach",
+      "count": 3,
+      "actual_support": 22,
+      "error_rate_in_actual": 0.1364
+    }
+  ],
+  "key_confounds": [
+    {
+      "pair": "tomato <-> potato",
+      "tomato -> potato": 0,
+      "potato -> tomato": 0,
+      "total_cross_confusions": 0
+    },
+    {
+      "pair": "tomato <-> eggplant",
+      "tomato -> eggplant": 0,
+      "eggplant -> tomato": 0,
+      "total_cross_confusions": 0
+    },
+    {
+      "pair": "tomato <-> tobacco",
+      "tomato -> tobacco": 0,
+      "tobacco -> tomato": 0,
+      "total_cross_confusions": 0
+    },
+    {
+      "pair": "capsicum <-> eggplant",
+      "capsicum -> eggplant": 0,
+      "eggplant -> capsicum": 1,
+      "total_cross_confusions": 1
+    },
+    {
+      "pair": "wheat <-> rice",
+      "wheat -> rice": 2,
+      "rice -> wheat": 2,
+      "total_cross_confusions": 4
+    },
+    {
+      "pair": "wheat <-> corn",
+      "wheat -> corn": 2,
+      "corn -> wheat": 1,
+      "total_cross_confusions": 3
+    },
+    {
+      "pair": "broccoli <-> cabbage",
+      "broccoli -> cabbage": 3,
+      "cabbage -> broccoli": 4,
+      "total_cross_confusions": 7
+    },
+    {
+      "pair": "broccoli <-> cauliflower",
+      "broccoli -> cauliflower": 1,
+      "cauliflower -> broccoli": 3,
+      "total_cross_confusions": 4
+    },
+    {
+      "pair": "cabbage <-> cauliflower",
+      "cabbage -> cauliflower": 1,
+      "cauliflower -> cabbage": 1,
+      "total_cross_confusions": 2
+    },
+    {
+      "pair": "peach <-> plum",
+      "peach -> plum": 0,
+      "plum -> peach": 3,
+      "total_cross_confusions": 3
+    },
+    {
+      "pair": "peach <-> cherry",
+      "peach -> cherry": 1,
+      "cherry -> peach": 0,
+      "total_cross_confusions": 1
+    },
+    {
+      "pair": "plum <-> cherry",
+      "plum -> cherry": 2,
+      "cherry -> plum": 0,
+      "total_cross_confusions": 2
+    },
+    {
+      "pair": "cucumber <-> zucchini",
+      "cucumber -> zucchini": 1,
+      "zucchini -> cucumber": 1,
+      "total_cross_confusions": 2
+    },
+    {
+      "pair": "cucumber <-> melon",
+      "cucumber -> melon": 0,
+      "melon -> cucumber": 0,
+      "total_cross_confusions": 0
+    },
+    {
+      "pair": "blueberry <-> raspberry",
+      "blueberry -> raspberry": 1,
+      "raspberry -> blueberry": 0,
+      "total_cross_confusions": 1
+    },
+    {
+      "pair": "banana <-> tobacco",
+      "banana -> tobacco": 0,
+      "tobacco -> banana": 0,
+      "total_cross_confusions": 0
+    }
+  ],
+  "final_recommendation": "NEEDS TRAINING TUNING",
+  "decision_rationale": "Imbalance or hyperparameter tuning required to improve minority class F1 scores."
+}

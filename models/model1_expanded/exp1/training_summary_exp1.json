@@ -1,0 +1,32 @@
+{
+  "status": "COMPLETED",
+  "experiment": "EXP-1",
+  "best_epoch_global": 14,
+  "best_stage": "S2",
+  "best_val_macro_f1_active": 0.8571,
+  "best_val_accuracy": 0.9001,
+  "epochs_run": 14,
+  "acceptance_target_val_macro_f1": 0.88,
+  "test_results": {
+    "overall_46": {
+      "top1_accuracy": 0.8972,
+      "top3_accuracy": 0.9697,
+      "macro_f1_active": 0.8471,
+      "macro_f1_full": 0.8102,
+      "weighted_f1": 0.897
+    },
+    "original_22": {
+      "top1_accuracy": 0.9511,
+      "top3_accuracy": 0.9841,
+      "macro_f1_active": 0.9613,
+      "macro_f1_full": 0.8739,
+      "weighted_f1": 0.9673
+    },
+    "new_24": {
+      "top1_accuracy": 0.8303,
+      "top3_accuracy": 0.9519,
+      "macro_f1_active": 0.7896,
+      "weighted_f1": 0.8455
+    }
+  }
+}
