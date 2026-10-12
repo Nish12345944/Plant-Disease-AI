@@ -19,6 +19,7 @@ import json
 import logging
 import os
 import tempfile
+import threading
 from pathlib import Path
 from typing import Any, Optional
 
@@ -62,7 +63,8 @@ from router.query_router import route_query
 
 logger = logging.getLogger(__name__)
 
-# Cached model singletons
+# Cached model singletons & thread lock
+_MODEL_LOCK = threading.Lock()
 _MODEL1 = None
 _IDX_TO_CLASS = None
 _CLASS_TO_IDX = None
@@ -77,19 +79,21 @@ def get_model1():
     """Retrieve or initialize the cached Model 1 neural network."""
     global _MODEL1, _IDX_TO_CLASS, _CLASS_TO_IDX
     if _MODEL1 is None:
-        if not MODEL1_CHECKPOINT.exists():
-            raise FileNotFoundError(
-                f"Model 1 checkpoint not found at: '{MODEL1_CHECKPOINT}'. "
-                "Ensure best_model.pth is mounted or configure MODEL1_CHECKPOINT env var."
-            )
-        logger.info(f"Loading Model 1 from {MODEL1_CHECKPOINT} onto {DEVICE_NAME}...")
-        _MODEL1, _IDX_TO_CLASS, _CLASS_TO_IDX, _, _ = load_model(
-            checkpoint_path=MODEL1_CHECKPOINT,
-            mapping_path=MODEL1_CLASS_MAPPING,
-            config_path=MODEL1_CONFIG,
-            device=DEVICE,
-        )
-        logger.info("Model 1 initialized successfully.")
+        with _MODEL_LOCK:
+            if _MODEL1 is None:
+                if not MODEL1_CHECKPOINT.exists():
+                    raise FileNotFoundError(
+                        f"Model 1 checkpoint not found at: '{MODEL1_CHECKPOINT}'. "
+                        "Ensure best_model.pth is mounted or configure MODEL1_CHECKPOINT env var."
+                    )
+                logger.info(f"Loading Model 1 from {MODEL1_CHECKPOINT} onto {DEVICE_NAME}...")
+                _MODEL1, _IDX_TO_CLASS, _CLASS_TO_IDX, _, _ = load_model(
+                    checkpoint_path=MODEL1_CHECKPOINT,
+                    mapping_path=MODEL1_CLASS_MAPPING,
+                    config_path=MODEL1_CONFIG,
+                    device=DEVICE,
+                )
+                logger.info("Model 1 initialized successfully.")
     return _MODEL1, _IDX_TO_CLASS, _CLASS_TO_IDX
 
 
@@ -97,30 +101,40 @@ def get_model2() -> Model2DiseaseClassifierV4:
     """Retrieve or initialize the cached Model 2 V4 disease & healthy classifier."""
     global _MODEL2_V4
     if _MODEL2_V4 is None:
-        if not MODEL2_CHECKPOINT.exists():
-            raise FileNotFoundError(
-                f"Model 2 V4 checkpoint not found at: '{MODEL2_CHECKPOINT}'. "
-                "Ensure best_model.pth is mounted or configure MODEL2_CHECKPOINT env var."
-            )
-        logger.info(f"Loading Model 2 V4 from {MODEL2_CHECKPOINT} onto {DEVICE_NAME}...")
-        _MODEL2_V4 = Model2DiseaseClassifierV4(
-            checkpoint_path=MODEL2_CHECKPOINT,
-            class_mapping_path=MODEL2_CLASS_MAPPING,
-            crop_disease_map_path=CROP_DISEASE_MAPPING,
-            device=str(DEVICE),
-            uncertainty_threshold=0.40,
-            margin_threshold=0.05,
-        )
-        logger.info(f"Model 2 V4 initialized successfully with {_MODEL2_V4.num_classes} classes from {_MODEL2_V4.checkpoint_path}.")
+        with _MODEL_LOCK:
+            if _MODEL2_V4 is None:
+                if not MODEL2_CHECKPOINT.exists():
+                    raise FileNotFoundError(
+                        f"Model 2 V4 checkpoint not found at: '{MODEL2_CHECKPOINT}'. "
+                        "Ensure best_model.pth is mounted or configure MODEL2_CHECKPOINT env var."
+                    )
+                logger.info(f"Loading Model 2 V4 from {MODEL2_CHECKPOINT} onto {DEVICE_NAME}...")
+                _MODEL2_V4 = Model2DiseaseClassifierV4(
+                    checkpoint_path=MODEL2_CHECKPOINT,
+                    class_mapping_path=MODEL2_CLASS_MAPPING,
+                    crop_disease_map_path=CROP_DISEASE_MAPPING,
+                    device=str(DEVICE),
+                    uncertainty_threshold=0.40,
+                    margin_threshold=0.05,
+                )
+                logger.info(f"Model 2 V4 initialized successfully with {_MODEL2_V4.num_classes} classes from {_MODEL2_V4.checkpoint_path}.")
     return _MODEL2_V4
 
 
-def pil_to_base64_data_url(pil_img: Image.Image, format: str = "JPEG", quality: int = 85) -> str:
-    """Convert a PIL Image into a base64 Data URL for clean frontend display."""
+def pil_to_base64_data_url(pil_img: Image.Image, format: str = "JPEG", quality: int = 80, max_dim: int = 512) -> str:
+    """Convert a PIL Image into a base64 Data URL for clean frontend display, resizing thumbnail for fast transit."""
     buffered = io.BytesIO()
     if pil_img.mode in ("RGBA", "P"):
-        pil_img = pil_img.convert("RGB")
-    pil_img.save(buffered, format=format, quality=quality)
+        img = pil_img.convert("RGB")
+    else:
+        img = pil_img.copy() if (max_dim and (pil_img.width > max_dim or pil_img.height > max_dim)) else pil_img
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+
+    if max_dim and (img.width > max_dim or img.height > max_dim):
+        img.thumbnail((max_dim, max_dim), Image.Resampling.LANCZOS)
+
+    img.save(buffered, format=format, quality=quality, optimize=True)
     img_b64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
     return f"data:image/{format.lower()};base64,{img_b64}"
 
@@ -234,7 +248,7 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
     m1_model, idx_to_class, _ = get_model1()
     m2_classifier = get_model2()
 
-    pil_img = Image.open(io.BytesIO(file_bytes))
+    pil_img = Image.open(io.BytesIO(file_bytes)).convert("RGB")
     m1_result = predict_image(
         image_input=pil_img,
         model=m1_model,
@@ -244,7 +258,7 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
         validate_plant=True,
     )
 
-    preview_b64 = pil_to_base64_data_url(pil_img, format="JPEG", quality=85)
+    preview_b64 = pil_to_base64_data_url(pil_img, format="JPEG", quality=80, max_dim=512)
     crop_name = m1_result.get("predicted_label") or m1_result.get("predicted_class", "unknown")
     crop_confidence = m1_result.get("confidence", 0.0)
     top_list = m1_result.get("top_k", [])
@@ -307,14 +321,24 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
                 "message": f"Diagnosed {clean_title} on {crop_name.title()} ({disease_conf * 100:.1f}% confidence).",
             }
         else:
+            # Uncertain / Inconclusive condition
+            # Preserve actual relevant model confidence instead of hardcoding 0.0
+            actual_conf = (
+                disease_conf
+                if (disease_conf and disease_conf > 0)
+                else (m2_res.get("raw_top1", {}).get("confidence", 0.0) if m2_res.get("raw_top1") else 0.0)
+            )
+            conf_val = round(float(actual_conf), 4) if actual_conf is not None else None
+            conf_pct = f"{conf_val * 100:.1f}%" if (conf_val is not None and conf_val > 0) else "N/A"
+
             model2_dict = {
                 "status": "uncertain",
                 "has_disease": False,
-                "primary_disease": None,
+                "primary_disease": "Inconclusive / Uncertain",
                 "primary_disease_slug": None,
                 "primary_disease_id": None,
-                "confidence": 0.0,
-                "percentage": "N/A",
+                "confidence": conf_val,
+                "percentage": conf_pct,
                 "primary_bbox": None,
                 "detections_count": 0,
                 "detections": [],
@@ -557,10 +581,10 @@ def process_video_inference(
                 m2_summary = {
                     "status": "uncertain",
                     "has_disease": False,
-                    "primary_disease": "Condition Uncertain / Inconclusive Symptoms",
+                    "primary_disease": "Inconclusive / Uncertain",
                     "primary_disease_slug": None,
-                    "confidence": 0.0,
-                    "percentage": "N/A",
+                    "confidence": round(float(top_conf if ranked_diseases else 0.0), 4),
+                    "percentage": f"{(top_conf if ranked_diseases else 0.0) * 100:.1f}%" if ranked_diseases else "N/A",
                     "supporting_frames": 0,
                     "evaluated_frames": valid_plant_frames,
                     "detections_count": 0,
@@ -571,7 +595,7 @@ def process_video_inference(
             m2_summary = {
                 "status": "uncertain",
                 "has_disease": False,
-                "primary_disease": None,
+                "primary_disease": "Inconclusive / Uncertain",
                 "primary_disease_slug": None,
                 "confidence": 0.0,
                 "percentage": "N/A",

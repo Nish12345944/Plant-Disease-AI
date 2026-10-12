@@ -174,9 +174,10 @@ class Model2DiseaseClassifierV4:
 
         # Normalized aliases
         aliases = {
+            "bellpepper": "bell_pepper",
+            "capsicum": "bell_pepper",
             "french_bean": "bean",
             "bean": "french_bean",
-            "capsicum": "bell_pepper",
             "cherry_tomato": "tomato",
         }
         alt_crop = aliases.get(crop_clean)
@@ -184,9 +185,14 @@ class Model2DiseaseClassifierV4:
             return True
 
         # Check registered mapping
-        if crop_clean in self.crop_disease_map and disease_clean in self.crop_disease_map[crop_clean]:
+        disease_short = disease_clean.split("__", 1)[-1] if "__" in disease_clean else disease_clean
+        if crop_clean in self.crop_disease_map and (
+            disease_clean in self.crop_disease_map[crop_clean] or disease_short in self.crop_disease_map[crop_clean]
+        ):
             return True
-        if alt_crop and alt_crop in self.crop_disease_map and disease_clean in self.crop_disease_map[alt_crop]:
+        if alt_crop and alt_crop in self.crop_disease_map and (
+            disease_clean in self.crop_disease_map[alt_crop] or disease_short in self.crop_disease_map[alt_crop]
+        ):
             return True
 
         return False
@@ -194,7 +200,7 @@ class Model2DiseaseClassifierV4:
     def predict_raw(self, pil_img: Image.Image) -> tuple[np.ndarray, list[dict[str, Any]]]:
         """Compute unconstrained 117-class probability distribution."""
         tensor = self.transform(pil_img).unsqueeze(0).to(self.device)
-        with torch.no_grad():
+        with torch.inference_mode():
             logits = self.model(tensor)
             probs = torch.softmax(logits, dim=1).squeeze(0).cpu().numpy()
 
@@ -242,7 +248,7 @@ class Model2DiseaseClassifierV4:
         # Default fallback
         final_status = "uncertain"
         final_disease = None
-        final_disease_conf = 0.0
+        final_disease_conf = float(raw_top1["probability"]) if raw_top1 else 0.0
 
         if compatible_ranked:
             best_compat = compatible_ranked[0]
@@ -258,6 +264,8 @@ class Model2DiseaseClassifierV4:
                 else:
                     final_status = "uncertain"
                     final_disease = None
+                    if raw_top1 and raw_top1["probability"] > cand_conf:
+                        final_disease_conf = float(raw_top1["probability"])
             else:
                 # Disease case
                 if cand_conf >= self.uncertainty_threshold:
@@ -266,9 +274,12 @@ class Model2DiseaseClassifierV4:
                 else:
                     final_status = "uncertain"
                     final_disease = None
+                    if raw_top1 and raw_top1["probability"] > cand_conf:
+                        final_disease_conf = float(raw_top1["probability"])
         else:
             final_status = "uncertain"
             final_disease = None
+            final_disease_conf = float(raw_top1["probability"]) if raw_top1 else 0.0
 
         result = {
             "crop": norm_crop,

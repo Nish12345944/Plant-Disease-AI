@@ -722,6 +722,12 @@ html, body {
   background: linear-gradient(180deg, rgba(6, 78, 59, 0.3) 0%, rgba(13, 21, 39, 0.8) 100%);
 }
 
+.model-card.model2-card.uncertain {
+  border-color: rgba(245, 158, 11, 0.35);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.1);
+  background: linear-gradient(180deg, rgba(120, 53, 15, 0.25) 0%, rgba(13, 21, 39, 0.8) 100%);
+}
+
 .status-tag.disease-badge {
   background: rgba(244, 63, 94, 0.18);
   color: #fb7185;

@@ -77,8 +77,9 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
   const cropConfidencePct = typeof cropConfidence === 'number' ? (cropConfidence * 100).toFixed(1) : null;
 
   const hasDiseaseModel = Boolean(model2 && model2.status && model2.status !== 'not_applicable' && model2.status !== 'not_connected');
-  const hasDisease = model2?.has_disease || (model2?.detections && model2.detections.length > 0);
-  const diseaseName = model2?.primary_disease || (hasDisease ? 'Disease Detected' : 'No disease detected');
+  const isUncertain = model2?.status === 'uncertain';
+  const hasDisease = !isUncertain && Boolean(model2?.has_disease || (model2?.detections && model2.detections.length > 0));
+  const diseaseName = model2?.primary_disease || (hasDisease ? 'Disease Detected' : isUncertain ? 'Inconclusive — verify image' : 'No disease detected');
   const diseaseConfidence = model2?.confidence;
   const diseaseConfidencePct = typeof diseaseConfidence === 'number' ? (diseaseConfidence * 100).toFixed(1) : (model2?.percentage || '—');
   const lesionsCount = model2?.detections_count || model2?.detections?.length || 0;
@@ -175,12 +176,24 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
             SECTION 2: 🦠 DISEASE DETECTION (Model 2)
             ======================================================== */}
         {hasDiseaseModel && (
-          <div className={`model-card model2-card ${hasDisease ? 'disease-detected' : 'healthy'}`}>
+          <div className={`model-card model2-card ${hasDisease ? 'disease-detected' : isUncertain ? 'uncertain' : 'healthy'}`}>
             <div className="model-card-header">
               <div className="model-badge-row">
-                <Layers size={16} color={hasDisease ? '#f43f5e' : 'var(--primary-emerald)'} />
+                <Layers size={16} color={hasDisease ? '#f43f5e' : isUncertain ? '#f59e0b' : 'var(--primary-emerald)'} />
                 <span className="model-title">DISEASE DETECTION</span>
               </div>
+              {isUncertain && (
+                <span style={{ 
+                  fontSize: '0.72rem', 
+                  color: '#f59e0b', 
+                  padding: '2px 6px', 
+                  background: 'rgba(245, 158, 11, 0.1)', 
+                  borderRadius: '4px',
+                  fontWeight: 600
+                }}>
+                  Inconclusive
+                </span>
+              )}
             </div>
 
             <div className="model-card-body">
@@ -194,6 +207,26 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                     <div className="result-field-row">
                       <span className="result-field-label">Confidence:</span>
                       <span className="result-field-value">{diseaseConfidencePct}%</span>
+                    </div>
+                  )}
+                </div>
+              ) : isUncertain ? (
+                <div className="result-field-group">
+                  <div className="result-field-row">
+                    <span className="result-field-label">Disease:</span>
+                    <span className="result-field-value" style={{ color: '#f59e0b' }}>Inconclusive — verify image</span>
+                  </div>
+                  {diseaseConfidencePct && diseaseConfidencePct !== 'N/A' && (
+                    <div className="result-field-row">
+                      <span className="result-field-label">Confidence:</span>
+                      <span className="result-field-value">{diseaseConfidencePct}%</span>
+                    </div>
+                  )}
+                  {model2?.message && (
+                    <div className="result-field-row" style={{ marginTop: '4px' }}>
+                      <span className="result-field-value" style={{ color: 'var(--text-muted)', fontSize: '0.82rem', fontWeight: 400 }}>
+                        {model2.message}
+                      </span>
                     </div>
                   )}
                 </div>
