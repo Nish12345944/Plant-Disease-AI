@@ -1,0 +1,37 @@
+# Git & IDE
+.git
+.gitignore
+.vscode
+.idea
+
+# Python Environments & Caches
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Node.js
+node_modules/
+app/frontend/node_modules/
+
+# Local data & backups
+backups/
+scratch/
+data/downloads/
+data/external/
+
+# Media and temporary test files
+temp_multimodal_uploads/
+temp_test_videos/
+temp_video_frames/
+*.mp4
+*.avi
+*.wav
+
+# Log & Backup files
+*.log
+*.tmp
+*.bak
+reports/

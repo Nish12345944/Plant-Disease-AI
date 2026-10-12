@@ -14,6 +14,7 @@ from pydantic import BaseModel
 
 from app.backend.config import (
     DEVICE_NAME,
+    PROJECT_ROOT,
     SUPPORTED_AUDIO_EXTS,
     SUPPORTED_IMAGE_EXTS,
     SUPPORTED_VIDEO_EXTS,
@@ -109,8 +110,8 @@ async def on_startup():
             logger.warning(f"Note: Model 2 checkpoint not detected at: {MODEL2_CHECKPOINT}")
 
 
-@app.get("/")
-async def root():
+@app.get("/api")
+async def api_root():
     """Return backend status and API documentation entrypoints."""
     return {
         "service": "Alexa Farms AI Backend",
@@ -597,3 +598,17 @@ async def unified_chat_endpoint(
             "device": DEVICE_NAME,
         },
     }
+
+
+# ---------------------------------------------------------------------------
+# Monolith Static Frontend Serving (Docker / Single-Service Deployments)
+# ---------------------------------------------------------------------------
+from fastapi.staticfiles import StaticFiles
+
+FRONTEND_DIST = PROJECT_ROOT / "app" / "frontend" / "dist"
+if FRONTEND_DIST.exists():
+    app.mount("/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")
+else:
+    @app.get("/")
+    async def root_fallback():
+        return await api_root()

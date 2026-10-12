@@ -1,0 +1,12 @@
+{
+  "best_epoch": 4,
+  "best_val_macro_f1": 0.6814662679821278,
+  "total_epochs_trained": 10,
+  "total_training_time_seconds": 2950.6238489151,
+  "num_classes": 143,
+  "architecture": "EfficientNet-B2",
+  "image_size": [
+    260,
+    260
+  ]
+}

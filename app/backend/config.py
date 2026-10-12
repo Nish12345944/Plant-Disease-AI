@@ -31,7 +31,9 @@ _env_crop_disease_map = os.environ.get("CROP_DISEASE_MAPPING")
 if _env_crop_disease_map:
     CROP_DISEASE_MAPPING = Path(_env_crop_disease_map)
 else:
-    CROP_DISEASE_MAPPING = PROJECT_ROOT / "data" / "processed" / "model2_organized_crop_disease_mapping.json"
+    CROP_DISEASE_MAPPING = PROJECT_ROOT / "models" / "model2_classifier_v4" / "crop_disease_mapping.json"
+    if not CROP_DISEASE_MAPPING.exists():
+        CROP_DISEASE_MAPPING = PROJECT_ROOT / "data" / "processed" / "model2_organized_crop_disease_mapping.json"
     if not CROP_DISEASE_MAPPING.exists():
         CROP_DISEASE_MAPPING = PROJECT_ROOT / "data" / "processed" / "model2_classifier_crop_disease_mapping.json"
 

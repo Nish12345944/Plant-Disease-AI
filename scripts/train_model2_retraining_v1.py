@@ -116,6 +116,39 @@ def set_seed(seed: int = RANDOM_SEED):
     torch.backends.cudnn.benchmark = False
 
 
+def atomic_torch_save(payload: dict, target_path: Path):
+    """Atomically save torch checkpoint by saving to a temp file and replacing."""
+    temp_path = target_path.parent / f".{target_path.name}.tmp"
+    torch.save(payload, temp_path)
+    os.replace(temp_path, target_path)
+
+
+def sync_progress_csv(csv_path: Path, start_epoch: int, header: list[str]) -> list[list[str]]:
+    """Preserves historical rows with epoch < start_epoch atomically. Eliminates duplicates or partial lines."""
+    valid_rows = []
+    if csv_path.exists():
+        with open(csv_path, "r", newline="", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            file_header = next(reader, None)
+            for row in reader:
+                if row and len(row) > 0:
+                    try:
+                        row_epoch = int(row[0])
+                        if row_epoch < start_epoch:
+                            valid_rows.append(row)
+                    except ValueError:
+                        continue
+
+    tmp_path = csv_path.parent / f".{csv_path.name}.tmp"
+    with open(tmp_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(header)
+        for r in valid_rows:
+            writer.writerow(r)
+    os.replace(tmp_path, csv_path)
+    return valid_rows
+
+
 # ---------------------------------------------------------------------------
 # Dataset with Robust Error-Handled Bounded Memory Decoding
 # ---------------------------------------------------------------------------
@@ -495,36 +528,98 @@ def run_training():
 
     last_ckpt_path = MODEL_DIR / "last_model.pth"
     best_ckpt_path = MODEL_DIR / "best_model.pth"
+    resume_ckpt = None
+
     if last_ckpt_path.exists():
+        log_message(f"Checking resume checkpoint at: {last_ckpt_path}")
         try:
-            last_ckpt = torch.load(last_ckpt_path, map_location=device, weights_only=False)
-            model.load_state_dict(last_ckpt["model_state_dict"])
-            start_epoch = last_ckpt["epoch"] + 1
-            log_message(f"Resuming from previous checkpoint at epoch {last_ckpt['epoch']}. Starting at Epoch {start_epoch:02d}...")
-            
-            if best_ckpt_path.exists():
+            resume_ckpt = torch.load(last_ckpt_path, map_location=device, weights_only=False)
+        except Exception as e:
+            err_msg = f"CRITICAL ERROR: Failed to read checkpoint {last_ckpt_path}: {e}. Training halted to prevent overwriting."
+            log_message(err_msg)
+            raise RuntimeError(err_msg) from e
+
+        # Validate checkpoint schema
+        for req_key in ["epoch", "model_state_dict"]:
+            if req_key not in resume_ckpt:
+                err_msg = f"CRITICAL ERROR: Checkpoint {last_ckpt_path} is missing required key '{req_key}'. Training halted."
+                log_message(err_msg)
+                raise RuntimeError(err_msg)
+
+        completed_epoch = resume_ckpt["epoch"]
+        if not isinstance(completed_epoch, int) or completed_epoch < 1:
+            err_msg = f"CRITICAL ERROR: Invalid completed epoch {completed_epoch} in checkpoint {last_ckpt_path}. Training halted."
+            log_message(err_msg)
+            raise RuntimeError(err_msg)
+
+        start_epoch = completed_epoch + 1
+        log_message(f"Resuming from previous checkpoint at epoch {completed_epoch}. Target start epoch: {start_epoch:02d}.")
+
+        # Restore model weights
+        try:
+            model.load_state_dict(resume_ckpt["model_state_dict"])
+            log_message("Model state dict restored successfully.")
+        except Exception as e:
+            err_msg = f"CRITICAL ERROR: Incompatible model state dict in {last_ckpt_path}: {e}. Training halted."
+            log_message(err_msg)
+            raise RuntimeError(err_msg) from e
+
+        # Restore best metrics from best_model.pth
+        if best_ckpt_path.exists():
+            try:
                 best_ckpt = torch.load(best_ckpt_path, map_location="cpu", weights_only=False)
                 best_val_macro_f1 = best_ckpt.get("val_macro_f1", 0.0)
                 best_epoch = best_ckpt.get("epoch", 1)
-                log_message(f"Loaded existing best validation macro F1: {best_val_macro_f1*100:.2f}% (Epoch {best_epoch})")
+                log_message(f"Loaded existing best validation macro F1: {best_val_macro_f1*100:.2f}% (Epoch {best_epoch}) from {best_ckpt_path}")
                 del best_ckpt
-            del last_ckpt
-            gc.collect()
-        except Exception as e:
-            log_message(f"Note: could not resume checkpoint ({e}), starting freshly from Epoch 1.")
+            except Exception as e:
+                err_msg = f"CRITICAL ERROR: Failed to load best checkpoint {best_ckpt_path}: {e}. Training halted."
+                log_message(err_msg)
+                raise RuntimeError(err_msg) from e
+        else:
+            best_val_macro_f1 = resume_ckpt.get("val_macro_f1", 0.0)
+            best_epoch = completed_epoch
+            log_message(f"Note: No separate best_model.pth found. Using last checkpoint's val_macro_f1: {best_val_macro_f1*100:.2f}% (Epoch {best_epoch})")
 
-    # 6. Two-Stage Schedule
+    # 6. Two-Stage Schedule & Optimizer/Scheduler Setup
     scaler = GradScaler("cuda") if device.type == "cuda" else None
 
-    if not PROGRESS_CSV.exists() or start_epoch == 1:
-        with open(PROGRESS_CSV, "w", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
-            writer.writerow([
-                "epoch", "stage", "learning_rate", "train_loss", "train_accuracy",
-                "train_macro_f1", "train_weighted_f1", "val_loss", "val_accuracy",
-                "val_macro_f1", "val_weighted_f1", "val_healthy_f1", "val_disease_macro_f1",
-                "best_val_macro_f1", "best_epoch", "epoch_time_seconds"
-            ])
+    # CSV synchronization & History reconstruction
+    csv_header = [
+        "epoch", "stage", "learning_rate", "train_loss", "train_accuracy",
+        "train_macro_f1", "train_weighted_f1", "val_loss", "val_accuracy",
+        "val_macro_f1", "val_weighted_f1", "val_healthy_f1", "val_disease_macro_f1",
+        "best_val_macro_f1", "best_epoch", "epoch_time_seconds"
+    ]
+    valid_csv_rows = sync_progress_csv(PROGRESS_CSV, start_epoch, csv_header)
+    for r in valid_csv_rows:
+        try:
+            history["train_loss"].append(float(r[3]))
+            history["train_acc"].append(float(r[4]))
+            history["train_macro_f1"].append(float(r[5]))
+            history["val_loss"].append(float(r[7]))
+            history["val_acc"].append(float(r[8]))
+            history["val_macro_f1"].append(float(r[9]))
+            history["val_healthy_f1"].append(float(r[11]))
+            history["val_disease_macro_f1"].append(float(r[12]))
+        except (IndexError, ValueError) as e:
+            log_message(f"Note: Could not parse history row: {r} ({e})")
+
+    # Reconstruct patience counter
+    patience_counter = 0
+    for r in valid_csv_rows:
+        try:
+            r_epoch = int(r[0])
+            r_f1 = float(r[9])
+            if r_epoch > STAGE1_EPOCHS:
+                if r_epoch == best_epoch or r_f1 >= best_val_macro_f1 - 1e-6:
+                    patience_counter = 0
+                else:
+                    patience_counter += 1
+        except (IndexError, ValueError):
+            pass
+    if start_epoch > 1:
+        log_message(f"Reconstructed patience counter: {patience_counter} (Limit: {PATIENCE})")
 
     total_epochs = STAGE1_EPOCHS + STAGE2_EPOCHS
 
@@ -538,6 +633,7 @@ def run_training():
         for param in model.features.parameters():
             param.requires_grad = False
         model.features.eval()
+        model.classifier.train()
         optimizer = optim.AdamW(model.classifier.parameters(), lr=STAGE1_LR, weight_decay=WEIGHT_DECAY, foreach=False)
         scheduler = None
     else:
@@ -545,18 +641,65 @@ def run_training():
         log_message(f"\n--- {stage}: Unfrozen backbone with cosine annealing (Epochs {start_epoch}..{total_epochs}) ---")
         for param in model.parameters():
             param.requires_grad = True
+        model.train()
         optimizer = optim.AdamW(model.parameters(), lr=STAGE2_LR, weight_decay=WEIGHT_DECAY, foreach=False)
-        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=STAGE2_EPOCHS, eta_min=STAGE2_ETA_MIN, last_epoch=start_epoch - STAGE1_EPOCHS - 1)
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=STAGE2_EPOCHS, eta_min=STAGE2_ETA_MIN)
+
+    # Restore optimizer, scheduler, and scaler states if resuming
+    if resume_ckpt is not None:
+        if "optimizer_state_dict" in resume_ckpt and resume_ckpt["optimizer_state_dict"] is not None:
+            try:
+                optimizer.load_state_dict(resume_ckpt["optimizer_state_dict"])
+                if device.type == "cuda":
+                    for state in optimizer.state.values():
+                        for k, v in state.items():
+                            if isinstance(v, torch.Tensor):
+                                state[k] = v.to(device)
+                log_message(f"Optimizer state restored successfully. Current LR: {optimizer.param_groups[0]['lr']:.6e}")
+            except Exception as e:
+                err_msg = f"CRITICAL ERROR: Failed to restore optimizer state dict: {e}"
+                log_message(err_msg)
+                raise RuntimeError(err_msg) from e
+        else:
+            log_message("Warning: Checkpoint did not contain optimizer_state_dict.")
+
+        if scheduler is not None:
+            if "scheduler_state_dict" in resume_ckpt and resume_ckpt["scheduler_state_dict"] is not None:
+                try:
+                    scheduler.load_state_dict(resume_ckpt["scheduler_state_dict"])
+                    log_message(f"Scheduler state restored successfully (last_epoch: {scheduler.last_epoch}, step_count: {scheduler._step_count}).")
+                except Exception as e:
+                    err_msg = f"CRITICAL ERROR: Failed to restore scheduler state dict: {e}"
+                    log_message(err_msg)
+                    raise RuntimeError(err_msg) from e
+            else:
+                log_message("Warning: Checkpoint did not contain scheduler_state_dict.")
+
+        if scaler is not None:
+            if "scaler_state_dict" in resume_ckpt and resume_ckpt["scaler_state_dict"] is not None:
+                try:
+                    scaler.load_state_dict(resume_ckpt["scaler_state_dict"])
+                    log_message(f"GradScaler state restored successfully (scale: {scaler.get_scale()}).")
+                except Exception as e:
+                    err_msg = f"CRITICAL ERROR: Failed to restore scaler state dict: {e}"
+                    log_message(err_msg)
+                    raise RuntimeError(err_msg) from e
+            else:
+                log_message("Warning: Checkpoint did not contain scaler_state_dict.")
+
+        del resume_ckpt
+        gc.collect()
 
     for epoch in range(start_epoch, total_epochs + 1):
         epoch_start = time.time()
 
-        # Switch to Stage 2 after STAGE1_EPOCHS
-        if epoch == STAGE1_EPOCHS + 1:
+        # Switch to Stage 2 after STAGE1_EPOCHS if started in Stage 1
+        if epoch == STAGE1_EPOCHS + 1 and start_epoch <= STAGE1_EPOCHS:
             stage = "Stage 2 (Full Fine-Tuning)"
             log_message(f"\n--- Entering {stage}: Unfreezing all backbone parameters with cosine annealing ---")
             for param in model.parameters():
                 param.requires_grad = True
+            model.train()
             optimizer = optim.AdamW(model.parameters(), lr=STAGE2_LR, weight_decay=WEIGHT_DECAY, foreach=False)
             scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=STAGE2_EPOCHS, eta_min=STAGE2_ETA_MIN)
 
@@ -639,7 +782,7 @@ def run_training():
             best_epoch = epoch
             patience_counter = 0
 
-            torch.save({
+            atomic_torch_save({
                 "epoch": epoch,
                 "model_state_dict": model.state_dict(),
                 "optimizer_state_dict": optimizer.state_dict(),
@@ -657,7 +800,7 @@ def run_training():
             if epoch > STAGE1_EPOCHS:
                 patience_counter += 1
 
-        torch.save({
+        atomic_torch_save({
             "epoch": epoch,
             "model_state_dict": model.state_dict(),
             "optimizer_state_dict": optimizer.state_dict(),
@@ -713,14 +856,112 @@ def run_training():
     return True
 
 
+def validate_resume_state():
+    """Verify that the existing checkpoint can safely resume at Epoch 8 without executing training."""
+    print("=" * 80)
+    print("MODEL 2 RETRAINING V1: RESUME VALIDATION CHECK")
+    print("=" * 80)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Device: {device}")
+
+    last_ckpt_path = MODEL_DIR / "last_model.pth"
+    best_ckpt_path = MODEL_DIR / "best_model.pth"
+
+    assert last_ckpt_path.exists(), f"Last checkpoint not found at {last_ckpt_path}"
+    assert best_ckpt_path.exists(), f"Best checkpoint not found at {best_ckpt_path}"
+
+    # 1. Load last checkpoint
+    last_ckpt = torch.load(last_ckpt_path, map_location="cpu", weights_only=False)
+    print(f"Loaded {last_ckpt_path} successfully.")
+    print(f"Checkpoint keys: {list(last_ckpt.keys())}")
+
+    completed_epoch = last_ckpt["epoch"]
+    next_epoch = completed_epoch + 1
+    print(f"Completed Epoch: {completed_epoch} | Next Epoch to Train: {next_epoch}")
+    assert completed_epoch == 7, f"Expected completed epoch 7, got {completed_epoch}"
+    assert next_epoch == 8, f"Expected next epoch 8, got {next_epoch}"
+
+    # 2. Check best checkpoint
+    best_ckpt = torch.load(best_ckpt_path, map_location="cpu", weights_only=False)
+    best_epoch = best_ckpt["epoch"]
+    best_val_macro_f1 = best_ckpt["val_macro_f1"]
+    print(f"Loaded {best_ckpt_path} successfully.")
+    print(f"Best Epoch: {best_epoch} | Best Val Macro F1: {best_val_macro_f1*100:.2f}% ({best_val_macro_f1:.6f})")
+    assert best_epoch == 4, f"Expected best epoch 4, got {best_epoch}"
+    assert abs(best_val_macro_f1 - 0.681466) < 1e-4, f"Expected ~68.15%, got {best_val_macro_f1}"
+
+    # 3. Model reconstruction & weight restoration
+    with open(CLASS_MAPPING_PATH, "r", encoding="utf-8") as f:
+        class_to_id = json.load(f)
+    num_classes = len(class_to_id)
+    assert num_classes == 143, f"Expected 143 classes, got {num_classes}"
+
+    model = build_and_init_model(num_classes, V4_CHECKPOINT_PATH, device=torch.device("cpu"))
+    model.load_state_dict(last_ckpt["model_state_dict"])
+    print("Model architecture: EfficientNet-B2 with 143-class head verified and loaded.")
+
+    # 4. Stage 2 Optimizer & Scheduler restoration
+    for param in model.parameters():
+        param.requires_grad = True
+    optimizer = optim.AdamW(model.parameters(), lr=STAGE2_LR, weight_decay=WEIGHT_DECAY, foreach=False)
+    scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=STAGE2_EPOCHS, eta_min=STAGE2_ETA_MIN)
+
+    assert "optimizer_state_dict" in last_ckpt, "optimizer_state_dict missing from checkpoint"
+    assert "scheduler_state_dict" in last_ckpt, "scheduler_state_dict missing from checkpoint"
+    assert "scaler_state_dict" in last_ckpt, "scaler_state_dict missing from checkpoint"
+
+    optimizer.load_state_dict(last_ckpt["optimizer_state_dict"])
+    scheduler.load_state_dict(last_ckpt["scheduler_state_dict"])
+
+    restored_lr = optimizer.param_groups[0]["lr"]
+    print(f"Restored Optimizer LR: {restored_lr:.6e} (Expected: ~9.165775e-05)")
+    assert abs(restored_lr - 9.165775e-05) < 1e-8, f"Unexpected restored LR: {restored_lr}"
+
+    print(f"Restored Scheduler: last_epoch={scheduler.last_epoch}, step_count={scheduler._step_count}")
+    assert scheduler.last_epoch == 3, f"Expected scheduler last_epoch 3, got {scheduler.last_epoch}"
+    assert scheduler._step_count == 4, f"Expected scheduler _step_count 4, got {scheduler._step_count}"
+
+    # 5. Check Scaler
+    scaler = GradScaler("cuda") if torch.cuda.is_available() else None
+    if scaler is not None and last_ckpt.get("scaler_state_dict"):
+        scaler.load_state_dict(last_ckpt["scaler_state_dict"])
+        print(f"Restored GradScaler scale: {scaler.get_scale()}")
+
+    # 6. Check CSV preservation
+    assert PROGRESS_CSV.exists(), f"Progress CSV not found at {PROGRESS_CSV}"
+    with open(PROGRESS_CSV, "r", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        header = next(reader)
+        rows = list(reader)
+    epochs_in_csv = [int(r[0]) for r in rows if r]
+    print(f"Epochs present in training_progress.csv: {epochs_in_csv}")
+    assert epochs_in_csv == [2, 3, 4, 5, 6, 7], f"Expected epochs [2, 3, 4, 5, 6, 7], got {epochs_in_csv}"
+
+    # 7. Check atomic save
+    test_path = MODEL_DIR / ".test_atomic_save.tmp"
+    atomic_torch_save({"test": 123}, test_path)
+    assert test_path.exists()
+    test_path.unlink()
+    print("Atomic save verified successfully.")
+
+    print("\n" + "=" * 80)
+    print("ALL RESUME VALIDATION CHECKS PASSED: Safe to resume training at Epoch 8!")
+    print("=" * 80)
+    return True
+
+
 def main():
     parser = argparse.ArgumentParser(description="Train Model 2 Retraining V1 Classifier")
     parser.add_argument("--run", action="store_true", help="Execute actual training run")
     parser.add_argument("--preflight", action="store_true", help="Run preflight validation assertions and exit")
+    parser.add_argument("--validate-resume", action="store_true", help="Validate checkpoint resume state without training")
     args = parser.parse_args()
 
     if args.run:
         run_training()
+    elif args.validate_resume:
+        validate_resume_state()
     else:
         run_preflight_check()
 
