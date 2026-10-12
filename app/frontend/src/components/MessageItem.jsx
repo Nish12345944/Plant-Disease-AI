@@ -131,21 +131,36 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                 <Sprout size={16} color="var(--primary-emerald)" />
                 <span className="model-title">PLANT IDENTIFICATION</span>
               </div>
+              {model1?.status === 'unavailable' && (
+                <span style={{ fontSize: '0.72rem', color: '#f59e0b', padding: '2px 6px', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '4px' }}>
+                  Checkpoint Missing
+                </span>
+              )}
             </div>
 
             <div className="model-card-body">
-              <div className="result-field-group">
-                <div className="result-field-row">
-                  <span className="result-field-label">Crop:</span>
-                  <span className="result-field-value plant-highlight">{cropName || 'Unknown'}</span>
-                </div>
-                {cropConfidencePct && (
+              {model1?.status === 'unavailable' ? (
+                <div className="result-field-group">
                   <div className="result-field-row">
-                    <span className="result-field-label">Confidence:</span>
-                    <span className="result-field-value">{cropConfidencePct}%</span>
+                    <span className="result-field-value" style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>
+                      {model1.message || 'Vision model checkpoint not mounted on this server instance.'}
+                    </span>
                   </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="result-field-group">
+                  <div className="result-field-row">
+                    <span className="result-field-label">Crop:</span>
+                    <span className="result-field-value plant-highlight">{cropName || 'Unknown'}</span>
+                  </div>
+                  {cropConfidencePct && (
+                    <div className="result-field-row">
+                      <span className="result-field-label">Confidence:</span>
+                      <span className="result-field-value">{cropConfidencePct}%</span>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         )}

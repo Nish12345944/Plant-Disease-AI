@@ -439,6 +439,14 @@ async def unified_chat_endpoint(
                     "confidence": 0.0,
                     "message": f"Vision model checkpoint unavailable: {str(exc)}",
                 }
+            except Exception as exc:
+                logger.error(f"Image inference processing failure: {exc}", exc_info=True)
+                image_result = {
+                    "status": "error",
+                    "predicted_crop": None,
+                    "confidence": 0.0,
+                    "message": f"Image processing failed: {str(exc)}",
+                }
 
     if video_file is not None:
         vid_bytes = await video_file.read()
@@ -457,6 +465,14 @@ async def unified_chat_endpoint(
                     "confidence": 0.0,
                     "message": f"Video model checkpoint unavailable: {str(exc)}",
                 }
+            except Exception as exc:
+                logger.error(f"Video inference processing failure: {exc}", exc_info=True)
+                video_result = {
+                    "status": "error",
+                    "predicted_crop": None,
+                    "confidence": 0.0,
+                    "message": f"Video processing failed: {str(exc)}",
+                }
 
     # Extract Model 1 & Model 2 result structures
     m1_data = None
@@ -473,81 +489,102 @@ async def unified_chat_endpoint(
 
     # Standardize visual evidence for the Agricultural Knowledge Assistant
     visual_evidence = None
+    vision_unavailable = False
+
     if image_result:
-        m1 = image_result.get("model1", {}) or {}
-        m2 = image_result.get("model2", {}) or {}
-        m1_status = m1.get("status", "valid")
-        m2_status = m2.get("status", "uncertain")
-
-        if m1_status != "valid":
-            eff_status = "uncertain"
-        elif m2_status == "healthy":
-            eff_status = "healthy"
-        elif m2_status == "detected" and m2.get("has_disease"):
-            eff_status = "diseased"
+        if image_result.get("status") in ("unavailable", "error"):
+            vision_unavailable = True
+            visual_evidence = None
         else:
-            eff_status = "uncertain"
+            m1 = image_result.get("model1", image_result) or {}
+            m2 = image_result.get("model2", {}) or {}
+            m1_status = m1.get("status", "valid")
+            m2_status = m2.get("status", "uncertain")
 
-        crop_name_vis = image_result.get("predicted_crop") or m1.get("predicted_crop")
-        disease_slug_vis = m2.get("primary_disease_slug") or m2.get("primary_disease")
+            if m1_status != "valid":
+                eff_status = "uncertain"
+            elif m2_status == "healthy":
+                eff_status = "healthy"
+            elif m2_status == "detected" and m2.get("has_disease"):
+                eff_status = "diseased"
+            else:
+                eff_status = "uncertain"
 
-        visual_evidence = {
-            "crop": crop_name_vis,
-            "crop_confidence": image_result.get("confidence") or m1.get("confidence", 0.0),
-            "disease": disease_slug_vis,
-            "disease_name": m2.get("primary_disease"),
-            "disease_confidence": m2.get("confidence", 0.0),
-            "status": eff_status,
-            "incompatibility_flag": (m2_status == "uncertain" and not m2.get("has_disease")),
-        }
+            crop_name_vis = image_result.get("predicted_crop") or m1.get("predicted_crop")
+            disease_slug_vis = m2.get("primary_disease_slug") or m2.get("primary_disease")
+
+            visual_evidence = {
+                "crop": crop_name_vis,
+                "crop_confidence": image_result.get("confidence") or m1.get("confidence", 0.0),
+                "disease": disease_slug_vis,
+                "disease_name": m2.get("primary_disease"),
+                "disease_confidence": m2.get("confidence", 0.0),
+                "status": eff_status,
+                "incompatibility_flag": (m2_status == "uncertain" and not m2.get("has_disease")),
+            }
     elif video_result:
-        m2 = video_result.get("model2", {}) or {}
-        vid_status = video_result.get("status", "valid")
-        m2_status = m2.get("status", "uncertain")
-
-        if vid_status != "valid":
-            eff_status = "uncertain"
-        elif m2_status == "healthy":
-            eff_status = "healthy"
-        elif m2_status == "detected" and m2.get("has_disease"):
-            eff_status = "diseased"
+        if video_result.get("status") in ("unavailable", "error"):
+            vision_unavailable = True
+            visual_evidence = None
         else:
-            eff_status = "uncertain"
+            m2 = video_result.get("model2", {}) or {}
+            vid_status = video_result.get("status", "valid")
+            m2_status = m2.get("status", "uncertain")
 
-        visual_evidence = {
-            "crop": video_result.get("predicted_crop"),
-            "crop_confidence": video_result.get("confidence", 0.0),
-            "disease": m2.get("primary_disease_slug") or m2.get("primary_disease"),
-            "disease_name": m2.get("primary_disease"),
-            "disease_confidence": m2.get("confidence", 0.0),
-            "status": eff_status,
-            "incompatibility_flag": (m2_status == "uncertain" and not m2.get("has_disease")),
-        }
+            if vid_status != "valid":
+                eff_status = "uncertain"
+            elif m2_status == "healthy":
+                eff_status = "healthy"
+            elif m2_status == "detected" and m2.get("has_disease"):
+                eff_status = "diseased"
+            else:
+                eff_status = "uncertain"
+
+            visual_evidence = {
+                "crop": video_result.get("predicted_crop"),
+                "crop_confidence": video_result.get("confidence", 0.0),
+                "disease": m2.get("primary_disease_slug") or m2.get("primary_disease"),
+                "disease_name": m2.get("primary_disease"),
+                "disease_confidence": m2.get("confidence", 0.0),
+                "status": eff_status,
+                "incompatibility_flag": (m2_status == "uncertain" and not m2.get("has_disease")),
+            }
 
     # Execute deterministic AgriculturalAssistant reasoning and knowledge retrieval
     assistant = get_session_assistant(session_id)
     knowledge_data = None
     knowledge_sources = []
 
-    try:
-        kb_resp = assistant.answer_query(
-            query=final_query,
-            visual_result=visual_evidence,
-        )
-        assistant_message = kb_resp.text
-        knowledge_data = kb_resp.to_dict()
-        knowledge_sources = kb_resp.sources
-    except Exception as exc:
-        logger.error(f"AgriculturalAssistant reasoning error: {exc}", exc_info=True)
+    if vision_unavailable and not typed_clean and not spoken_clean:
         assistant_message = (
-            "I encountered an issue processing the agricultural knowledge for your request. "
-            "Please try rephrasing your question or check the image clarity."
+            "Vision plant identification is currently unavailable on this deployment because "
+            "the neural model checkpoint is not mounted on this server instance. However, you can describe "
+            "your crop and symptoms in text, and I can identify diseases and recommend treatments using the knowledge base!"
         )
         knowledge_data = {
-            "status": "error",
-            "error": str(exc),
+            "status": "checkpoint_unavailable",
             "text": assistant_message,
         }
+    else:
+        try:
+            kb_resp = assistant.answer_query(
+                query=final_query,
+                visual_result=visual_evidence,
+            )
+            assistant_message = kb_resp.text
+            knowledge_data = kb_resp.to_dict()
+            knowledge_sources = kb_resp.sources
+        except Exception as exc:
+            logger.error(f"AgriculturalAssistant reasoning error: {exc}", exc_info=True)
+            assistant_message = (
+                "I encountered an issue processing the agricultural knowledge for your request. "
+                "Please try rephrasing your question or check the image clarity."
+            )
+            knowledge_data = {
+                "status": "error",
+                "error": str(exc),
+                "text": assistant_message,
+            }
 
     inputs_dict = {
         "text": has_text,

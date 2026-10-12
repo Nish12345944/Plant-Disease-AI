@@ -57,4 +57,4 @@ ENV PYTHONUNBUFFERED=1 \
 EXPOSE 10000
 
 # Start command
-CMD ["sh", "-c", "uvicorn app.backend.main:app --host 0.0.0.0 --port ${PORT:-10000}"]
+CMD ["sh", "-c", "uvicorn app.backend.main:app --host 0.0.0.0 --port ${PORT:-10000} --workers 1 --timeout-keep-alive 75"]

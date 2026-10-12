@@ -24,9 +24,20 @@ export default function Header({
 
       <div className="header-actions">
         {/* Device & Model Status Pill */}
-        <div className="status-pill" title="Model 1 Status">
+        <div 
+          className="status-pill" 
+          title={`Backend: ${backendStatus?.service || 'Alexa Farms API'} | Device: ${backendStatus?.device || 'CPU'} | Model 1: ${backendStatus?.models?.model1?.available ? 'Available' : 'Checkpoint not mounted'}`}
+        >
           <Cpu size={14} color="var(--primary-emerald)" />
-          <span>Model 1: {backendStatus?.model1_loaded ? 'Ready (RTX 3050)' : 'Loading...'}</span>
+          <span>
+            Model 1: {!backendStatus 
+              ? 'Connecting...' 
+              : backendStatus.models?.model1?.loaded 
+                ? `Ready (${backendStatus.device?.includes('CUDA') ? 'GPU' : 'CPU'})` 
+                : backendStatus.models?.model1?.available 
+                  ? `Standby (${backendStatus.device?.includes('CUDA') ? 'GPU' : 'CPU'})` 
+                  : 'Unavailable (No Checkpoint)'}
+          </span>
         </div>
 
         {/* Developer Debug Toggle Button */}

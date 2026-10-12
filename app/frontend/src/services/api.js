@@ -106,8 +106,21 @@ export async function sendChatMessage({ text = '', file = null, inputType = 'tex
   });
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.detail || `Chat request failed with HTTP ${res.status}`);
+    let errorDetail = `Chat request failed with HTTP ${res.status}`;
+    try {
+      const err = await res.json();
+      if (err.detail) errorDetail = err.detail;
+      else if (err.message) errorDetail = err.message;
+    } catch {
+      if (res.status === 502) {
+        errorDetail = 'Backend service is starting up or temporarily unavailable (HTTP 502 Bad Gateway). Please retry in a few moments.';
+      } else if (res.status === 503) {
+        errorDetail = 'Service temporarily unavailable (HTTP 503). The requested model checkpoint is unavailable or service is loading.';
+      } else if (res.status === 504) {
+        errorDetail = 'Request timed out (HTTP 504 Gateway Timeout). Please try with a smaller file or text query.';
+      }
+    }
+    throw new Error(errorDetail);
   }
 
   return await res.json();
