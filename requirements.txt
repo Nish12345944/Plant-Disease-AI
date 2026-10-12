@@ -1,0 +1,25 @@
+# ---------------------------------------------------------------------------
+# Plant Disease AI - Production Deployment Requirements (Render Free CPU)
+# ---------------------------------------------------------------------------
+# Uses PyTorch CPU wheel to avoid multi-gigabyte CUDA bloat on cloud containers.
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Core Web Application Framework
+fastapi>=0.110.0,<1.0.0
+uvicorn[standard]>=0.28.0,<1.0.0
+pydantic>=2.0.0,<3.0.0
+python-multipart>=0.0.9
+requests>=2.31.0
+
+# Deep Learning & Vision (CPU-optimized)
+torch>=2.0.0
+torchvision>=0.15.0
+pillow>=10.0.0
+numpy>=1.24.0,<3.0.0
+
+# Headless Computer Vision (No GUI/X11 dependencies for cloud Linux)
+opencv-python-headless>=4.8.0,<5.0.0
+
+# Speech-to-Text Transcription (CTranslate2 CPU)
+# Note: Whisper 'tiny' (~150MB RAM) is recommended on Render Free (512MB RAM limit).
+faster-whisper>=1.0.0

@@ -8,16 +8,21 @@ plant part, action, and language) using the official Model 1 / Model 2 taxonomy.
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 from typing import Optional
 
 from router.taxonomy import ExtractedEntities
 
-PROJECT_ROOT = Path(r"c:\Users\vyasn\OneDrive\Desktop\Disease_prediction").resolve()
-CROP_DISEASE_MAP_FILE = PROJECT_ROOT / "data" / "processed" / "model2_classifier_v2_crop_disease_mapping.json"
-if not CROP_DISEASE_MAP_FILE.exists():
-    CROP_DISEASE_MAP_FILE = PROJECT_ROOT / "data" / "processed" / "model2_classifier_crop_disease_mapping.json"
+PROJECT_ROOT = Path(os.environ.get("PROJECT_ROOT", str(Path(__file__).resolve().parent.parent))).resolve()
+_env_crop_map = os.environ.get("CROP_DISEASE_MAPPING")
+if _env_crop_map:
+    CROP_DISEASE_MAP_FILE = Path(_env_crop_map)
+else:
+    CROP_DISEASE_MAP_FILE = PROJECT_ROOT / "data" / "processed" / "model2_classifier_v2_crop_disease_mapping.json"
+    if not CROP_DISEASE_MAP_FILE.exists():
+        CROP_DISEASE_MAP_FILE = PROJECT_ROOT / "data" / "processed" / "model2_classifier_crop_disease_mapping.json"
 
 # Load Crop-Disease Taxonomy
 if CROP_DISEASE_MAP_FILE.exists():

@@ -37,9 +37,20 @@ from app.backend.config import (
     MODEL2_CLASS_MAPPING,
     MODEL2_CONFIG,
     TEMP_MEDIA_DIR,
+    WHISPER_MODEL_SIZE,
 )
-from audio.recorder import AudioRecorder
-from audio.test_audio import transcribe_audio
+
+try:
+    from audio.recorder import AudioRecorder, MicrophoneError
+except Exception:
+    AudioRecorder = None
+    MicrophoneError = Exception
+
+try:
+    from audio.test_audio import transcribe_audio
+except Exception:
+    transcribe_audio = None
+
 from model1_test_app.inference import load_model, predict_image
 from model1_test_app.video_inference import TARGET_FRAMES_DEFAULT, predict_video
 from models.model2_classifier_v4.predict import (
@@ -59,7 +70,7 @@ _CLASS_TO_IDX = None
 _MODEL2_V4: Optional[Model2DiseaseClassifierV4] = None
 
 # Active server-side microphone recorder singleton
-_ACTIVE_RECORDER: Optional[AudioRecorder] = None
+_ACTIVE_RECORDER: Optional[Any] = None
 
 
 def get_model1():
@@ -67,7 +78,10 @@ def get_model1():
     global _MODEL1, _IDX_TO_CLASS, _CLASS_TO_IDX
     if _MODEL1 is None:
         if not MODEL1_CHECKPOINT.exists():
-            raise FileNotFoundError(f"CRITICAL: Model 1 checkpoint not found at: {MODEL1_CHECKPOINT}")
+            raise FileNotFoundError(
+                f"Model 1 checkpoint not found at: '{MODEL1_CHECKPOINT}'. "
+                "Ensure best_model.pth is mounted or configure MODEL1_CHECKPOINT env var."
+            )
         logger.info(f"Loading Model 1 from {MODEL1_CHECKPOINT} onto {DEVICE_NAME}...")
         _MODEL1, _IDX_TO_CLASS, _CLASS_TO_IDX, _, _ = load_model(
             checkpoint_path=MODEL1_CHECKPOINT,
@@ -84,7 +98,10 @@ def get_model2() -> Model2DiseaseClassifierV4:
     global _MODEL2_V4
     if _MODEL2_V4 is None:
         if not MODEL2_CHECKPOINT.exists():
-            raise FileNotFoundError(f"CRITICAL: Model 2 V4 checkpoint not found at: {MODEL2_CHECKPOINT}")
+            raise FileNotFoundError(
+                f"Model 2 V4 checkpoint not found at: '{MODEL2_CHECKPOINT}'. "
+                "Ensure best_model.pth is mounted or configure MODEL2_CHECKPOINT env var."
+            )
         logger.info(f"Loading Model 2 V4 from {MODEL2_CHECKPOINT} onto {DEVICE_NAME}...")
         _MODEL2_V4 = Model2DiseaseClassifierV4(
             checkpoint_path=MODEL2_CHECKPOINT,
@@ -113,7 +130,13 @@ def pil_to_base64_data_url(pil_img: Image.Image, format: str = "JPEG", quality: 
 # ---------------------------------------------------------------------------
 
 def process_audio_file(file_bytes: bytes, original_filename: str = "audio.wav") -> dict[str, Any]:
-    """Transcribe an audio file using the existing faster-whisper pipeline."""
+    """Transcribe an audio file using faster-whisper."""
+    if transcribe_audio is None:
+        return {
+            "status": "unavailable",
+            "text": "",
+            "error": "Speech transcription is not available in this environment (faster-whisper not installed or unsupported).",
+        }
     suffix = Path(original_filename).suffix.lower() or ".wav"
     temp_path = None
     try:
@@ -121,7 +144,7 @@ def process_audio_file(file_bytes: bytes, original_filename: str = "audio.wav") 
             tmp.write(file_bytes)
             temp_path = tmp.name
 
-        result = transcribe_audio(temp_path)
+        result = transcribe_audio(temp_path, model_size=WHISPER_MODEL_SIZE)
         dur = result.segments[-1].end if getattr(result, "segments", None) else 0.0
         return {
             "status": "success",
@@ -146,7 +169,12 @@ def process_audio_file(file_bytes: bytes, original_filename: str = "audio.wav") 
 def start_server_microphone() -> dict[str, Any]:
     """Start server-side microphone capture."""
     global _ACTIVE_RECORDER
-    if _ACTIVE_RECORDER is not None and _ACTIVE_RECORDER.is_recording:
+    if AudioRecorder is None:
+        return {
+            "status": "unavailable",
+            "message": "Host microphone recording is not available in cloud/headless deployments. Use browser audio recording.",
+        }
+    if _ACTIVE_RECORDER is not None and getattr(_ACTIVE_RECORDER, "is_recording", False):
         return {"status": "already_recording", "message": "Microphone recording is already active."}
 
     try:
@@ -161,7 +189,7 @@ def start_server_microphone() -> dict[str, Any]:
 def stop_server_microphone() -> dict[str, Any]:
     """Stop server-side microphone capture and transcribe."""
     global _ACTIVE_RECORDER
-    if _ACTIVE_RECORDER is None or not _ACTIVE_RECORDER.is_recording:
+    if AudioRecorder is None or _ACTIVE_RECORDER is None or not getattr(_ACTIVE_RECORDER, "is_recording", False):
         return {"status": "not_recording", "text": "", "message": "Microphone is not currently recording."}
 
     temp_wav_path = None
@@ -170,7 +198,14 @@ def stop_server_microphone() -> dict[str, Any]:
         if not temp_wav_path or not Path(temp_wav_path).exists():
             return {"status": "error", "text": "", "message": "No audio was captured from microphone."}
 
-        result = transcribe_audio(temp_wav_path)
+        if transcribe_audio is None:
+            return {
+                "status": "unavailable",
+                "text": "",
+                "message": "Audio captured, but speech transcription library is unavailable.",
+            }
+
+        result = transcribe_audio(temp_wav_path, model_size=WHISPER_MODEL_SIZE)
         return {
             "status": "success",
             "text": (result.text or "").strip(),

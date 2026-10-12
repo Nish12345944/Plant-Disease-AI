@@ -21,6 +21,7 @@ import argparse
 import io
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Any, Optional, Union
 
@@ -34,15 +35,17 @@ from torchvision.models import efficientnet_b2
 logger = logging.getLogger(__name__)
 
 # Base paths
-PROJECT_ROOT = Path(r"c:\Users\vyasn\OneDrive\Desktop\Disease_prediction").resolve()
-MODEL_DIR_V4 = PROJECT_ROOT / "models" / "model2_classifier_v4"
-DEFAULT_CHECKPOINT_PATH = MODEL_DIR_V4 / "best_model.pth"
-DEFAULT_MAPPING_PATH = MODEL_DIR_V4 / "class_mapping.json"
-DEFAULT_CONFIG_PATH = MODEL_DIR_V4 / "config.json"
-CROP_DISEASE_MAP_PATH = PROJECT_ROOT / "data" / "processed" / "model2_organized_crop_disease_mapping.json"
+PROJECT_ROOT = Path(os.environ.get("PROJECT_ROOT", str(Path(__file__).resolve().parent.parent.parent))).resolve()
+MODEL_DIR_V4 = Path(__file__).resolve().parent
+DEFAULT_CHECKPOINT_PATH = Path(os.environ.get("MODEL2_CHECKPOINT", str(MODEL_DIR_V4 / "best_model.pth")))
+DEFAULT_MAPPING_PATH = Path(os.environ.get("MODEL2_CLASS_MAPPING", str(MODEL_DIR_V4 / "class_mapping.json")))
+DEFAULT_CONFIG_PATH = Path(os.environ.get("MODEL2_CONFIG", str(MODEL_DIR_V4 / "config.json")))
+CROP_DISEASE_MAP_PATH = Path(os.environ.get("CROP_DISEASE_MAPPING", str(PROJECT_ROOT / "data" / "processed" / "model2_organized_crop_disease_mapping.json")))
 
 if not DEFAULT_MAPPING_PATH.exists():
-    DEFAULT_MAPPING_PATH = PROJECT_ROOT / "data" / "processed" / "model2_organized_class_mapping.json"
+    alt_map = PROJECT_ROOT / "data" / "processed" / "model2_organized_class_mapping.json"
+    if alt_map.exists():
+        DEFAULT_MAPPING_PATH = alt_map
 if not CROP_DISEASE_MAP_PATH.exists():
     CROP_DISEASE_MAP_PATH = PROJECT_ROOT / "data" / "processed" / "model2_classifier_crop_disease_mapping.json"
 

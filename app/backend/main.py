@@ -76,24 +76,37 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def on_startup():
-    """Warm up Model 1 and Model 2 V4 on startup so subsequent requests are fast."""
-    try:
-        logger.info("Initializing Model 1 neural weights...")
-        get_model1()
-        logger.info("Model 1 initialized successfully.")
-    except Exception as exc:
-        logger.error(f"CRITICAL: Model 1 initialization failed: {exc}", exc_info=True)
-        raise exc
+    """Verify services on startup. Lazy loads heavy neural models to conserve memory unless EAGER_LOAD_MODELS=true."""
+    from app.backend.config import EAGER_LOAD_MODELS, MODEL1_CHECKPOINT, MODEL2_CHECKPOINT
 
+    # Verify Knowledge Base in-memory repository
     try:
-        logger.info("Initializing Model 2 V4 EfficientNet-B2 classifier weights...")
-        m2 = get_model2()
-        logger.info(f"Model 2 version: V4")
-        logger.info(f"Model 2 checkpoint: {m2.checkpoint_path}")
-        logger.info(f"Model 2 V4 initialized successfully with {m2.num_classes} classes.")
+        get_knowledge_base()
+        logger.info("Agricultural Knowledge Base verified and ready.")
     except Exception as exc:
-        logger.error(f"CRITICAL: Model 2 V4 initialization failed: {exc}", exc_info=True)
-        raise exc
+        logger.warning(f"Knowledge base initialization note: {exc}")
+
+    if EAGER_LOAD_MODELS:
+        logger.info("EAGER_LOAD_MODELS=true: Pre-warming neural models on startup...")
+        try:
+            get_model1()
+            logger.info("Model 1 initialized successfully.")
+        except Exception as exc:
+            logger.error(f"Model 1 eager initialization failed: {exc}")
+        try:
+            m2 = get_model2()
+            logger.info("Model 2 V4 initialized successfully.")
+        except Exception as exc:
+            logger.error(f"Model 2 V4 eager initialization failed: {exc}")
+    else:
+        logger.info(
+            "Lazy model loading active (Render Free / Low-Memory optimization). "
+            "Neural models will initialize on the first image/video inference request."
+        )
+        if not MODEL1_CHECKPOINT.exists():
+            logger.warning(f"Note: Model 1 checkpoint not detected at: {MODEL1_CHECKPOINT}")
+        if not MODEL2_CHECKPOINT.exists():
+            logger.warning(f"Note: Model 2 checkpoint not detected at: {MODEL2_CHECKPOINT}")
 
 
 @app.get("/")
@@ -104,25 +117,50 @@ async def root():
         "status": "online",
         "device": DEVICE_NAME,
         "api_docs": "/docs",
-        "health": "/api/health",
+        "health": "/health",
         "frontend_url": "http://localhost:5173",
         "models": {
             "model1": "Plant Identification (Model 1 - EfficientNet-B2 22 crops)",
             "model2": "Disease & Healthy Classification (Model 2 V4 - EfficientNet-B2 117 classes)",
-            "audio": "faster-whisper"
-        }
+            "audio": "faster-whisper",
+        },
     }
 
 
+@app.get("/health")
 @app.get("/api/health")
 async def health_check():
-    """Return system readiness and device specifications."""
+    """Return lightweight system readiness, device specifications, and checkpoint status without model inference."""
+    import app.backend.services as srv
+    from app.backend.config import (
+        MODEL1_CHECKPOINT,
+        MODEL2_CHECKPOINT,
+        WHISPER_MODEL_SIZE,
+    )
     return {
         "status": "healthy",
+        "service": "Alexa Farms AI Backend",
         "device": DEVICE_NAME,
-        "model1_loaded": True,
-        "model2_loaded": True,
-        "whisper_model": "faster-whisper-small",
+        "models": {
+            "model1": {
+                "name": "EfficientNet-B2 Crop Identifier",
+                "loaded": srv._MODEL1 is not None,
+                "checkpoint": str(MODEL1_CHECKPOINT),
+                "available": MODEL1_CHECKPOINT.exists(),
+            },
+            "model2": {
+                "name": "EfficientNet-B2 V4 Disease Classifier",
+                "loaded": srv._MODEL2_V4 is not None,
+                "checkpoint": str(MODEL2_CHECKPOINT),
+                "available": MODEL2_CHECKPOINT.exists(),
+            },
+            "audio": {
+                "model_size": WHISPER_MODEL_SIZE,
+                "available": srv.transcribe_audio is not None,
+            },
+            "knowledge_base": "ready",
+            "router": "ready",
+        },
         "supported_media": {
             "images": sorted(list(SUPPORTED_IMAGE_EXTS)),
             "videos": sorted(list(SUPPORTED_VIDEO_EXTS)),
@@ -221,6 +259,12 @@ async def inference_image_endpoint(file: UploadFile = File(...)):
     try:
         res = process_image_inference(file_bytes)
         return res
+    except FileNotFoundError as exc:
+        logger.warning(f"Image inference unavailable: {exc}")
+        raise HTTPException(
+            status_code=503,
+            detail=f"Inference model checkpoint unavailable: {str(exc)}",
+        )
     except Exception as exc:
         logger.error(f"Image inference failure: {exc}")
         raise HTTPException(status_code=500, detail=f"Image inference failed: {str(exc)}")
@@ -250,6 +294,12 @@ async def inference_video_endpoint(
             target_frames=target_frames,
         )
         return res
+    except FileNotFoundError as exc:
+        logger.warning(f"Video inference unavailable: {exc}")
+        raise HTTPException(
+            status_code=503,
+            detail=f"Inference model checkpoint unavailable: {str(exc)}",
+        )
     except Exception as exc:
         logger.error(f"Video inference failure: {exc}")
         raise HTTPException(status_code=500, detail=f"Video inference failed: {str(exc)}")
@@ -378,16 +428,34 @@ async def unified_chat_endpoint(
     if image_file is not None:
         img_bytes = await image_file.read()
         if img_bytes:
-            image_result = process_image_inference(img_bytes)
+            try:
+                image_result = process_image_inference(img_bytes)
+            except FileNotFoundError as exc:
+                logger.warning(f"Image inference skipped (checkpoint missing): {exc}")
+                image_result = {
+                    "status": "unavailable",
+                    "predicted_crop": None,
+                    "confidence": 0.0,
+                    "message": f"Vision model checkpoint unavailable: {str(exc)}",
+                }
 
     if video_file is not None:
         vid_bytes = await video_file.read()
         if vid_bytes:
-            video_result = process_video_inference(
-                vid_bytes,
-                original_filename=video_file.filename or "video.mp4",
-                target_frames=target_frames,
-            )
+            try:
+                video_result = process_video_inference(
+                    vid_bytes,
+                    original_filename=video_file.filename or "video.mp4",
+                    target_frames=target_frames,
+                )
+            except FileNotFoundError as exc:
+                logger.warning(f"Video inference skipped (checkpoint missing): {exc}")
+                video_result = {
+                    "status": "unavailable",
+                    "predicted_crop": None,
+                    "confidence": 0.0,
+                    "message": f"Video model checkpoint unavailable: {str(exc)}",
+                }
 
     # Extract Model 1 & Model 2 result structures
     m1_data = None

@@ -8,6 +8,7 @@ Provides fast in-memory indexing with JSON serialization.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -16,7 +17,7 @@ from knowledge.data.v4_disease_knowledge import V4_CROP_KNOWLEDGE, V4_DISEASE_KN
 from knowledge.schema import CropRecord, DiseaseRecord
 from knowledge.sources import SOURCE_REGISTRY, SourceRecord
 
-PROJECT_ROOT = Path(r"c:\Users\vyasn\OneDrive\Desktop\Disease_prediction").resolve()
+PROJECT_ROOT = Path(os.environ.get("PROJECT_ROOT", str(Path(__file__).resolve().parent.parent))).resolve()
 KNOWLEDGE_STORE_DIR = PROJECT_ROOT / "knowledge" / "store"
 
 

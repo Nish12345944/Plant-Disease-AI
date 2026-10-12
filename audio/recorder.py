@@ -11,10 +11,14 @@ import queue
 import tempfile
 import wave
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 import numpy as np
-import sounddevice as sd
+
+try:
+    import sounddevice as sd
+except (ImportError, OSError):
+    sd = None
 
 logger = logging.getLogger(__name__)
 
@@ -45,13 +49,15 @@ class AudioRecorder:
         dtype: str = DEFAULT_DTYPE,
         device: Optional[int | str] = None,
     ) -> None:
+        if sd is None:
+            raise MicrophoneError("sounddevice / PortAudio library is not available on this system.")
         self.sample_rate = sample_rate
         self.channels = channels
         self.dtype = dtype
         self.device = device
 
         self._audio_queue: queue.Queue = queue.Queue()
-        self._stream: Optional[sd.InputStream] = None
+        self._stream: Optional[Any] = None
         self._is_recording: bool = False
         self._recorded_chunks: list[np.ndarray] = []
         self._active_audio_data: Optional[np.ndarray] = None
