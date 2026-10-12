@@ -131,19 +131,25 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                 <Sprout size={16} color="var(--primary-emerald)" />
                 <span className="model-title">PLANT IDENTIFICATION</span>
               </div>
-              {model1?.status === 'unavailable' && (
-                <span style={{ fontSize: '0.72rem', color: '#f59e0b', padding: '2px 6px', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '4px' }}>
-                  Checkpoint Missing
+              {(model1?.status === 'unavailable' || videoInference?.status === 'unavailable' || model1?.status === 'error' || videoInference?.status === 'error') && (
+                <span style={{ 
+                  fontSize: '0.72rem', 
+                  color: (model1?.status === 'error' || videoInference?.status === 'error') ? '#f43f5e' : '#f59e0b', 
+                  padding: '2px 6px', 
+                  background: (model1?.status === 'error' || videoInference?.status === 'error') ? 'rgba(244, 63, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)', 
+                  borderRadius: '4px' 
+                }}>
+                  {(model1?.status === 'error' || videoInference?.status === 'error') ? 'Inference Error' : 'Checkpoint Missing'}
                 </span>
               )}
             </div>
 
             <div className="model-card-body">
-              {model1?.status === 'unavailable' ? (
+              {(model1?.status === 'unavailable' || videoInference?.status === 'unavailable' || model1?.status === 'error' || videoInference?.status === 'error') ? (
                 <div className="result-field-group">
                   <div className="result-field-row">
                     <span className="result-field-value" style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>
-                      {model1.message || 'Vision model checkpoint not mounted on this server instance.'}
+                      {videoInference?.message || model1?.message || 'Vision model checkpoint not mounted on this server instance.'}
                     </span>
                   </div>
                 </div>
@@ -236,7 +242,7 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
         {/* ========================================================
             SECTION 4: VIDEO FRAMES MODAL TRIGGER (If Video)
             ======================================================== */}
-        {videoInference && (
+        {videoInference && !['unavailable', 'error'].includes(videoInference.status) && (videoInference.frames_processed > 0) && (
           <div className="video-actions-container">
             <button 
               className="btn-extracted-frames"

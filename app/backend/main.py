@@ -77,8 +77,19 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def on_startup():
-    """Verify services on startup. Lazy loads heavy neural models to conserve memory unless EAGER_LOAD_MODELS=true."""
+    """Verify services and securely ensure model checkpoints on startup.
+    Lazy loads heavy neural models to conserve memory unless EAGER_LOAD_MODELS=true.
+    """
     from app.backend.config import EAGER_LOAD_MODELS, MODEL1_CHECKPOINT, MODEL2_CHECKPOINT
+    from app.backend.weights_manager import ensure_model_checkpoints
+
+    # Securely synchronize configured model checkpoints from private storage
+    try:
+        checkpoint_status = ensure_model_checkpoints()
+        for name, info in checkpoint_status.items():
+            logger.info(f"Checkpoint '{name}' status: {info.get('status')} (available={info.get('available')})")
+    except Exception as exc:
+        logger.warning(f"Checkpoint synchronization note: {exc}")
 
     # Verify Knowledge Base in-memory repository
     try:
@@ -512,15 +523,17 @@ async def unified_chat_endpoint(
 
             crop_name_vis = image_result.get("predicted_crop") or m1.get("predicted_crop")
             disease_slug_vis = m2.get("primary_disease_slug") or m2.get("primary_disease")
+            has_valid_crop_evidence = bool(crop_name_vis and crop_name_vis.strip().lower() not in ("unknown", "plant", ""))
+            has_valid_disease_evidence = bool(disease_slug_vis and disease_slug_vis.strip().lower() not in ("unknown", ""))
 
             visual_evidence = {
-                "crop": crop_name_vis,
+                "crop": crop_name_vis if has_valid_crop_evidence else None,
                 "crop_confidence": image_result.get("confidence") or m1.get("confidence", 0.0),
-                "disease": disease_slug_vis,
+                "disease": disease_slug_vis if has_valid_disease_evidence else None,
                 "disease_name": m2.get("primary_disease"),
                 "disease_confidence": m2.get("confidence", 0.0),
                 "status": eff_status,
-                "incompatibility_flag": (m2_status == "uncertain" and not m2.get("has_disease")),
+                "incompatibility_flag": bool(has_valid_crop_evidence and has_valid_disease_evidence and m2_status == "uncertain" and not m2.get("has_disease")),
             }
     elif video_result:
         if video_result.get("status") in ("unavailable", "error"):
@@ -540,14 +553,19 @@ async def unified_chat_endpoint(
             else:
                 eff_status = "uncertain"
 
+            crop_name_vid = video_result.get("predicted_crop")
+            disease_slug_vid = m2.get("primary_disease_slug") or m2.get("primary_disease")
+            has_valid_crop_vid = bool(crop_name_vid and crop_name_vid.strip().lower() not in ("unknown", "plant", ""))
+            has_valid_disease_vid = bool(disease_slug_vid and disease_slug_vid.strip().lower() not in ("unknown", ""))
+
             visual_evidence = {
-                "crop": video_result.get("predicted_crop"),
+                "crop": crop_name_vid if has_valid_crop_vid else None,
                 "crop_confidence": video_result.get("confidence", 0.0),
-                "disease": m2.get("primary_disease_slug") or m2.get("primary_disease"),
+                "disease": disease_slug_vid if has_valid_disease_vid else None,
                 "disease_name": m2.get("primary_disease"),
                 "disease_confidence": m2.get("confidence", 0.0),
                 "status": eff_status,
-                "incompatibility_flag": (m2_status == "uncertain" and not m2.get("has_disease")),
+                "incompatibility_flag": bool(has_valid_crop_vid and has_valid_disease_vid and m2_status == "uncertain" and not m2.get("has_disease")),
             }
 
     # Execute deterministic AgriculturalAssistant reasoning and knowledge retrieval
@@ -556,8 +574,9 @@ async def unified_chat_endpoint(
     knowledge_sources = []
 
     if vision_unavailable and not typed_clean and not spoken_clean:
+        media_label = "video" if has_video else "plant"
         assistant_message = (
-            "Vision plant identification is currently unavailable on this deployment because "
+            f"Visual {media_label} identification is currently unavailable on this deployment because "
             "the neural model checkpoint is not mounted on this server instance. However, you can describe "
             "your crop and symptoms in text, and I can identify diseases and recommend treatments using the knowledge base!"
         )

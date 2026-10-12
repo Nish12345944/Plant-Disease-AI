@@ -78,8 +78,17 @@ def reason_agricultural_query(
     # -----------------------------------------------------------------------
     # RULE 3: Crop-Disease Incompatibility Protection
     # -----------------------------------------------------------------------
-    if visual_result and visual_result.get("incompatibility_flag"):
-        notes.append("Visual inference detected a conflict between the identified crop and disease signature.")
+    has_identified_crop = bool(effective_crop and effective_crop.strip().lower() not in ("unknown", "plant", ""))
+    has_identified_disease = bool(effective_disease and effective_disease.strip().lower() not in ("unknown", ""))
+
+    if (
+        visual_result 
+        and visual_result.get("incompatibility_flag")
+        and has_identified_crop 
+        and has_identified_disease
+        and visual_result.get("status") not in ("unavailable", "error")
+    ):
+        notes.append(f"Visual inference detected a conflict between the identified crop ({effective_crop}) and disease signature ({effective_disease}).")
         return StructuredReasoningResult(
             applicable_rule="RULE_3_INCOMPATIBLE_REJECTION",
             status="uncertain",
@@ -88,7 +97,7 @@ def reason_agricultural_query(
             confidence_level="low",
             visual_evidence_used=True,
             is_incompatible_rejected=True,
-            clarification_prompt="The observed symptoms appear incompatible with standard diseases for this crop. Please provide another photo or check the crop type.",
+            clarification_prompt=f"The observed symptoms appear incompatible with standard diseases for {effective_crop.title()}. Please provide another photo or check the crop type.",
             reasoning_notes=notes,
         )
 
