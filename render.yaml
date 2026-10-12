@@ -1,15 +1,14 @@
 services:
   - type: web
-    name: plant-disease-ai-backend
-    env: python
+    name: plant-disease-ai
+    env: docker
     plan: free
     region: oregon
-    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt"
-    startCommand: "uvicorn app.backend.main:app --host 0.0.0.0 --port $PORT"
-    healthCheckPath: "/health"
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.10.14
+      - key: PORT
+        value: 10000
       - key: EAGER_LOAD_MODELS
         value: "false"
       - key: WHISPER_MODEL_SIZE
