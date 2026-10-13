@@ -1,6 +1,22 @@
 import React, { useState } from 'react';
 import { X, Check, Code, Cpu, Compass, BookOpen, Layers } from 'lucide-react';
 
+function formatCropDisplay(raw) {
+  if (!raw) return 'Unknown';
+  const str = typeof raw === 'string' ? raw : (raw?.name || raw?.label || raw?.crop || String(raw));
+  const clean = str.trim().toLowerCase();
+  if (clean === 'capsicum' || clean === 'bellpepper' || clean === 'bell_pepper') {
+    return 'Bell Pepper';
+  }
+  if (clean === 'french_bean' || clean === 'bean') {
+    return 'French Bean';
+  }
+  if (clean === 'cherry_tomato') {
+    return 'Cherry Tomato';
+  }
+  return clean.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export default function DeveloperPanel({ isOpen, onClose, telemetryData }) {
   const [activeTab, setActiveTab] = useState('summary'); // 'summary' | 'json'
 
@@ -153,7 +169,7 @@ export default function DeveloperPanel({ isOpen, onClose, telemetryData }) {
                   <div className="debug-item mt-2">
                     <span className="debug-label">Model 1 Plant Identification</span>
                     <span className="debug-value text-emerald">
-                      {typeof (data.model1.predicted_crop || data.model1.predicted_label) === 'string' ? (data.model1.predicted_crop || data.model1.predicted_label) : 'Unknown'} ({typeof data.model1.confidence === 'number' ? (data.model1.confidence * 100).toFixed(1) : 0}%)
+                      {formatCropDisplay(data.model1.predicted_crop || data.model1.predicted_label)} ({typeof data.model1.confidence === 'number' ? (data.model1.confidence * 100).toFixed(1) : 0}%)
                     </span>
                   </div>
                 )}

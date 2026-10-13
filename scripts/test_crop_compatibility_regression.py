@@ -99,7 +99,7 @@ def run_tests():
 
     # Test 8: End-to-end predict_crop_aware on real diseased bell-pepper leaf
     tests_run += 1
-    test_img_path = WORKSPACE / r"data\processed\model2_retraining_v1\test\bell_pepper\bacterial_spot\23579bc30e_bell_pepper_bacterial_spot_Bing_0029.jpg"
+    test_img_path = WORKSPACE / r"data\processed\model2_retraining_v1\test\bell_pepper\blossom_end_rot\3f66f50342_bell_pepper_blossom_end_rot_Google_0327.jpg"
     assert test_img_path.is_file(), f"Test image not found at {test_img_path}"
     real_img = Image.open(test_img_path).convert("RGB")
 

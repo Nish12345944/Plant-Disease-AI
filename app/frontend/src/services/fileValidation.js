@@ -7,7 +7,7 @@ const SUPPORTED_VIDEO_EXTS = ['.mp4', '.avi', '.mov', '.mkv', '.webm', '.m4v'];
 const SUPPORTED_AUDIO_EXTS = ['.wav', '.mp3', '.m4a', '.flac', '.ogg', '.opus', '.aac', '.webm'];
 
 const MAX_IMAGE_SIZE_BYTES = 25 * 1024 * 1024; // 25 MB
-const MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024; // 100 MB
+const MAX_VIDEO_SIZE_BYTES = 50 * 1024 * 1024; // 50 MB
 const MAX_AUDIO_SIZE_BYTES = 25 * 1024 * 1024; // 25 MB
 
 export function validateMediaFile(file) {
@@ -45,7 +45,7 @@ export function validateMediaFile(file) {
       return {
         valid: false,
         type: 'video',
-        error: `Video size exceeds the 100 MB limit (${(file.size / (1024 * 1024)).toFixed(1)} MB).`,
+        error: `Video size exceeds the 50 MB limit (${(file.size / (1024 * 1024)).toFixed(1)} MB). Please upload a shorter or compressed video clip.`,
       };
     }
     return { valid: true, type: 'video', ext };

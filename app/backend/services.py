@@ -20,6 +20,7 @@ import logging
 import os
 import tempfile
 import threading
+import time
 from pathlib import Path
 from typing import Any, Optional
 
@@ -52,7 +53,12 @@ try:
 except Exception:
     transcribe_audio = None
 
-from model1_test_app.inference import load_model, predict_image
+from model1_test_app.inference import (
+    format_class_name,
+    load_model,
+    normalize_crop_id,
+    predict_image,
+)
 from model1_test_app.video_inference import TARGET_FRAMES_DEFAULT, predict_video
 from models.model2_classifier_v4.predict import (
     Model2DiseaseClassifierV4,
@@ -60,6 +66,12 @@ from models.model2_classifier_v4.predict import (
     format_human_readable,
 )
 from router.query_router import route_query
+from video.frame_extractor import (
+    MAX_VIDEO_DURATION_SECONDS,
+    MAX_VIDEO_SIZE_BYTES,
+    VideoDurationExceededError,
+    VideoSizeExceededError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -249,6 +261,8 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
     m2_classifier = get_model2()
 
     pil_img = Image.open(io.BytesIO(file_bytes)).convert("RGB")
+    if pil_img.width > 1024 or pil_img.height > 1024:
+        pil_img.thumbnail((1024, 1024), Image.Resampling.LANCZOS)
     m1_result = predict_image(
         image_input=pil_img,
         model=m1_model,
@@ -259,7 +273,9 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
     )
 
     preview_b64 = pil_to_base64_data_url(pil_img, format="JPEG", quality=80, max_dim=512)
-    crop_name = m1_result.get("predicted_label") or m1_result.get("predicted_class", "unknown")
+    raw_crop_class = m1_result.get("predicted_class", "unknown")
+    canonical_crop_id = normalize_crop_id(raw_crop_class) or raw_crop_class
+    crop_display_label = format_class_name(canonical_crop_id)
     crop_confidence = m1_result.get("confidence", 0.0)
     top_list = m1_result.get("top_k", [])
     is_plant = m1_result.get("status") == "valid"
@@ -268,7 +284,7 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
     try:
         m2_res = m2_classifier.predict_crop_aware(
             image_input=pil_img,
-            crop_name=crop_name if is_plant else None,
+            crop_name=canonical_crop_id if is_plant else None,
             crop_confidence=crop_confidence,
         )
 
@@ -292,7 +308,7 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
                 "top_compatible": m2_res["top_compatible"],
                 "raw_top10": m2_res["raw_top10"],
                 "annotated_preview_url": preview_b64,
-                "message": f"Verified healthy foliage for {crop_name.title()}." if is_plant else "Healthy specimen.",
+                "message": f"Verified healthy foliage for {crop_display_label}." if is_plant else "Healthy specimen.",
             }
         elif final_status == "diseased" and final_disease:
             clean_title = format_disease_name_clean(final_disease) or final_disease
@@ -318,7 +334,7 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
                 "top_compatible": m2_res["top_compatible"],
                 "raw_top10": m2_res["raw_top10"],
                 "annotated_preview_url": preview_b64,
-                "message": f"Diagnosed {clean_title} on {crop_name.title()} ({disease_conf * 100:.1f}% confidence).",
+                "message": f"Diagnosed {clean_title} on {crop_display_label} ({disease_conf * 100:.1f}% confidence).",
             }
         else:
             # Uncertain / Inconclusive condition
@@ -346,7 +362,7 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
                 "top_compatible": m2_res["top_compatible"],
                 "raw_top10": m2_res["raw_top10"],
                 "annotated_preview_url": preview_b64,
-                "message": f"Condition uncertain on {crop_name.title()}. Crop-disease compatibility or confidence threshold not met.",
+                "message": f"Condition uncertain on {crop_display_label}. Crop-disease compatibility or confidence threshold not met.",
             }
     except Exception as exc:
         logger.error(f"Model 2 V4 image inference failed: {exc}", exc_info=True)
@@ -364,9 +380,9 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
 
     model1_dict = {
         "status": m1_result.get("status", "valid"),
-        "predicted_crop": crop_name,
-        "predicted_class": m1_result.get("predicted_class", "unknown"),
-        "predicted_label": crop_name,
+        "predicted_crop": crop_display_label,
+        "predicted_class": canonical_crop_id,
+        "predicted_label": crop_display_label,
         "confidence": crop_confidence,
         "percentage": m1_result.get("percentage", "N/A"),
         "is_plant": is_plant,
@@ -380,7 +396,8 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
 
     # Standardized Diagnosis Contract
     standardized_diagnosis = {
-        "crop": crop_name if is_plant else None,
+        "crop": canonical_crop_id if is_plant else None,
+        "crop_display": crop_display_label if is_plant else None,
         "crop_confidence": round(float(crop_confidence), 4),
         "status": model2_dict["status"],
         "disease": model2_dict.get("primary_disease_slug"),
@@ -403,6 +420,14 @@ def process_video_inference(
     disease_conf_threshold: float = 0.20,
 ) -> dict[str, Any]:
     """Execute video inference across representative frames with Model 1 and Model 2 V4."""
+    if len(file_bytes) > MAX_VIDEO_SIZE_BYTES:
+        size_mb = len(file_bytes) / (1024 * 1024)
+        max_mb = MAX_VIDEO_SIZE_BYTES / (1024 * 1024)
+        raise VideoSizeExceededError(
+            f"Video size ({size_mb:.1f} MB) exceeds maximum allowed limit of {max_mb:.0f} MB. Please upload a smaller video clip."
+        )
+
+    t0 = time.perf_counter()
     model, idx_to_class, _ = get_model1()
     m2_classifier = get_model2()
 
@@ -413,6 +438,7 @@ def process_video_inference(
             tmp.write(file_bytes)
             temp_path = Path(tmp.name)
 
+        t_v0 = time.perf_counter()
         v_res = predict_video(
             video_path=temp_path,
             model=model,
@@ -422,10 +448,14 @@ def process_video_inference(
             quality_filter=True,
             top_k=3,
             detect_disease=False,
+            save_debug_rois=False,
         )
+        t_v_predict_ms = (time.perf_counter() - t_v0) * 1000
 
         final_pred = v_res["final_prediction"]
-        crop_label = final_pred.get("label", "Unknown")
+        raw_video_crop = final_pred.get("class_name", "unknown")
+        canonical_video_crop = normalize_crop_id(raw_video_crop) or raw_video_crop
+        crop_display_label = format_class_name(canonical_video_crop)
         crop_conf = final_pred.get("confidence", 0.0)
 
         # Multi-frame Model 2 V4 disease classification across valid plant frames
@@ -435,6 +465,11 @@ def process_video_inference(
         healthy_frames_count = 0
         uncertain_frames_count = 0
         valid_plant_frames = 0
+
+        prev_m2_roi = None
+        prev_m2_crop = None
+        prev_m2_res = None
+        t_m2_start = time.perf_counter()
 
         for f in v_res["frame_records"]:
             thumb_b64 = pil_to_base64_data_url(f["thumbnail"], format="JPEG", quality=75) if f.get("thumbnail") else None
@@ -452,11 +487,24 @@ def process_video_inference(
             # Only run disease classification on valid plant frames
             if f_status == "valid" and roi_img is not None:
                 valid_plant_frames += 1
-                m2_res = m2_classifier.predict_crop_aware(
-                    image_input=roi_img,
-                    crop_name=crop_label,
-                    crop_confidence=crop_conf,
-                )
+                f_crop_class = normalize_crop_id(f.get("predicted_class")) or canonical_video_crop
+
+                # Avoid repeating Model 2 inference on duplicate or identical frame ROIs
+                if (prev_m2_roi is not None
+                    and f_crop_class == prev_m2_crop
+                    and prev_m2_res is not None
+                    and (roi_img is prev_m2_roi or f.get("is_duplicate"))):
+                    m2_res = prev_m2_res
+                else:
+                    m2_res = m2_classifier.predict_crop_aware(
+                        image_input=roi_img,
+                        crop_name=f_crop_class,
+                        crop_confidence=crop_conf,
+                    )
+                    prev_m2_roi = roi_img
+                    prev_m2_crop = f_crop_class
+                    prev_m2_res = m2_res
+
                 f_disease_status = m2_res.get("status", "uncertain")
                 f_disease_conf = float(m2_res.get("disease_confidence", 0.0))
 
@@ -560,7 +608,7 @@ def process_video_inference(
                 "evaluated_frames": valid_plant_frames,
                 "detections_count": len(all_disease_detections),
                 "detections": all_disease_detections,
-                "message": f"Diagnosed {top_dis['label']} on {crop_label} ({top_conf * 100:.1f}% confidence across {top_dis['count']}/{valid_plant_frames} supporting frames).",
+                "message": f"Diagnosed {top_dis['label']} on {crop_display_label} ({top_conf * 100:.1f}% confidence across {top_dis['count']}/{valid_plant_frames} supporting frames).",
             }
         elif valid_plant_frames > 0:
             if healthy_frames_count >= (valid_plant_frames * 0.40):
@@ -575,7 +623,7 @@ def process_video_inference(
                     "evaluated_frames": valid_plant_frames,
                     "detections_count": 0,
                     "detections": [],
-                    "message": f"Verified healthy foliage for {crop_label} across {valid_plant_frames} video frames.",
+                    "message": f"Verified healthy foliage for {crop_display_label} across {valid_plant_frames} video frames.",
                 }
             else:
                 m2_summary = {
@@ -589,7 +637,7 @@ def process_video_inference(
                     "evaluated_frames": valid_plant_frames,
                     "detections_count": 0,
                     "detections": [],
-                    "message": f"Condition uncertain across {valid_plant_frames} frames for {crop_label}. Crop-disease compatibility or confidence threshold not met.",
+                    "message": f"Condition uncertain across {valid_plant_frames} frames for {crop_display_label}. Crop-disease compatibility or confidence threshold not met.",
                 }
         else:
             m2_summary = {
@@ -607,12 +655,18 @@ def process_video_inference(
             }
 
         video_duration = v_res["video"].get("duration_seconds", 0.0)
+        t_m2_ms = (time.perf_counter() - t_m2_start) * 1000
+        t_total_ms = (time.perf_counter() - t0) * 1000
+        logger.info(
+            f"[VIDEO_STAGE_TIMINGS] '{original_filename}' total={t_total_ms:.1f}ms "
+            f"(m1_predict={t_v_predict_ms:.1f}ms, m2={t_m2_ms:.1f}ms, frames={v_res['frames_used']}, valid={valid_plant_frames})"
+        )
 
         return {
             "status": final_pred.get("status", "valid"),
-            "predicted_crop": crop_label,
-            "predicted_class": final_pred.get("class_name", "unknown"),
-            "predicted_label": crop_label,
+            "predicted_crop": crop_display_label,
+            "predicted_class": canonical_video_crop,
+            "predicted_label": crop_display_label,
             "confidence": crop_conf,
             "percentage": final_pred.get("percentage", "N/A"),
             "frames_processed": v_res["frames_used"],

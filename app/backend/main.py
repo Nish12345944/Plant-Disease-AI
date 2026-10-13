@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+import asyncio
+import io
 import logging
+import time
 import uuid
 from pathlib import Path
 from typing import Any, Optional
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from starlette.concurrency import run_in_threadpool
 
 from app.backend.config import (
     DEVICE_NAME,
@@ -32,10 +36,34 @@ from app.backend.services import (
 )
 from knowledge.assistant import AgriculturalAssistant
 from knowledge.database import get_knowledge_base
+from video.frame_extractor import (
+    MAX_VIDEO_DURATION_SECONDS,
+    MAX_VIDEO_SIZE_BYTES,
+    VideoDurationExceededError,
+    VideoSizeExceededError,
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger(__name__)
+
+# Concurrency limiters to bound heavy CPU/GPU operations (Render 512MB RAM & 0.5 vCPU protection)
+# These prevent OOM SIGKILL and keep the event loop responsive for /health and lightweight routes.
+_INFERENCE_SEMAPHORE = asyncio.Semaphore(1)  # Max 1 concurrent vision inference (strictly protects 512MB RAM)
+_VIDEO_SEMAPHORE = asyncio.Semaphore(1)      # Max 1 concurrent video inference pipeline
+_AUDIO_SEMAPHORE = asyncio.Semaphore(1)      # Max 1 concurrent Whisper transcription
+
+
+def _check_video_has_audio(vid_bytes: bytes) -> bool:
+    """Helper executed in threadpool to inspect video container for audio streams without blocking event loop."""
+    try:
+        import av
+        with av.open(io.BytesIO(vid_bytes)) as c:
+            return len(c.streams.audio) > 0
+    except Exception as e:
+        logger.debug(f"Video audio stream check: {e}")
+        return False
+
 
 # Active conversational sessions registry
 _SESSIONS: dict[str, AgriculturalAssistant] = {}
@@ -80,8 +108,9 @@ async def on_startup():
     """Verify services and securely ensure model checkpoints on startup.
     Lazy loads heavy neural models to conserve memory unless EAGER_LOAD_MODELS=true.
     """
-    from app.backend.config import EAGER_LOAD_MODELS, MODEL1_CHECKPOINT, MODEL2_CHECKPOINT
+    from app.backend.config import EAGER_LOAD_MODELS, MODEL1_CHECKPOINT, MODEL1_CLASS_MAPPING, MODEL1_CONFIG, MODEL2_CHECKPOINT
     from app.backend.weights_manager import ensure_model_checkpoints
+    from model1_test_app.inference import validate_model1_setup
 
     # Securely synchronize configured model checkpoints from private storage
     try:
@@ -90,6 +119,21 @@ async def on_startup():
             logger.info(f"Checkpoint '{name}' status: {info.get('status')} (available={info.get('available')})")
     except Exception as exc:
         logger.warning(f"Checkpoint synchronization note: {exc}")
+
+    # Startup validation: enforce Model 1 checkpoint availability, output dimension, and mapping alignment
+    try:
+        m1_info = validate_model1_setup(
+            checkpoint_path=MODEL1_CHECKPOINT,
+            mapping_path=MODEL1_CLASS_MAPPING,
+            config_path=MODEL1_CONFIG,
+        )
+        logger.info(
+            f"Startup validation: Model 1 verified with {m1_info['num_classes']} classes "
+            f"at '{m1_info['checkpoint_path']}'."
+        )
+    except Exception as exc:
+        logger.error(f"Startup validation: Model 1 verification failed: {exc}")
+        raise exc
 
     # Verify Knowledge Base in-memory repository
     try:
@@ -132,8 +176,8 @@ async def api_root():
         "health": "/health",
         "frontend_url": "http://localhost:5173",
         "models": {
-            "model1": "Plant Identification (Model 1 - EfficientNet-B2 22 crops)",
-            "model2": "Disease & Healthy Classification (Model 2 V4 - EfficientNet-B2 117 classes)",
+            "model1": "Plant Identification (Model 1 - EfficientNet-B2 46 crops)",
+            "model2": "Disease & Healthy Classification (Model 2 Retrained V2 - EfficientNet-B2 144 classes)",
             "audio": "faster-whisper",
         },
     }
@@ -155,13 +199,13 @@ async def health_check():
         "device": DEVICE_NAME,
         "models": {
             "model1": {
-                "name": "EfficientNet-B2 Crop Identifier",
+                "name": "EfficientNet-B2 46-Crop Identifier",
                 "loaded": srv._MODEL1 is not None,
                 "checkpoint": str(MODEL1_CHECKPOINT),
                 "available": MODEL1_CHECKPOINT.exists(),
             },
             "model2": {
-                "name": "EfficientNet-B2 V4 Disease Classifier",
+                "name": "EfficientNet-B2 Retrained V2 144-Class Disease Classifier",
                 "loaded": srv._MODEL2_V4 is not None,
                 "checkpoint": str(MODEL2_CHECKPOINT),
                 "available": MODEL2_CHECKPOINT.exists(),
@@ -202,7 +246,12 @@ async def transcribe_audio_endpoint(file: UploadFile = File(...)):
         raise HTTPException(status_code=400, detail="Uploaded audio file is empty.")
 
     try:
-        res = process_audio_file(file_bytes, original_filename=file.filename or "recording.wav")
+        async with _AUDIO_SEMAPHORE:
+            res = await run_in_threadpool(
+                process_audio_file,
+                file_bytes,
+                original_filename=file.filename or "recording.wav",
+            )
         return res
     except Exception as exc:
         logger.error(f"Transcription failure: {exc}")
@@ -212,29 +261,31 @@ async def transcribe_audio_endpoint(file: UploadFile = File(...)):
 @app.post("/api/audio/mic/start")
 async def start_mic_endpoint():
     """Start host server-side microphone recording via AudioRecorder."""
-    res = start_server_microphone()
+    res = await run_in_threadpool(start_server_microphone)
     return res
 
 
 @app.post("/api/audio/mic/stop")
 async def stop_mic_endpoint():
     """Stop host server-side microphone recording and transcribe captured audio."""
-    res = stop_server_microphone()
+    async with _AUDIO_SEMAPHORE:
+        res = await run_in_threadpool(stop_server_microphone)
     return res
 
 
 # ---------------------------------------------------------------------------
-# Query Routing Endpoint
+# Query Routing & Dialogue History Endpoints
 # ---------------------------------------------------------------------------
 
 class RouteQueryRequest(BaseModel):
     query: str
 
 
+@app.post("/query/route")
 @app.post("/api/query/route")
 async def route_query_endpoint(payload: RouteQueryRequest):
     """Analyze query intent using the deterministic rule-based query router."""
-    result = process_query_routing(payload.query)
+    result = await run_in_threadpool(process_query_routing, payload.query)
     routing_meta = {
         "needs_model1": result["needs_model1"],
         "needs_model2": result["needs_model2"],
@@ -247,6 +298,51 @@ async def route_query_endpoint(payload: RouteQueryRequest):
         "needs_model1": result["needs_model1"],
         "needs_model2": result["needs_model2"],
         "needs_rag": result["needs_rag"],
+    }
+
+
+@app.get("/query/history")
+@app.get("/api/query/history")
+async def get_query_history_endpoint(
+    limit: int = Query(20, ge=1, le=100),
+    session_id: Optional[str] = None,
+):
+    """Retrieve recent query dialogue history for a session."""
+    assistant = get_session_assistant(session_id)
+    turns = assistant.conversation.state.turns if assistant and assistant.conversation else []
+    selected = turns[-limit:] if turns else []
+    return {
+        "status": "success",
+        "session_id": session_id or "default",
+        "count": len(selected),
+        "total_turns": len(turns),
+        "history": [
+            {
+                "turn_id": t.turn_id,
+                "user_query": t.user_query,
+                "normalized_query": t.normalized_query,
+                "intent": t.intent,
+                "crop": t.crop,
+                "disease": t.disease,
+                "status": t.status,
+                "system_response": t.system_response,
+            }
+            for t in selected
+        ],
+    }
+
+
+@app.delete("/query/history")
+@app.delete("/api/query/history")
+async def clear_query_history_endpoint(session_id: Optional[str] = None):
+    """Clear query dialogue history for a session."""
+    assistant = get_session_assistant(session_id)
+    if assistant:
+        assistant.reset_session()
+    return {
+        "status": "success",
+        "message": "Query history cleared successfully",
+        "session_id": session_id or "default",
     }
 
 
@@ -268,8 +364,12 @@ async def inference_image_endpoint(file: UploadFile = File(...)):
     if not file_bytes:
         raise HTTPException(status_code=400, detail="Uploaded image file is empty.")
 
+    t0 = time.perf_counter()
     try:
-        res = process_image_inference(file_bytes)
+        async with _INFERENCE_SEMAPHORE:
+            res = await run_in_threadpool(process_image_inference, file_bytes)
+        t_total = (time.perf_counter() - t0) * 1000
+        logger.info(f"[PERF_TIMING] /api/inference/image total={t_total:.1f}ms")
         return res
     except FileNotFoundError as exc:
         logger.warning(f"Image inference unavailable: {exc}")
@@ -285,9 +385,9 @@ async def inference_image_endpoint(file: UploadFile = File(...)):
 @app.post("/api/inference/video")
 async def inference_video_endpoint(
     file: UploadFile = File(...),
-    target_frames: int = Form(24),
+    target_frames: int = Form(8),
 ):
-    """Run Model 1 video classification across 16-24 representative frames."""
+    """Run Model 1 & Model 2 video classification across representative frames."""
     ext = Path(file.filename or "video.mp4").suffix.lower()
     if ext and ext not in SUPPORTED_VIDEO_EXTS:
         raise HTTPException(
@@ -299,13 +399,30 @@ async def inference_video_endpoint(
     if not file_bytes:
         raise HTTPException(status_code=400, detail="Uploaded video file is empty.")
 
-    try:
-        res = process_video_inference(
-            file_bytes,
-            original_filename=file.filename or "video.mp4",
-            target_frames=target_frames,
+    if len(file_bytes) > MAX_VIDEO_SIZE_BYTES:
+        size_mb = len(file_bytes) / (1024 * 1024)
+        max_mb = MAX_VIDEO_SIZE_BYTES / (1024 * 1024)
+        raise HTTPException(
+            status_code=400,
+            detail=f"Video size ({size_mb:.1f} MB) exceeds maximum allowed limit of {max_mb:.0f} MB.",
         )
+
+    t0 = time.perf_counter()
+    try:
+        async with _VIDEO_SEMAPHORE:
+            async with _INFERENCE_SEMAPHORE:
+                res = await run_in_threadpool(
+                    process_video_inference,
+                    file_bytes,
+                    original_filename=file.filename or "video.mp4",
+                    target_frames=target_frames,
+                )
+        t_total = (time.perf_counter() - t0) * 1000
+        logger.info(f"[PERF_TIMING] /api/inference/video total={t_total:.1f}ms")
         return res
+    except (VideoDurationExceededError, VideoSizeExceededError) as exc:
+        logger.warning(f"Video limit exceeded: {exc}")
+        raise HTTPException(status_code=400, detail=str(exc))
     except FileNotFoundError as exc:
         logger.warning(f"Video inference unavailable: {exc}")
         raise HTTPException(
@@ -331,19 +448,20 @@ async def unified_chat_endpoint(
     audio_file: Optional[UploadFile] = File(None),
     image_file: Optional[UploadFile] = File(None),
     video_file: Optional[UploadFile] = File(None),
-    target_frames: int = Form(24),
+    target_frames: int = Form(8),
 ):
     """Coordinate multimodal inputs (typed text, speech, image, video).
 
     Executes:
     1. Validate input presence and media file extensions.
-    2. Audio speech-to-text if audio is supplied.
+    2. Audio speech-to-text if audio is supplied or video contains speech.
     3. Combines typed and transcribed queries.
     4. Runs Model 1 and Model 2 V4 inference if image or video is attached.
     5. Routes query intent using the router.
     6. Executes AgriculturalAssistant for deterministic, grounded agronomic reasoning and knowledge retrieval.
     7. Returns structured user, assistant, vision, and knowledge response objects with debug telemetry.
     """
+    req_start_t = time.perf_counter()
     message_id = str(uuid.uuid4())
 
     # Disambiguate generic `file` parameter based on `input_type` or extension
@@ -392,17 +510,59 @@ async def unified_chat_endpoint(
             detail="No valid input provided. Please provide text, audio, image, or video.",
         )
 
-    # Process Audio if present
+    # Pre-read and validate video bytes if video is supplied
+    vid_bytes = None
+    has_video_audio = False
+    if video_file is not None:
+        vid_bytes = await video_file.read()
+        if not vid_bytes:
+            raise HTTPException(status_code=400, detail="Uploaded video file is empty.")
+        if len(vid_bytes) > MAX_VIDEO_SIZE_BYTES:
+            size_mb = len(vid_bytes) / (1024 * 1024)
+            max_mb = MAX_VIDEO_SIZE_BYTES / (1024 * 1024)
+            raise HTTPException(
+                status_code=400,
+                detail=f"Video size ({size_mb:.1f} MB) exceeds maximum allowed limit of {max_mb:.0f} MB.",
+            )
+        has_video_audio = await run_in_threadpool(_check_video_has_audio, vid_bytes)
+
+    # Process Audio if present (either standalone audio or embedded video audio)
+    t_audio_ms = 0.0
     audio_transcription = None
     detected_language = language or "en"
     if audio_file is not None:
+        t_a0 = time.perf_counter()
         audio_bytes = await audio_file.read()
         if audio_bytes:
-            audio_res = process_audio_file(audio_bytes, original_filename=audio_file.filename or "speech.wav")
+            async with _AUDIO_SEMAPHORE:
+                audio_res = await run_in_threadpool(
+                    process_audio_file,
+                    audio_bytes,
+                    original_filename=audio_file.filename or "speech.wav",
+                )
             audio_transcription = audio_res["text"]
             detected_language = audio_res.get("language") or detected_language
+        t_audio_ms = (time.perf_counter() - t_a0) * 1000
+    elif has_video_audio and vid_bytes:
+        t_a0 = time.perf_counter()
+        try:
+            async with _AUDIO_SEMAPHORE:
+                audio_res = await run_in_threadpool(
+                    process_audio_file,
+                    vid_bytes,
+                    original_filename=video_file.filename or "video.mp4",
+                )
+            if audio_res.get("text"):
+                audio_transcription = audio_res["text"].strip()
+                detected_language = audio_res.get("language") or detected_language
+                has_audio = True
+            elif audio_res.get("status") == "success":
+                has_audio = True
+        except Exception as exc:
+            logger.warning(f"Video audio transcription failed or skipped: {exc}")
+        t_audio_ms = (time.perf_counter() - t_a0) * 1000
 
-    # Resolve active query text
+    # Resolve active query text (combining typed prompt and spoken instruction)
     typed_clean = (text or "").strip()
     spoken_clean = (audio_transcription or "").strip()
 
@@ -420,12 +580,15 @@ async def unified_chat_endpoint(
         final_query = "What plant or crop is this?" if (has_image or has_video) else ""
 
     # Route Intent
-    routing = process_query_routing(final_query) if final_query else {
-        "intent": "plant_identification" if (has_image or has_video) else "unknown",
-        "needs_model1": True if (has_image or has_video) else False,
-        "needs_model2": False,
-        "needs_rag": False,
-    }
+    if final_query:
+        routing = await run_in_threadpool(process_query_routing, final_query)
+    else:
+        routing = {
+            "intent": "plant_identification" if (has_image or has_video) else "unknown",
+            "needs_model1": True if (has_image or has_video) else False,
+            "needs_model2": False,
+            "needs_rag": False,
+        }
 
     routing_meta = {
         "needs_model1": routing.get("needs_model1", False),
@@ -436,12 +599,16 @@ async def unified_chat_endpoint(
     # Model 1 Image & Video Inference execution
     image_result = None
     video_result = None
+    t_image_ms = 0.0
+    t_video_ms = 0.0
 
     if image_file is not None:
+        t_img0 = time.perf_counter()
         img_bytes = await image_file.read()
         if img_bytes:
             try:
-                image_result = process_image_inference(img_bytes)
+                async with _INFERENCE_SEMAPHORE:
+                    image_result = await run_in_threadpool(process_image_inference, img_bytes)
             except FileNotFoundError as exc:
                 logger.warning(f"Image inference skipped (checkpoint missing): {exc}")
                 image_result = {
@@ -458,32 +625,39 @@ async def unified_chat_endpoint(
                     "confidence": 0.0,
                     "message": f"Image processing failed: {str(exc)}",
                 }
+        t_image_ms = (time.perf_counter() - t_img0) * 1000
 
-    if video_file is not None:
-        vid_bytes = await video_file.read()
-        if vid_bytes:
-            try:
-                video_result = process_video_inference(
-                    vid_bytes,
-                    original_filename=video_file.filename or "video.mp4",
-                    target_frames=target_frames,
-                )
-            except FileNotFoundError as exc:
-                logger.warning(f"Video inference skipped (checkpoint missing): {exc}")
-                video_result = {
-                    "status": "unavailable",
-                    "predicted_crop": None,
-                    "confidence": 0.0,
-                    "message": f"Video model checkpoint unavailable: {str(exc)}",
-                }
-            except Exception as exc:
-                logger.error(f"Video inference processing failure: {exc}", exc_info=True)
-                video_result = {
-                    "status": "error",
-                    "predicted_crop": None,
-                    "confidence": 0.0,
-                    "message": f"Video processing failed: {str(exc)}",
-                }
+    if video_file is not None and vid_bytes:
+        t_vid0 = time.perf_counter()
+        try:
+            async with _VIDEO_SEMAPHORE:
+                async with _INFERENCE_SEMAPHORE:
+                    video_result = await run_in_threadpool(
+                        process_video_inference,
+                        vid_bytes,
+                        original_filename=video_file.filename or "video.mp4",
+                        target_frames=target_frames,
+                    )
+        except (VideoDurationExceededError, VideoSizeExceededError) as exc:
+            logger.warning(f"Video validation constraint failed: {exc}")
+            raise HTTPException(status_code=400, detail=str(exc))
+        except FileNotFoundError as exc:
+            logger.warning(f"Video inference skipped (checkpoint missing): {exc}")
+            video_result = {
+                "status": "unavailable",
+                "predicted_crop": None,
+                "confidence": 0.0,
+                "message": f"Video model checkpoint unavailable: {str(exc)}",
+            }
+        except Exception as exc:
+            logger.error(f"Video inference processing failure: {exc}", exc_info=True)
+            video_result = {
+                "status": "error",
+                "predicted_crop": None,
+                "confidence": 0.0,
+                "message": f"Video processing failed: {str(exc)}",
+            }
+        t_video_ms = (time.perf_counter() - t_vid0) * 1000
 
     # Extract Model 1 & Model 2 result structures
     m1_data = None
@@ -497,6 +671,13 @@ async def unified_chat_endpoint(
 
     if video_result:
         m2_data = video_result.get("model2")
+        if not m1_data:
+            m1_data = video_result.get("model1") or {
+                "status": video_result.get("status", "valid"),
+                "predicted_crop": video_result.get("predicted_crop"),
+                "predicted_class": video_result.get("predicted_class"),
+                "confidence": video_result.get("confidence", 0.0),
+            }
 
     # Standardize visual evidence for the Agricultural Knowledge Assistant
     visual_evidence = None
@@ -569,6 +750,7 @@ async def unified_chat_endpoint(
             }
 
     # Execute deterministic AgriculturalAssistant reasoning and knowledge retrieval
+    t_r0 = time.perf_counter()
     assistant = get_session_assistant(session_id)
     knowledge_data = None
     knowledge_sources = []
@@ -586,7 +768,8 @@ async def unified_chat_endpoint(
         }
     else:
         try:
-            kb_resp = assistant.answer_query(
+            kb_resp = await run_in_threadpool(
+                assistant.answer_query,
                 query=final_query,
                 visual_result=visual_evidence,
             )
@@ -604,6 +787,21 @@ async def unified_chat_endpoint(
                 "error": str(exc),
                 "text": assistant_message,
             }
+
+    t_reason_ms = (time.perf_counter() - t_r0) * 1000
+    t_total_ms = (time.perf_counter() - req_start_t) * 1000
+
+    perf_timing = {
+        "audio_ms": round(t_audio_ms, 2),
+        "image_ms": round(t_image_ms, 2),
+        "video_ms": round(t_video_ms, 2),
+        "reasoning_ms": round(t_reason_ms, 2),
+        "total_ms": round(t_total_ms, 2),
+    }
+    logger.info(
+        f"[PERF_TIMING] /api/chat total={t_total_ms:.1f}ms "
+        f"(audio={t_audio_ms:.1f}ms, image={t_image_ms:.1f}ms, video={t_video_ms:.1f}ms, reasoning={t_reason_ms:.1f}ms)"
+    )
 
     inputs_dict = {
         "text": has_text,
@@ -652,6 +850,7 @@ async def unified_chat_endpoint(
             "needs_model2": routing_meta["needs_model2"],
             "needs_rag": routing_meta["needs_rag"],
             "device": DEVICE_NAME,
+            "perf_timing": perf_timing,
         },
     }
 

@@ -18,14 +18,20 @@ from __future__ import annotations
 
 import argparse
 import sys
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 SUPPORTED_EXTENSIONS = {
     ".wav", ".mp3", ".m4a", ".flac", ".ogg", ".opus", ".wma", ".aac", ".webm",
+    ".mp4", ".mov", ".avi", ".mkv", ".m4v",
 }
 
 DEFAULT_MODEL_SIZE = "small"
+
+_WHISPER_MODELS: dict[tuple[str, str, str], Any] = {}
+_WHISPER_LOCK = threading.Lock()
 
 
 @dataclass
@@ -45,6 +51,16 @@ class TranscriptionResult:
     language_probability: float
     text: str
     segments: list = field(default_factory=list)
+
+
+def has_audio_stream(file_path: str | Path) -> bool:
+    """Check if media file has at least one decodable audio stream using PyAV."""
+    try:
+        import av
+        with av.open(str(file_path)) as container:
+            return len(container.streams.audio) > 0
+    except Exception:
+        return False
 
 
 def validate_audio_path(audio_path_str: str) -> Path:
@@ -87,6 +103,15 @@ def transcribe_audio(
 
     audio_path = validate_audio_path(audio_path_str)
 
+    # If media container has no audio stream (e.g. silent video), return empty transcription gracefully
+    if not has_audio_stream(audio_path):
+        return TranscriptionResult(
+            language="en",
+            language_probability=0.0,
+            text="",
+            segments=[],
+        )
+
     if device == "auto":
         try:
             import torch
@@ -98,25 +123,29 @@ def transcribe_audio(
     if compute_type == "auto":
         compute_type = "float16" if device == "cuda" else "int8"
 
-    model = WhisperModel(model_size, device=device, compute_type=compute_type)
+    cache_key = (model_size, device, compute_type)
+    with _WHISPER_LOCK:
+        if cache_key not in _WHISPER_MODELS:
+            _WHISPER_MODELS[cache_key] = WhisperModel(model_size, device=device, compute_type=compute_type)
+        model = _WHISPER_MODELS[cache_key]
 
-    segments_iter, info = model.transcribe(str(audio_path), beam_size=5)
+        segments_iter, info = model.transcribe(str(audio_path), beam_size=5)
 
-    segments: list = []
-    text_parts: list = []
-    for seg in segments_iter:
-        text = seg.text.strip()
-        segments.append(
-            TranscriptionSegment(start=seg.start, end=seg.end, text=text)
+        segments: list = []
+        text_parts: list = []
+        for seg in segments_iter:
+            text = seg.text.strip()
+            segments.append(
+                TranscriptionSegment(start=seg.start, end=seg.end, text=text)
+            )
+            text_parts.append(text)
+
+        return TranscriptionResult(
+            language=info.language,
+            language_probability=info.language_probability,
+            text=" ".join(text_parts).strip(),
+            segments=segments,
         )
-        text_parts.append(text)
-
-    return TranscriptionResult(
-        language=info.language,
-        language_probability=info.language_probability,
-        text=" ".join(text_parts).strip(),
-        segments=segments,
-    )
 
 
 def print_result(result: TranscriptionResult) -> None:

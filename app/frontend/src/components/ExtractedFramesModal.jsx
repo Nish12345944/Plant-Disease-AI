@@ -1,6 +1,22 @@
 import React, { useState } from 'react';
 import { X, Film, CheckCircle2, AlertCircle, ShieldAlert, Scan, Eye, Crosshair, AlertOctagon } from 'lucide-react';
 
+function formatCropDisplay(raw) {
+  if (!raw) return 'Unknown';
+  const str = typeof raw === 'string' ? raw : (raw?.name || raw?.label || raw?.crop || String(raw));
+  const clean = str.trim().toLowerCase();
+  if (clean === 'capsicum' || clean === 'bellpepper' || clean === 'bell_pepper') {
+    return 'Bell Pepper';
+  }
+  if (clean === 'french_bean' || clean === 'bean') {
+    return 'French Bean';
+  }
+  if (clean === 'cherry_tomato') {
+    return 'Cherry Tomato';
+  }
+  return clean.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
   const [viewMode, setViewMode] = useState('roi'); // 'roi', 'annotated', or 'full'
 
@@ -99,7 +115,7 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
                   <div className="frame-info">
                     <div className="frame-prediction-row">
                       <span className="frame-plant-name">
-                        {typeof (frame.predicted_crop || frame.predicted_label) === 'string' ? (frame.predicted_crop || frame.predicted_label) : 'Unknown'}
+                        {formatCropDisplay(frame.predicted_crop || frame.predicted_label)}
                       </span>
                       <span className={`frame-conf-pill ${isValid ? 'high' : 'low'}`}>
                         {((frame.confidence || 0) * 100).toFixed(1)}%

@@ -37,21 +37,71 @@ logger = logging.getLogger(__name__)
 # Base paths
 PROJECT_ROOT = Path(os.environ.get("PROJECT_ROOT", str(Path(__file__).resolve().parent.parent.parent))).resolve()
 MODEL_DIR_V4 = Path(__file__).resolve().parent
-DEFAULT_CHECKPOINT_PATH = Path(os.environ.get("MODEL2_CHECKPOINT", str(MODEL_DIR_V4 / "best_model.pth")))
-DEFAULT_MAPPING_PATH = Path(os.environ.get("MODEL2_CLASS_MAPPING", str(MODEL_DIR_V4 / "class_mapping.json")))
-DEFAULT_CONFIG_PATH = Path(os.environ.get("MODEL2_CONFIG", str(MODEL_DIR_V4 / "config.json")))
-CROP_DISEASE_MAP_PATH = Path(os.environ.get("CROP_DISEASE_MAPPING", str(PROJECT_ROOT / "data" / "processed" / "model2_organized_crop_disease_mapping.json")))
+MODEL2_RETRAINING_V2_DIR = PROJECT_ROOT / "models" / "model2_retraining_v2"
 
-if not DEFAULT_MAPPING_PATH.exists():
-    alt_map = PROJECT_ROOT / "data" / "processed" / "model2_organized_class_mapping.json"
-    if alt_map.exists():
-        DEFAULT_MAPPING_PATH = alt_map
-if not CROP_DISEASE_MAP_PATH.exists():
-    CROP_DISEASE_MAP_PATH = PROJECT_ROOT / "data" / "processed" / "model2_classifier_crop_disease_mapping.json"
+DEFAULT_CHECKPOINT_PATH = Path(
+    os.environ.get(
+        "MODEL2_CHECKPOINT",
+        str(MODEL2_RETRAINING_V2_DIR / "best_model.pth" if (MODEL2_RETRAINING_V2_DIR / "best_model.pth").exists() else MODEL_DIR_V4 / "best_model.pth"),
+    )
+)
+DEFAULT_MAPPING_PATH = Path(
+    os.environ.get(
+        "MODEL2_CLASS_MAPPING",
+        str(MODEL2_RETRAINING_V2_DIR / "class_mapping.json" if (MODEL2_RETRAINING_V2_DIR / "class_mapping.json").exists() else MODEL_DIR_V4 / "class_mapping.json"),
+    )
+)
+DEFAULT_CONFIG_PATH = Path(
+    os.environ.get(
+        "MODEL2_CONFIG",
+        str(MODEL2_RETRAINING_V2_DIR / "config.json" if (MODEL2_RETRAINING_V2_DIR / "config.json").exists() else MODEL_DIR_V4 / "config.json"),
+    )
+)
+CROP_DISEASE_MAP_PATH = Path(
+    os.environ.get(
+        "CROP_DISEASE_MAPPING",
+        str(MODEL2_RETRAINING_V2_DIR / "crop_disease_mapping.json" if (MODEL2_RETRAINING_V2_DIR / "crop_disease_mapping.json").exists() else PROJECT_ROOT / "data" / "processed" / "model2_organized_crop_disease_mapping.json"),
+    )
+)
 
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
 DEFAULT_IMAGE_SIZE = (260, 260)
+
+# 28 disease classes with zero test support in the immutable evaluation benchmark
+# (reports/model2_retraining_v2/final_test_evaluation/test_classification_report.csv).
+# These classes have no demonstrated test reliability and cannot declare an image diseased
+# nor falsely override healthy foliage predictions.
+ZERO_TEST_SUPPORT_CLASSES: set[str] = {
+    "bell_pepper__leaf_curl",
+    "blueberry__exobasidium",
+    "blueberry__septoria_leaf_spot",
+    "cauliflower__black_rot",
+    "cauliflower__downy_mildew",
+    "cauliflower__pest_damage",
+    "coffee__black_rot",
+    "eggplant__mosaic_virus",
+    "eggplant__pest_damage",
+    "eggplant__wilt_disease",
+    "ginger__leaf_blight",
+    "ginger__pest_damage",
+    "plum__shot_hole",
+    "rose__black_spot",
+    "rose__downy_mildew",
+    "rose__mosaic_virus",
+    "rose__pest_damage",
+    "rose__powdery_mildew",
+    "rose__rust",
+    "spinach__anthracnose",
+    "spinach__bacterial_spot",
+    "spinach__downy_mildew",
+    "spinach__pest_damage",
+    "strawberry__angular_leaf_spot",
+    "strawberry__gray_mold",
+    "strawberry__leaf_spot",
+    "strawberry__powdery_mildew",
+    "tomato__anthracnose",
+}
 
 
 def format_disease_name_clean(slug: Optional[str]) -> Optional[str]:
@@ -66,8 +116,16 @@ def format_disease_name_clean(slug: Optional[str]) -> Optional[str]:
 
 def format_human_readable(result: dict[str, Any]) -> str:
     """Format standardized prediction result dictionary into human-readable text."""
-    crop_str = result.get("crop")
-    crop_display = crop_str.replace("_", " ").title() if crop_str else "Unknown Crop"
+    crop_display = result.get("crop_display")
+    if not crop_display:
+        crop_str = result.get("crop")
+        if not crop_str or str(crop_str).lower() in ("unknown", "none"):
+            crop_display = "Unknown Crop"
+        elif str(crop_str).lower() in ("bellpepper", "capsicum", "bell_pepper"):
+            crop_display = "Bell Pepper"
+        else:
+            crop_display = str(crop_str).replace("_", " ").title()
+
     status = str(result.get("status", "uncertain")).lower()
 
     if status == "healthy":
@@ -106,8 +164,9 @@ class Model2DiseaseClassifierV4:
 
         self.class_to_id: dict[str, int] = {}
         self.id_to_class: dict[int, str] = {}
-        self.num_classes: int = 117
+        self.num_classes: int = 144
         self.crop_disease_map: dict[str, list[str]] = {}
+        self.zero_support_classes: set[str] = set(ZERO_TEST_SUPPORT_CLASSES)
 
         self._load_taxonomy()
         self.model = self._load_model()
@@ -132,6 +191,9 @@ class Model2DiseaseClassifierV4:
         if self.crop_disease_map_path.exists():
             with open(self.crop_disease_map_path, "r", encoding="utf-8") as f:
                 self.crop_disease_map = json.load(f)
+        else:
+            logger.warning(f"Crop-disease map file not found at: {self.crop_disease_map_path}")
+            self.crop_disease_map = {}
 
     def _get_transform(self):
         return transforms.Compose([
@@ -158,47 +220,94 @@ class Model2DiseaseClassifierV4:
         model.eval()
         return model
 
-    def is_compatible(self, crop: Optional[str], disease_slug: Optional[str]) -> bool:
-        """Verify biological compatibility between crop and disease."""
-        if not disease_slug or disease_slug.lower() == "healthy":
-            return True
+    @staticmethod
+    def normalize_crop_key(crop: Optional[str]) -> Optional[str]:
+        """Normalize crop identifier to taxonomy crop key (matching crop_disease_mapping.json).
+
+        Maps canonical and legacy aliases:
+          'bellpepper', 'capsicum', 'bell_pepper' -> 'bell_pepper'
+          'french_bean', 'bean' -> 'bean'
+          'cherry_tomato', 'tomato' -> 'tomato'
+        Leaves others in lowercase format. Note that 'zucchini', 'cucumber', and 'squash'
+        are distinct taxonomy crops and are NEVER cross-aliased.
+        """
         if not crop:
-            return True
-
-        crop_clean = crop.lower().strip()
-        disease_clean = disease_slug.lower().strip()
-
-        # Direct crop prefix match
-        if disease_clean.startswith(f"{crop_clean}__"):
-            return True
-
-        # Normalized aliases
+            return None
+        c = str(crop).strip().lower().replace(" ", "_")
+        if c in ("unknown", "none", "no_plant", "unidentified", "blurry"):
+            return None
         aliases = {
             "bellpepper": "bell_pepper",
             "capsicum": "bell_pepper",
             "french_bean": "bean",
-            "bean": "french_bean",
             "cherry_tomato": "tomato",
         }
-        alt_crop = aliases.get(crop_clean)
-        if alt_crop and disease_clean.startswith(f"{alt_crop}__"):
+        return aliases.get(c, c)
+
+    @staticmethod
+    def get_canonical_crop_id(crop: Optional[str]) -> str:
+        """Return canonical internal crop ID ('bellpepper' for bell pepper)."""
+        if not crop:
+            return "unknown"
+        c = str(crop).strip().lower().replace(" ", "_")
+        if c in ("capsicum", "bell_pepper", "bellpepper"):
+            return "bellpepper"
+        if c in ("bean", "french_bean"):
+            return "french_bean"
+        if c in ("tomato", "cherry_tomato"):
+            return "tomato" if c == "tomato" else "cherry_tomato"
+        return c
+
+    @staticmethod
+    def get_crop_display_label(crop: Optional[str]) -> str:
+        """Return user-facing crop label ('Bell Pepper' for bell pepper, never 'Capsicum')."""
+        if not crop:
+            return "Unknown Crop"
+        canonical = Model2DiseaseClassifierV4.get_canonical_crop_id(crop)
+        display_map = {
+            "bellpepper": "Bell Pepper",
+            "french_bean": "French Bean",
+            "cherry_tomato": "Cherry Tomato",
+        }
+        return display_map.get(canonical, canonical.replace("_", " ").title())
+
+    def is_compatible(self, crop: Optional[str], disease_slug: Optional[str]) -> bool:
+        """Verify biological compatibility between crop and candidate disease class.
+
+        Strict rules:
+        - If crop is None, unknown, or blurry: no disease/healthy is compatible (returns False).
+        - If crop is not registered in self.crop_disease_map:
+            no class (including 'healthy') is compatible (returns False).
+        - If disease_slug is None or 'healthy':
+            compatible ONLY if crop is registered in self.crop_disease_map.
+        - For specific diseases:
+            must belong strictly to the normalized crop's registered diseases in self.crop_disease_map.
+            Cross-crop contamination (e.g. cucumber <-> zucchini) is strictly prohibited.
+        """
+        if not crop:
+            return False
+
+        norm_crop = self.normalize_crop_key(crop)
+        if not norm_crop or norm_crop not in self.crop_disease_map:
+            return False
+
+        if not disease_slug or disease_slug.lower().strip() == "healthy":
+            # Crop is registered in taxonomy, so healthy foliage / absence of disease is compatible
             return True
 
-        # Check registered mapping
-        disease_short = disease_clean.split("__", 1)[-1] if "__" in disease_clean else disease_clean
-        if crop_clean in self.crop_disease_map and (
-            disease_clean in self.crop_disease_map[crop_clean] or disease_short in self.crop_disease_map[crop_clean]
-        ):
-            return True
-        if alt_crop and alt_crop in self.crop_disease_map and (
-            disease_clean in self.crop_disease_map[alt_crop] or disease_short in self.crop_disease_map[alt_crop]
-        ):
-            return True
+        slug_clean = disease_slug.lower().strip()
 
-        return False
+        # Candidate disease must belong strictly to this crop
+        expected_prefix = f"{norm_crop}__"
+        if not slug_clean.startswith(expected_prefix):
+            return False
+
+        disease_short = slug_clean[len(expected_prefix):]
+        permitted = self.crop_disease_map.get(norm_crop, [])
+        return (slug_clean in permitted) or (disease_short in permitted)
 
     def predict_raw(self, pil_img: Image.Image) -> tuple[np.ndarray, list[dict[str, Any]]]:
-        """Compute unconstrained 117-class probability distribution."""
+        """Compute unconstrained 144-class probability distribution."""
         tensor = self.transform(pil_img).unsqueeze(0).to(self.device)
         with torch.inference_mode():
             logits = self.model(tensor)
@@ -233,47 +342,131 @@ class Model2DiseaseClassifierV4:
             raise ValueError(f"Unsupported image input type: {type(image_input)}")
 
         probs, all_ranked = self.predict_raw(img)
+        raw_top1 = all_ranked[0] if all_ranked else None
 
-        norm_crop = crop_name.lower().strip() if crop_name else None
+        norm_crop = self.normalize_crop_key(crop_name)
+        canonical_crop_id = self.get_canonical_crop_id(crop_name) if norm_crop else None
+        crop_display = self.get_crop_display_label(crop_name) if norm_crop else "Unknown Crop"
 
-        # Filter candidates by compatibility
+        is_unknown_crop = norm_crop is None
+        is_low_conf = crop_confidence is not None and crop_confidence < 0.25
+        is_crop_in_taxonomy = bool(norm_crop and norm_crop in self.crop_disease_map)
+
+        # Guard: Unknown crop or low-confidence crop -> no disease inference based on guessed crop
+        if is_unknown_crop or is_low_conf:
+            result = {
+                "crop": canonical_crop_id,
+                "crop_display": crop_display if not is_unknown_crop else "Unknown Crop",
+                "crop_confidence": round(float(crop_confidence), 4) if crop_confidence is not None else None,
+                "status": "uncertain",
+                "disease": None,
+                "disease_confidence": 0.0,
+                "raw_top1": {
+                    "class_name": raw_top1["class_name"] if raw_top1 else "none",
+                    "confidence": round(raw_top1["probability"], 4) if raw_top1 else 0.0,
+                    "is_compatible": False,
+                } if raw_top1 else None,
+                "top_compatible": [],
+                "raw_top10": all_ranked[:10] if all_ranked else [],
+                "message": (
+                    "Crop identity uncertain or below confidence threshold; disease inference skipped."
+                    if is_low_conf
+                    else "Crop unidentified; cannot infer disease."
+                ),
+            }
+            result["human_readable"] = format_human_readable(result)
+            return result
+
+        # Guard: Crop not registered in taxonomy (missing crop mapping) -> fail safely as uncertain
+        if not is_crop_in_taxonomy:
+            result = {
+                "crop": canonical_crop_id,
+                "crop_display": crop_display,
+                "crop_confidence": round(float(crop_confidence), 4) if crop_confidence is not None else None,
+                "status": "uncertain",
+                "disease": None,
+                "disease_confidence": 0.0,
+                "raw_top1": {
+                    "class_name": raw_top1["class_name"] if raw_top1 else "none",
+                    "confidence": round(raw_top1["probability"], 4) if raw_top1 else 0.0,
+                    "is_compatible": False,
+                } if raw_top1 else None,
+                "top_compatible": [],
+                "raw_top10": all_ranked[:10] if all_ranked else [],
+                "message": f"Crop '{crop_display}' is not registered in the disease taxonomy.",
+            }
+            result["human_readable"] = format_human_readable(result)
+            return result
+
+        # Filter candidates strictly by compatibility BEFORE ranking/selecting predictions
         compatible_ranked = [
-            c for c in all_ranked
+            c.copy() for c in all_ranked
             if self.is_compatible(norm_crop, c["class_name"])
         ]
 
-        raw_top1 = all_ranked[0]
-        is_raw_compatible = self.is_compatible(norm_crop, raw_top1["class_name"])
+        is_raw_compatible = self.is_compatible(norm_crop, raw_top1["class_name"]) if raw_top1 else False
 
-        # Default fallback
-        final_status = "uncertain"
-        final_disease = None
-        final_disease_conf = float(raw_top1["probability"]) if raw_top1 else 0.0
+        # Compute crop-conditioned normalized probabilities over the compatible space
+        compat_mass = sum(c["probability"] for c in compatible_ranked)
 
-        if compatible_ranked:
+        # When compatible candidates carry meaningful probability mass (compat_mass >= 0.20),
+        # compute normalized crop-aware probabilities so cross-crop logits do not dilute valid predictions.
+        if compat_mass >= 0.20 and compatible_ranked:
+            for c in compatible_ranked:
+                c["crop_aware_probability"] = c["probability"] / compat_mass
+                c["crop_aware_percentage"] = f"{c['crop_aware_probability'] * 100:.2f}%"
+        else:
+            for c in compatible_ranked:
+                c["crop_aware_probability"] = c["probability"]
+                c["crop_aware_percentage"] = c["percentage"]
+
+        # Evaluation of compatible candidates
+        if compatible_ranked and compat_mass >= 0.20:
             best_compat = compatible_ranked[0]
             cand_name = best_compat["class_name"]
-            cand_conf = best_compat["probability"]
-            final_disease_conf = cand_conf
+            cand_conf = float(best_compat.get("crop_aware_probability", best_compat["probability"]))
 
-            # Healthy case
-            if cand_name == "healthy":
+            # Safeguard against unverified zero-test-support disease classes:
+            # 1. Zero-support disease classes cannot claim demonstrated reliability.
+            # 2. Healthy images cannot be incorrectly declared diseased because of uncalibrated zero-support classes.
+            if cand_name in self.zero_support_classes:
+                healthy_candidates = [c for c in compatible_ranked if c["class_name"] == "healthy"]
+                if healthy_candidates and healthy_candidates[0]["probability"] >= 0.10:
+                    h_conf = float(healthy_candidates[0].get("crop_aware_probability", healthy_candidates[0]["probability"]))
+                    if h_conf >= self.uncertainty_threshold:
+                        final_status = "healthy"
+                        final_disease = None
+                        final_disease_conf = h_conf
+                    else:
+                        final_status = "uncertain"
+                        final_disease = None
+                        final_disease_conf = h_conf
+                else:
+                    # Cannot claim demonstrated reliability for zero-support disease class
+                    final_status = "uncertain"
+                    final_disease = None
+                    final_disease_conf = cand_conf
+            elif cand_name == "healthy":
                 if cand_conf >= self.uncertainty_threshold:
                     final_status = "healthy"
                     final_disease = None
+                    final_disease_conf = cand_conf
                 else:
                     final_status = "uncertain"
                     final_disease = None
+                    final_disease_conf = cand_conf
                     if raw_top1 and raw_top1["probability"] > cand_conf:
                         final_disease_conf = float(raw_top1["probability"])
             else:
-                # Disease case
+                # Valid disease candidate with test support
                 if cand_conf >= self.uncertainty_threshold:
                     final_status = "diseased"
                     final_disease = cand_name
+                    final_disease_conf = cand_conf
                 else:
                     final_status = "uncertain"
                     final_disease = None
+                    final_disease_conf = cand_conf
                     if raw_top1 and raw_top1["probability"] > cand_conf:
                         final_disease_conf = float(raw_top1["probability"])
         else:
@@ -282,16 +475,17 @@ class Model2DiseaseClassifierV4:
             final_disease_conf = float(raw_top1["probability"]) if raw_top1 else 0.0
 
         result = {
-            "crop": norm_crop,
+            "crop": canonical_crop_id,
+            "crop_display": crop_display,
             "crop_confidence": round(float(crop_confidence), 4) if crop_confidence is not None else None,
             "status": final_status,
             "disease": final_disease,
             "disease_confidence": round(float(final_disease_conf), 4),
             "raw_top1": {
-                "class_name": raw_top1["class_name"],
-                "confidence": round(raw_top1["probability"], 4),
+                "class_name": raw_top1["class_name"] if raw_top1 else "none",
+                "confidence": round(raw_top1["probability"], 4) if raw_top1 else 0.0,
                 "is_compatible": is_raw_compatible,
-            },
+            } if raw_top1 else None,
             "top_compatible": compatible_ranked[:5],
             "raw_top10": all_ranked[:10],
         }

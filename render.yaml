@@ -3,7 +3,7 @@ services:
     name: plant-disease-ai
     env: docker
     plan: free
-    region: oregon
+    region: singapore
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
@@ -13,3 +13,17 @@ services:
         value: "false"
       - key: WHISPER_MODEL_SIZE
         value: "tiny"
+      - key: MODEL1_CHECKPOINT
+        value: "models/model1_expanded/best_model.pth"
+      - key: MODEL1_CLASS_MAPPING
+        value: "models/model1_expanded/class_mapping.json"
+      - key: MODEL1_CONFIG
+        value: "models/model1_expanded/config.json"
+      - key: MODEL2_CHECKPOINT
+        value: "models/model2_retraining_v2/best_model.pth"
+      - key: MODEL2_CLASS_MAPPING
+        value: "models/model2_retraining_v2/class_mapping.json"
+      - key: MODEL2_CONFIG
+        value: "models/model2_retraining_v2/config.json"
+      - key: CROP_DISEASE_MAPPING
+        value: "models/model2_retraining_v2/crop_disease_mapping.json"

@@ -91,6 +91,9 @@ def extract_entities(normalized_text: str, language: str = "en") -> ExtractedEnt
             entities.crop = crop
             break
 
+    if entities.crop in ("capsicum", "bellpepper", "bell_pepper"):
+        entities.crop = "bell pepper"
+
     # 2. Extract Plant Part
     for part, aliases in PLANT_PARTS.items():
         for alias in aliases:

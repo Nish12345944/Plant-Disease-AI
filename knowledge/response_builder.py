@@ -29,7 +29,18 @@ def build_response(
     sources = plan.sources_cited
     lines: list[str] = []
 
-    crop_title = crop.title() if crop else "Plant"
+    if not crop:
+        crop_title = "Plant"
+    else:
+        clean_c = crop.lower().strip()
+        if clean_c in ("bellpepper", "capsicum", "bell_pepper"):
+            crop_title = "Bell Pepper"
+        elif clean_c in ("french_bean", "bean"):
+            crop_title = "French Bean"
+        elif clean_c == "cherry_tomato":
+            crop_title = "Cherry Tomato"
+        else:
+            crop_title = clean_c.replace("_", " ").title()
     disease_title = None
     if disease:
         if "__" in disease:

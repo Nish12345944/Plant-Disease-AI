@@ -81,6 +81,43 @@ export async function routeQuery(text) {
 }
 
 /**
+ * Direct video inference endpoint
+ * @param {Blob|File} videoFile
+ * @param {number} [targetFrames=8]
+ */
+export async function predictVideo(videoFile, targetFrames = 8) {
+  const formData = new FormData();
+  const filename = videoFile.name || 'video.mp4';
+  formData.append('file', videoFile, filename);
+  formData.append('target_frames', String(targetFrames));
+
+  const res = await fetch(`${API_BASE}/inference/video`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) {
+    let errorDetail = `Video inference failed with HTTP ${res.status}`;
+    try {
+      const err = await res.json();
+      if (err.detail) errorDetail = err.detail;
+      else if (err.message) errorDetail = err.message;
+    } catch {
+      if (res.status === 502) {
+        errorDetail = 'Backend service is starting up or temporarily unavailable (HTTP 502 Bad Gateway). Please retry in a few moments.';
+      } else if (res.status === 503) {
+        errorDetail = 'Service temporarily unavailable (HTTP 503). Vision model checkpoint is unavailable.';
+      } else if (res.status === 504) {
+        errorDetail = 'Request timed out (HTTP 504 Gateway Timeout). Please try with a shorter video clip.';
+      }
+    }
+    throw new Error(errorDetail);
+  }
+
+  return await res.json();
+}
+
+/**
  * Unified multimodal chat endpoint
  * @param {Object} params
  * @param {string} params.text

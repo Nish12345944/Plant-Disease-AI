@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from pathlib import Path
 from typing import Any, Optional, Union
 
@@ -22,16 +23,111 @@ from torchvision.models import efficientnet_b2
 
 logger = logging.getLogger(__name__)
 
-# Default model artifacts
-DEFAULT_CHECKPOINT_PATH = Path("models/model1/best_model.pth")
-DEFAULT_MAPPING_PATH = Path("models/model1/class_mapping.json")
-DEFAULT_CONFIG_PATH = Path("models/model1/config.json")
+# Default model artifacts (Expanded 46-crop classifier for production)
+DEFAULT_CHECKPOINT_PATH = Path("models/model1_expanded/best_model.pth")
+DEFAULT_MAPPING_PATH = Path("models/model1_expanded/class_mapping.json")
+DEFAULT_CONFIG_PATH = Path("models/model1_expanded/config.json")
 
 # Exact ImageNet normalization parameters used in training
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
 DEFAULT_IMAGE_SIZE = (224, 224)
 DEFAULT_CONFIDENCE_THRESHOLD = 0.25
+
+
+def validate_model1_setup(
+    checkpoint_path: Union[str, Path] = DEFAULT_CHECKPOINT_PATH,
+    mapping_path: Union[str, Path] = DEFAULT_MAPPING_PATH,
+    config_path: Optional[Union[str, Path]] = DEFAULT_CONFIG_PATH,
+    allow_legacy: Optional[bool] = None,
+) -> dict[str, Any]:
+    """Validate Model 1 checkpoint availability, output dimension, and class mapping alignment.
+
+    Enforces:
+    1. Checkpoint and mapping files must exist; fails clearly if unavailable.
+    2. Checkpoint output dimension must match mapping class count; fails clearly on mismatch.
+    3. Production cannot silently select legacy (<46 classes) models unless allow_legacy=True or ALLOW_LEGACY_MODEL1=true.
+
+    Returns:
+        dict with metadata: {
+            "checkpoint_path": Path,
+            "mapping_path": Path,
+            "num_classes": int,
+            "checkpoint_output_dim": int,
+            "is_expanded": bool,
+        }
+    """
+    chk_path = Path(checkpoint_path).resolve()
+    map_path = Path(mapping_path).resolve()
+
+    if not chk_path.exists():
+        raise FileNotFoundError(
+            f"Required Model 1 checkpoint not found at: '{chk_path}'. "
+            f"Expanded 46-class checkpoint is required for production."
+        )
+    if not map_path.exists():
+        raise FileNotFoundError(
+            f"Model 1 class mapping not found at: '{map_path}'."
+        )
+
+    # 1. Load class mapping
+    with open(map_path, "r", encoding="utf-8") as f:
+        mapping_data = json.load(f)
+
+    idx_to_class = mapping_data.get("idx_to_class", {})
+    mapping_class_count = len(idx_to_class)
+    if mapping_class_count == 0:
+        raise ValueError(f"No classes found in class mapping file: '{map_path}'")
+
+    # 2. Inspect checkpoint classifier dimension on CPU
+    ckpt = torch.load(chk_path, map_location="cpu", weights_only=False)
+    state_dict = ckpt.get("model_state_dict", ckpt)
+
+    out_weight = None
+    for k in ("classifier.1.weight", "classifier.weight"):
+        if k in state_dict:
+            out_weight = state_dict[k]
+            break
+    if out_weight is None:
+        classifier_keys = [k for k in state_dict.keys() if "classifier" in k and "weight" in k]
+        if classifier_keys:
+            out_weight = state_dict[classifier_keys[-1]]
+
+    if out_weight is None:
+        raise ValueError(f"Unable to locate classifier head in checkpoint '{chk_path}'.")
+
+    checkpoint_output_dim = int(out_weight.shape[0])
+
+    # 3. Verify output dimension matches class mapping count
+    if checkpoint_output_dim != mapping_class_count:
+        raise ValueError(
+            f"Model 1 dimension mismatch: Checkpoint '{chk_path}' has {checkpoint_output_dim} "
+            f"output classes, but class mapping '{map_path}' defines {mapping_class_count} classes."
+        )
+
+    # 4. Prevent silent fallback to legacy 22-class model in production
+    if allow_legacy is None:
+        allow_legacy = os.environ.get("ALLOW_LEGACY_MODEL1", "false").lower() in ("true", "1", "yes")
+
+    if checkpoint_output_dim < 46 and not allow_legacy:
+        raise RuntimeError(
+            f"Production configuration error: Legacy Model 1 checkpoint with {checkpoint_output_dim} "
+            f"classes ('{chk_path}') cannot be silently selected in production. "
+            f"The expanded 46-class model is required. Set ALLOW_LEGACY_MODEL1=true to explicitly allow "
+            f"alternate/legacy checkpoints in test environments."
+        )
+
+    logger.info(
+        f"Model 1 configuration validated: checkpoint='{chk_path}', classes={checkpoint_output_dim}, mapping='{map_path}'"
+    )
+
+    return {
+        "checkpoint_path": chk_path,
+        "mapping_path": map_path,
+        "num_classes": mapping_class_count,
+        "checkpoint_output_dim": checkpoint_output_dim,
+        "is_expanded": checkpoint_output_dim >= 46,
+    }
 
 
 def get_eval_transform(
@@ -56,19 +152,25 @@ def get_eval_transform(
     ])
 
 
+# Cached default evaluation transform to avoid re-instantiation on every inference call
+_DEFAULT_EVAL_TRANSFORM = get_eval_transform()
+
+
 def load_model(
     checkpoint_path: Union[str, Path] = DEFAULT_CHECKPOINT_PATH,
     mapping_path: Union[str, Path] = DEFAULT_MAPPING_PATH,
     config_path: Optional[Union[str, Path]] = DEFAULT_CONFIG_PATH,
     device: Optional[torch.device] = None,
+    allow_legacy: Optional[bool] = None,
 ) -> tuple[nn.Module, dict[int, str], dict[str, int], torch.device, str]:
-    """Load EfficientNet-B2 checkpoint and dynamic class mapping.
+    """Load EfficientNet-B2 checkpoint and dynamic class mapping with validation.
 
     Args:
         checkpoint_path: Path to best_model.pth.
         mapping_path: Path to class_mapping.json.
         config_path: Path to config.json (optional).
         device: Target torch.device. If None, auto-selects CUDA if available, else CPU.
+        allow_legacy: If True, permits checkpoints with <46 classes for testing.
 
     Returns:
         Tuple of (model, idx_to_class, class_to_idx, device, device_name).
@@ -76,10 +178,14 @@ def load_model(
     chk_path = Path(checkpoint_path).resolve()
     map_path = Path(mapping_path).resolve()
 
-    if not chk_path.exists():
-        raise FileNotFoundError(f"Model 1 checkpoint not found at: {chk_path}")
-    if not map_path.exists():
-        raise FileNotFoundError(f"Class mapping file not found at: {map_path}")
+    # Startup validation: verify existence, dimensions, and legacy guard
+    val_info = validate_model1_setup(
+        checkpoint_path=chk_path,
+        mapping_path=map_path,
+        config_path=config_path,
+        allow_legacy=allow_legacy,
+    )
+    num_classes = val_info["checkpoint_output_dim"]
 
     # Determine device
     if device is None:
@@ -101,10 +207,6 @@ def load_model(
         int(k): v for k, v in mapping_data.get("idx_to_class", {}).items()
     }
     class_to_idx: dict[str, int] = mapping_data.get("class_to_idx", {})
-    num_classes = len(idx_to_class)
-
-    if num_classes == 0:
-        raise ValueError(f"No classes found in class mapping file: {map_path}")
 
     # Initialize EfficientNet-B2 architecture
     model = efficientnet_b2(weights=None)
@@ -123,13 +225,39 @@ def load_model(
     model.eval()
 
     logger.info(
-        f"Model 1 loaded successfully on {device_name} with {num_classes} classes."
+        f"Model 1 loaded successfully on {device_name} with {num_classes} classes from '{chk_path}'."
     )
     return model, idx_to_class, class_to_idx, device, device_name
 
 
+CROP_DISPLAY_NAMES: dict[str, str] = {
+    "bellpepper": "Bell Pepper",
+    "capsicum": "Bell Pepper",
+    "bell_pepper": "Bell Pepper",
+    "french_bean": "French Bean",
+    "cherry_tomato": "Cherry Tomato",
+}
+
+
+def normalize_crop_id(crop: Optional[str]) -> Optional[str]:
+    """Normalize crop identifier to canonical internal ID (e.g. 'capsicum'/'bell_pepper' -> 'bellpepper')."""
+    if not crop:
+        return None
+    c = crop.lower().strip()
+    if c in ("capsicum", "bell_pepper", "bellpepper", "bell pepper"):
+        return "bellpepper"
+    if c in ("bean", "french_bean", "french bean"):
+        return "french_bean"
+    return c.replace(" ", "_")
+
+
 def format_class_name(raw_name: str) -> str:
-    """Format raw class identifiers like 'cherry_tomato' to 'Cherry Tomato'."""
+    """Format raw class identifiers to user-facing labels (e.g., 'bellpepper' -> 'Bell Pepper')."""
+    if not raw_name:
+        return "Unknown"
+    clean = raw_name.lower().strip()
+    if clean in CROP_DISPLAY_NAMES:
+        return CROP_DISPLAY_NAMES[clean]
     return raw_name.replace("_", " ").title()
 
 
@@ -153,7 +281,7 @@ def predict_image(
         4. Probability distribution & confidence check.
     """
     if transform is None:
-        transform = get_eval_transform()
+        transform = _DEFAULT_EVAL_TRANSFORM
 
     # Load and normalize PIL image
     if isinstance(image_input, (str, Path)):
@@ -191,8 +319,14 @@ def predict_image(
             "image_size": (w, h),
         }
 
-    # Basic non-destructive blur check
-    np_rgb = np.array(img_rgb)
+    # Basic non-destructive blur check (scale down large images to prevent multi-megabyte Laplacian allocations)
+    if w > 1024 or h > 1024:
+        scale = 1024.0 / max(w, h)
+        blur_img = img_rgb.resize((int(w * scale), int(h * scale)), Image.Resampling.BILINEAR)
+    else:
+        blur_img = img_rgb
+
+    np_rgb = np.array(blur_img)
     gray = cv2.cvtColor(np_rgb, cv2.COLOR_RGB2GRAY)
     blur_score = float(cv2.Laplacian(gray, cv2.CV_64F).var())
 
@@ -211,7 +345,8 @@ def predict_image(
     # Direct Model 1 Preprocessing & Inference
     tensor = transform(img_rgb).unsqueeze(0).to(device)
 
-    with torch.no_grad():
+    infer_ctx = torch.inference_mode if hasattr(torch, "inference_mode") else torch.no_grad
+    with infer_ctx():
         logits = model(tensor)
         probs = torch.softmax(logits, dim=1)[0].cpu().numpy()
 
@@ -222,12 +357,13 @@ def predict_image(
     top_k_list = []
     for rank, idx in enumerate(top_indices, start=1):
         raw_cls = idx_to_class[int(idx)]
+        canonical_cls = normalize_crop_id(raw_cls) or raw_cls
         confidence = float(probs[idx])
         top_k_list.append({
             "rank": rank,
             "class_id": int(idx),
-            "class_name": raw_cls,
-            "label": format_class_name(raw_cls),
+            "class_name": canonical_cls,
+            "label": format_class_name(canonical_cls),
             "confidence": confidence,
             "percentage": f"{confidence * 100:.2f}%",
         })
@@ -246,6 +382,7 @@ def predict_image(
             "top_k": top_k_list,
             "all_probabilities": probs,
             "image_size": (w, h),
+            "_preprocessed_tensor": tensor,
         }
 
     return {
@@ -258,4 +395,5 @@ def predict_image(
         "top_k": top_k_list,
         "all_probabilities": probs,
         "image_size": (w, h),
+        "_preprocessed_tensor": tensor,
     }

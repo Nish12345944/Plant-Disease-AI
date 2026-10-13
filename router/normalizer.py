@@ -52,7 +52,7 @@ CROP_SPELLING_MAP = {
     "peper": "bell pepper",
     "shimla mirch": "bell pepper",
     "shimlamirch": "bell pepper",
-    "capsicum": "capsicum",
+    "capsicum": "bell pepper",
     
     "soya": "soybean",
     "soyabean": "soybean",

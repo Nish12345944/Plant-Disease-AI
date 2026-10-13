@@ -77,9 +77,22 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
 
   const hasPlantResult = Boolean(model1 || videoInference);
   const rawCrop = videoInference?.predicted_crop || model1?.predicted_crop || model1?.predicted_label;
-  const cropName = typeof rawCrop === 'string'
-    ? rawCrop
-    : (rawCrop?.name || rawCrop?.label || rawCrop?.crop || (rawCrop ? String(rawCrop) : ''));
+  const formatCropDisplay = (raw) => {
+    if (!raw) return '';
+    const str = typeof raw === 'string' ? raw : (raw?.name || raw?.label || raw?.crop || String(raw));
+    const clean = str.trim().toLowerCase();
+    if (clean === 'capsicum' || clean === 'bellpepper' || clean === 'bell_pepper') {
+      return 'Bell Pepper';
+    }
+    if (clean === 'french_bean' || clean === 'bean') {
+      return 'French Bean';
+    }
+    if (clean === 'cherry_tomato') {
+      return 'Cherry Tomato';
+    }
+    return clean.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+  };
+  const cropName = formatCropDisplay(rawCrop);
   const cropConfidence = videoInference ? videoInference.confidence : model1?.confidence;
   const cropConfidencePct = typeof cropConfidence === 'number' ? (cropConfidence * 100).toFixed(1) : (typeof cropConfidence === 'string' ? cropConfidence : null);
 
