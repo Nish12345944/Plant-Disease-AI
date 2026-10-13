@@ -13,8 +13,8 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
 
   return (
     <div className="modal-overlay animate-fade-in" onClick={onClose}>
-      <div 
-        className="modal-content frames-modal" 
+      <div
+        className="modal-content frames-modal"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-header">
@@ -27,24 +27,24 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
               </p>
             </div>
           </div>
-          
+
           <div className="modal-header-actions">
             <div className="view-toggle-pills">
-              <button 
+              <button
                 className={`view-pill ${viewMode === 'roi' ? 'active' : ''}`}
                 onClick={() => setViewMode('roi')}
                 title="Show Plant ROI used for Model 1 & 2 Inference"
               >
                 <Scan size={14} /> Plant ROI
               </button>
-              <button 
+              <button
                 className={`view-pill ${viewMode === 'annotated' ? 'active' : ''}`}
                 onClick={() => setViewMode('annotated')}
                 title="Show Model 2 Disease Bounding Boxes on ROI"
               >
                 <Crosshair size={14} /> Disease BBoxes
               </button>
-              <button 
+              <button
                 className={`view-pill ${viewMode === 'full' ? 'active' : ''}`}
                 onClick={() => setViewMode('full')}
                 title="Show Full Video Frame"
@@ -66,7 +66,7 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
               const isBlurry = frame.quality_status === 'blurry' || frame.status === 'blurry';
               const isNoPlant = frame.quality_status === 'unknown' || frame.status === 'unknown' || frame.quality_status === 'no_plant';
               const hasDiseaseDets = frame.disease_detections && frame.disease_detections.length > 0;
-              
+
               let displayImg = frame.thumbnail || frame.thumbnail_url;
               if (viewMode === 'roi') {
                 displayImg = frame.roi_thumbnail || frame.roi_thumbnail_url || displayImg;
@@ -99,7 +99,7 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
                   <div className="frame-info">
                     <div className="frame-prediction-row">
                       <span className="frame-plant-name">
-                        {frame.predicted_crop || frame.predicted_label || 'Unknown'}
+                        {typeof (frame.predicted_crop || frame.predicted_label) === 'string' ? (frame.predicted_crop || frame.predicted_label) : 'Unknown'}
                       </span>
                       <span className={`frame-conf-pill ${isValid ? 'high' : 'low'}`}>
                         {((frame.confidence || 0) * 100).toFixed(1)}%
@@ -110,7 +110,7 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
                     {hasDiseaseDets && viewMode === 'annotated' && (
                       <div className="frame-disease-tag-row">
                         <span className="frame-disease-chip">
-                          <AlertOctagon size={11} /> {frame.disease_detections[0]?.disease_label || frame.disease_detections[0]?.disease} ({frame.disease_detections[0]?.percentage || `${(frame.disease_detections[0]?.confidence * 100).toFixed(0)}%`})
+                          <AlertOctagon size={11} /> {typeof (frame.disease_detections[0]?.disease_label || frame.disease_detections[0]?.disease) === 'string' ? (frame.disease_detections[0]?.disease_label || frame.disease_detections[0]?.disease) : 'Disease'} ({frame.disease_detections[0]?.percentage || `${((frame.disease_detections[0]?.confidence || 0) * 100).toFixed(0)}%`})
                         </span>
                       </div>
                     )}
@@ -141,7 +141,7 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
 
                     {(frame.filter_reason || frame.reason) && (
                       <span className="frame-filter-reason">
-                        {frame.filter_reason || frame.reason}
+                        {typeof (frame.filter_reason || frame.reason) === 'string' ? (frame.filter_reason || frame.reason) : ''}
                       </span>
                     )}
                   </div>
@@ -153,8 +153,8 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
 
         <div className="modal-footer">
           <div className="modal-summary-text">
-            Plant: <strong className="text-emerald">{videoData.predicted_crop || videoData.predicted_label || 'Unknown'}</strong> ({((videoData.confidence || 0) * 100).toFixed(1)}%) • 
-            Disease: <strong className={m2Summary.has_disease ? 'text-rose' : 'text-emerald'}>{m2Summary.primary_disease || 'Healthy Specimen'}</strong> ({m2Summary.percentage || '100%'}) across {frames.length} frames.
+            Plant: <strong className="text-emerald">{typeof (videoData.predicted_crop || videoData.predicted_label) === 'string' ? (videoData.predicted_crop || videoData.predicted_label) : 'Unknown'}</strong> ({((videoData.confidence || 0) * 100).toFixed(1)}%) •
+            Disease: <strong className={m2Summary.has_disease ? 'text-rose' : 'text-emerald'}>{typeof m2Summary.primary_disease === 'string' ? m2Summary.primary_disease : (m2Summary.primary_disease?.name || 'Healthy Specimen')}</strong> ({typeof m2Summary.percentage === 'string' ? m2Summary.percentage : '100%'}) across {frames.length} frames.
           </div>
           <button className="btn-secondary" onClick={onClose}>
             Close

@@ -2196,6 +2196,18 @@ html, body {
   background: rgba(56, 189, 248, 0.15);
   border: 1px solid rgba(56, 189, 248, 0.35);
   color: #7dd3fc;
+  display: inline-block;
+  text-decoration: none;
 }
 
+a.source-citation-badge {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
 
+a.source-citation-badge:hover {
+  background: rgba(56, 189, 248, 0.28);
+  border-color: rgba(56, 189, 248, 0.6);
+  color: #bae6fd;
+  text-decoration: underline;
+}

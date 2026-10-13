@@ -293,7 +293,9 @@ export default function App() {
       const assistantMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        text: response.message,
+        text: typeof response.message === 'string'
+          ? response.message
+          : (response.message?.text || response.message?.message || response.message?.detail || String(response.message || '')),
         data: {
           model1: response.model1,
           video_inference: response.video_inference,

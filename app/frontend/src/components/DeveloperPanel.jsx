@@ -30,7 +30,7 @@ export default function DeveloperPanel({ isOpen, onClose, telemetryData }) {
           <h3>Developer / Input Debug Telemetry</h3>
         </div>
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <button 
+          <button
             className="btn-link"
             style={{ fontSize: '0.8rem', color: activeTab === 'summary' ? 'var(--primary-emerald)' : 'var(--text-muted)' }}
             onClick={() => setActiveTab('summary')}
@@ -38,16 +38,16 @@ export default function DeveloperPanel({ isOpen, onClose, telemetryData }) {
             Summary
           </button>
           <span style={{ color: 'var(--border-subtle)' }}>|</span>
-          <button 
+          <button
             className="btn-link"
             style={{ fontSize: '0.8rem', color: activeTab === 'json' ? 'var(--primary-emerald)' : 'var(--text-muted)' }}
             onClick={() => setActiveTab('json')}
           >
             Raw JSON
           </button>
-          <button 
-            className="btn-icon" 
-            onClick={onClose} 
+          <button
+            className="btn-icon"
+            onClick={onClose}
             title="Close Panel"
             style={{ width: '28px', height: '28px', marginLeft: '8px' }}
           >
@@ -153,7 +153,7 @@ export default function DeveloperPanel({ isOpen, onClose, telemetryData }) {
                   <div className="debug-item mt-2">
                     <span className="debug-label">Model 1 Plant Identification</span>
                     <span className="debug-value text-emerald">
-                      {data.model1.predicted_crop || data.model1.predicted_label || 'Unknown'} ({(data.model1.confidence * 100).toFixed(1)}%)
+                      {typeof (data.model1.predicted_crop || data.model1.predicted_label) === 'string' ? (data.model1.predicted_crop || data.model1.predicted_label) : 'Unknown'} ({typeof data.model1.confidence === 'number' ? (data.model1.confidence * 100).toFixed(1) : 0}%)
                     </span>
                   </div>
                 )}
@@ -161,7 +161,7 @@ export default function DeveloperPanel({ isOpen, onClose, telemetryData }) {
                   <div className="debug-item mt-2">
                     <span className="debug-label">Model 2 Disease Localization</span>
                     <span className="debug-value text-rose">
-                      {data.model2.primary_disease || 'None'} ({data.model2.percentage || 'N/A'}, {data.model2.detections_count || data.model2.detections?.length || 0} lesions)
+                      {typeof data.model2.primary_disease === 'string' ? data.model2.primary_disease : (data.model2.primary_disease?.name || 'None')} ({typeof data.model2.percentage === 'string' ? data.model2.percentage : 'N/A'}, {data.model2.detections_count || data.model2.detections?.length || 0} lesions)
                     </span>
 
                     {/* Annotated preview in debug panel */}
@@ -170,10 +170,10 @@ export default function DeveloperPanel({ isOpen, onClose, telemetryData }) {
                         <div style={{ padding: '4px 8px', fontSize: '0.72rem', background: 'rgba(244, 63, 94, 0.15)', color: '#fda4af', fontWeight: 600 }}>
                           Annotated Disease Localization Bounding Boxes
                         </div>
-                        <img 
-                          src={data.annotated_preview_url || data.model2.annotated_preview_url} 
-                          alt="Annotated preview" 
-                          style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', background: '#000', display: 'block' }} 
+                        <img
+                          src={data.annotated_preview_url || data.model2.annotated_preview_url}
+                          alt="Annotated preview"
+                          style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', background: '#000', display: 'block' }}
                         />
                       </div>
                     )}
@@ -185,7 +185,7 @@ export default function DeveloperPanel({ isOpen, onClose, telemetryData }) {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', marginTop: '4px' }}>
                           {data.model2.detections.slice(0, 10).map((det, i) => (
                             <div key={i} style={{ background: '#0b1220', padding: '3px 6px', borderRadius: '3px' }}>
-                              #{i+1} {det.disease_label || det.disease} ({det.percentage || `${(det.confidence*100).toFixed(1)}%`}) {det.bbox && `[${det.bbox.map(v => typeof v === 'number' ? v.toFixed(0) : v).join(', ')}]`}
+                              #{i+1} {typeof (det.disease_label || det.disease) === 'string' ? (det.disease_label || det.disease) : (det.disease_label?.name || det.disease?.name || 'Disease')} ({det.percentage || `${((det.confidence || 0)*100).toFixed(1)}%`}) {det.bbox && `[${det.bbox.map(v => typeof v === 'number' ? v.toFixed(0) : v).join(', ')}]`}
                             </div>
                           ))}
                           {data.model2.detections.length > 10 && (

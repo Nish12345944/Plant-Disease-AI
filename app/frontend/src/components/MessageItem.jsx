@@ -1,13 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import { 
-  Bot, 
-  User, 
-  Sprout, 
-  Layers, 
-  Film, 
-  CheckCircle, 
-  AlertTriangle, 
-  Volume2, 
+import {
+  Bot,
+  User,
+  Sprout,
+  Layers,
+  Film,
+  CheckCircle,
+  AlertTriangle,
+  Volume2,
   ChevronRight,
   ChevronDown,
   ChevronUp,
@@ -50,10 +50,14 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
           )}
 
           {/* User query text */}
-          {message.text && <p className="user-text-content">{message.text}</p>}
+          {message.text && (
+            <p className="user-text-content">
+              {typeof message.text === 'string' ? message.text : (message.text?.text || message.text?.message || '')}
+            </p>
+          )}
 
           <div className="message-timestamp">
-            {message.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {typeof message.timestamp === 'string' ? message.timestamp : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
         </div>
         <div className="message-avatar user-avatar">
@@ -72,24 +76,35 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
   const annotatedPreviewUrl = data.annotated_preview_url || model2?.annotated_preview_url;
 
   const hasPlantResult = Boolean(model1 || videoInference);
-  const cropName = videoInference?.predicted_crop || model1?.predicted_crop || model1?.predicted_label;
+  const rawCrop = videoInference?.predicted_crop || model1?.predicted_crop || model1?.predicted_label;
+  const cropName = typeof rawCrop === 'string'
+    ? rawCrop
+    : (rawCrop?.name || rawCrop?.label || rawCrop?.crop || (rawCrop ? String(rawCrop) : ''));
   const cropConfidence = videoInference ? videoInference.confidence : model1?.confidence;
-  const cropConfidencePct = typeof cropConfidence === 'number' ? (cropConfidence * 100).toFixed(1) : null;
+  const cropConfidencePct = typeof cropConfidence === 'number' ? (cropConfidence * 100).toFixed(1) : (typeof cropConfidence === 'string' ? cropConfidence : null);
 
   const hasDiseaseModel = Boolean(model2 && model2.status && model2.status !== 'not_applicable' && model2.status !== 'not_connected');
   const isUncertain = model2?.status === 'uncertain';
   const hasDisease = !isUncertain && Boolean(model2?.has_disease || (model2?.detections && model2.detections.length > 0));
-  const diseaseName = model2?.primary_disease || (hasDisease ? 'Disease Detected' : isUncertain ? 'Inconclusive — verify image' : 'No disease detected');
+  const rawDiseaseName = model2?.primary_disease || (hasDisease ? 'Disease Detected' : isUncertain ? 'Inconclusive — verify image' : 'No disease detected');
+  const diseaseName = typeof rawDiseaseName === 'string'
+    ? rawDiseaseName
+    : (rawDiseaseName?.name || rawDiseaseName?.label || rawDiseaseName?.disease || (hasDisease ? 'Disease Detected' : isUncertain ? 'Inconclusive — verify image' : 'No disease detected'));
   const diseaseConfidence = model2?.confidence;
-  const diseaseConfidencePct = typeof diseaseConfidence === 'number' ? (diseaseConfidence * 100).toFixed(1) : (model2?.percentage || '—');
-  const lesionsCount = model2?.detections_count || model2?.detections?.length || 0;
+  const diseaseConfidencePct = typeof diseaseConfidence === 'number'
+    ? (diseaseConfidence * 100).toFixed(1)
+    : (typeof model2?.percentage === 'string' || typeof model2?.percentage === 'number' ? String(model2.percentage) : '—');
+  const lesionsCount = typeof model2?.detections_count === 'number'
+    ? model2.detections_count
+    : (Array.isArray(model2?.detections) ? model2.detections.length : 0);
 
   // Group detections by disease if multiple
   const diseaseGroups = useMemo(() => {
-    if (!model2?.detections || model2.detections.length === 0) return [];
+    if (!model2?.detections || !Array.isArray(model2.detections) || model2.detections.length === 0) return [];
     const groups = {};
     model2.detections.forEach((det) => {
-      const label = det.disease_label || det.disease || 'Unknown Disease';
+      const rawLabel = det.disease_label || det.disease || 'Unknown Disease';
+      const label = typeof rawLabel === 'string' ? rawLabel : (rawLabel?.name || rawLabel?.label || 'Unknown Disease');
       if (!groups[label]) {
         groups[label] = {
           name: label,
@@ -98,8 +113,9 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
         };
       }
       groups[label].count += 1;
-      if (det.confidence > groups[label].maxConfidence) {
-        groups[label].maxConfidence = det.confidence;
+      const detConf = typeof det.confidence === 'number' ? det.confidence : 0;
+      if (detConf > groups[label].maxConfidence) {
+        groups[label].maxConfidence = detConf;
       }
     });
     return Object.values(groups);
@@ -115,9 +131,9 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
         {/* Header / Router Intent Pill */}
         <div className="assistant-header-row">
           <span className="brand-name-tag">ALEXA FARMS AI</span>
-          {routerData && (
+          {routerData && routerData.intent && (
             <span className="intent-badge" title="Query Router Intent">
-              Intent: {routerData.intent}
+              Intent: {typeof routerData.intent === 'string' ? routerData.intent : (routerData.intent?.name || 'unknown')}
             </span>
           )}
         </div>
@@ -133,12 +149,12 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                 <span className="model-title">PLANT IDENTIFICATION</span>
               </div>
               {(model1?.status === 'unavailable' || videoInference?.status === 'unavailable' || model1?.status === 'error' || videoInference?.status === 'error') && (
-                <span style={{ 
-                  fontSize: '0.72rem', 
-                  color: (model1?.status === 'error' || videoInference?.status === 'error') ? '#f43f5e' : '#f59e0b', 
-                  padding: '2px 6px', 
-                  background: (model1?.status === 'error' || videoInference?.status === 'error') ? 'rgba(244, 63, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)', 
-                  borderRadius: '4px' 
+                <span style={{
+                  fontSize: '0.72rem',
+                  color: (model1?.status === 'error' || videoInference?.status === 'error') ? '#f43f5e' : '#f59e0b',
+                  padding: '2px 6px',
+                  background: (model1?.status === 'error' || videoInference?.status === 'error') ? 'rgba(244, 63, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                  borderRadius: '4px'
                 }}>
                   {(model1?.status === 'error' || videoInference?.status === 'error') ? 'Inference Error' : 'Checkpoint Missing'}
                 </span>
@@ -150,7 +166,14 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                 <div className="result-field-group">
                   <div className="result-field-row">
                     <span className="result-field-value" style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>
-                      {videoInference?.message || model1?.message || 'Vision model checkpoint not mounted on this server instance.'}
+                      {(() => {
+                        const plantMsg = videoInference?.message || model1?.message;
+                        if (typeof plantMsg === 'string' && plantMsg.trim()) return plantMsg;
+                        if (plantMsg && typeof plantMsg === 'object') {
+                          return plantMsg.detail || plantMsg.message || plantMsg.reason || 'Vision model checkpoint not mounted on this server instance.';
+                        }
+                        return 'Vision model checkpoint not mounted on this server instance.';
+                      })()}
                     </span>
                   </div>
                 </div>
@@ -183,11 +206,11 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                 <span className="model-title">DISEASE DETECTION</span>
               </div>
               {isUncertain && (
-                <span style={{ 
-                  fontSize: '0.72rem', 
-                  color: '#f59e0b', 
-                  padding: '2px 6px', 
-                  background: 'rgba(245, 158, 11, 0.1)', 
+                <span style={{
+                  fontSize: '0.72rem',
+                  color: '#f59e0b',
+                  padding: '2px 6px',
+                  background: 'rgba(245, 158, 11, 0.1)',
                   borderRadius: '4px',
                   fontWeight: 600
                 }}>
@@ -225,7 +248,7 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                   {model2?.message && (
                     <div className="result-field-row" style={{ marginTop: '4px' }}>
                       <span className="result-field-value" style={{ color: 'var(--text-muted)', fontSize: '0.82rem', fontWeight: 400 }}>
-                        {model2.message}
+                        {typeof model2.message === 'string' ? model2.message : (model2.message?.message || model2.message?.detail || '')}
                       </span>
                     </div>
                   )}
@@ -262,9 +285,9 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
 
             <div className="model-card-body">
               <div className="clean-analyzed-image-frame">
-                <img 
-                  src={data.original_image_url} 
-                  alt="Analyzed Plant Specimen" 
+                <img
+                  src={data.original_image_url}
+                  alt="Analyzed Plant Specimen"
                   className="clean-analyzed-img"
                 />
               </div>
@@ -277,7 +300,7 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
             ======================================================== */}
         {videoInference && !['unavailable', 'error'].includes(videoInference.status) && (videoInference.frames_processed > 0) && (
           <div className="video-actions-container">
-            <button 
+            <button
               className="btn-extracted-frames"
               onClick={() => onOpenFramesModal(videoInference)}
               id="btn-show-extracted-frames"
@@ -293,16 +316,52 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
         {message.text && (
           <div className="assistant-guidance-container">
             <div className="assistant-text-body">
-              {message.text.split('\n\n').map((paragraph, idx) => (
-                <p key={idx} className="assistant-paragraph">{paragraph}</p>
-              ))}
+              {String(typeof message.text === 'string' ? message.text : (message.text?.text || message.text?.message || message.text?.detail || ''))
+                .split('\n\n')
+                .map((paragraph, idx) => (
+                  <p key={idx} className="assistant-paragraph">{paragraph}</p>
+                ))}
             </div>
-            {data.knowledge_sources && data.knowledge_sources.length > 0 && (
+            {Array.isArray(data.knowledge_sources) && data.knowledge_sources.length > 0 && (
               <div className="knowledge-sources-row">
                 <span className="sources-label">Sources:</span>
-                {data.knowledge_sources.map((src, idx) => (
-                  <span key={idx} className="source-citation-badge">{src}</span>
-                ))}
+                {data.knowledge_sources.map((src, idx) => {
+                  if (!src) return null;
+                  if (typeof src === 'string') {
+                    return (
+                      <span key={idx} className="source-citation-badge">{src}</span>
+                    );
+                  }
+                  if (typeof src === 'object') {
+                    const label = src.title
+                      ? `${src.title}${src.organization ? ` (${src.organization})` : ''}`
+                      : (src.name || src.organization || src.source_id || 'Reference Source');
+                    if (src.url) {
+                      return (
+                        <a
+                          key={idx}
+                          href={src.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="source-citation-badge source-citation-link"
+                          title={`View source: ${label}`}
+                        >
+                          {label}
+                        </a>
+                      );
+                    }
+                    return (
+                      <span key={idx} className="source-citation-badge" title={label}>
+                        {label}
+                      </span>
+                    );
+                  }
+                  return (
+                    <span key={idx} className="source-citation-badge">
+                      {String(src)}
+                    </span>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -310,7 +369,7 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
 
         {/* Footer info & Telemetry Inspector trigger */}
         <div className="assistant-card-footer">
-          <button 
+          <button
             className="btn-inspect-telemetry"
             onClick={() => onInspectTelemetry(data)}
             title="Inspect unified debug telemetry"
@@ -319,11 +378,10 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
             <span>Inspect Debug State</span>
           </button>
           <span className="response-time-tag">
-            {message.timestamp || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            {typeof message.timestamp === 'string' ? message.timestamp : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
       </div>
     </div>
   );
 }
-
