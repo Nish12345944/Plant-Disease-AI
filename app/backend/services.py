@@ -72,6 +72,8 @@ from video.frame_extractor import (
     VideoDurationExceededError,
     VideoSizeExceededError,
 )
+from app.backend.image_validator import validate_plant_image
+from app.backend.open_set_crop_guard import evaluate_crop_acceptance, get_supported_crop_classes
 
 logger = logging.getLogger(__name__)
 
@@ -256,7 +258,75 @@ def stop_server_microphone() -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> dict[str, Any]:
-    """Perform hierarchical Model 1 (Plant Identification) and Model 2 V4 (Crop-Aware Disease Classification) inference."""
+    """Perform hierarchical Model 1 (Plant Identification) and Model 2 V4 (Crop-Aware Disease Classification) inference
+    with Plant Image Validation Gate (Safeguard A) and Open-Set Crop Guard (Safeguard B).
+    """
+    # -----------------------------------------------------------------------
+    # Safeguard A: Plant Image Validation Gate
+    # -----------------------------------------------------------------------
+    validation = validate_plant_image(file_bytes)
+    if not validation.valid:
+        logger.info(
+            f"[IMAGE_VALIDATION_REJECT] status={validation.status} reason={validation.reason_code}: {validation.message}"
+        )
+        try:
+            pil_fallback = Image.open(io.BytesIO(file_bytes)).convert("RGB")
+            preview_b64 = pil_to_base64_data_url(pil_fallback, format="JPEG", quality=80, max_dim=512)
+        except Exception:
+            preview_b64 = None
+
+        model1_dict = {
+            "status": validation.status,
+            "crop_status": "rejected",
+            "reason_code": validation.reason_code,
+            "predicted_crop": "Invalid / Non-Plant Image",
+            "predicted_class": None,
+            "predicted_label": "Invalid / Non-Plant Image",
+            "confidence": 0.0,
+            "percentage": "N/A",
+            "is_plant": False,
+            "reason": validation.message,
+            "message": validation.message,
+            "top3": [],
+            "top_k": [],
+            "image_size": validation.image_size,
+            "preview_url": preview_b64,
+            "validation": validation.to_dict(),
+        }
+
+        model2_dict = {
+            "status": "not_applicable",
+            "has_disease": False,
+            "primary_disease": None,
+            "primary_disease_slug": None,
+            "confidence": 0.0,
+            "percentage": "N/A",
+            "detections_count": 0,
+            "detections": [],
+            "annotated_preview_url": preview_b64,
+            "message": f"Disease classification not performed: {validation.message}",
+        }
+
+        standardized_diagnosis = {
+            "crop": None,
+            "crop_display": None,
+            "crop_confidence": 0.0,
+            "status": "rejected",
+            "disease": None,
+            "disease_confidence": 0.0,
+            "reason_code": validation.reason_code,
+        }
+
+        return {
+            **model1_dict,
+            "model1": model1_dict,
+            "model2": model2_dict,
+            "validation": validation.to_dict(),
+            "standardized_diagnosis": standardized_diagnosis,
+            "annotated_preview_url": preview_b64,
+        }
+
+    # Image validation passed - proceed to Model 1 inference
     m1_model, idx_to_class, _ = get_model1()
     m2_classifier = get_model2()
 
@@ -273,18 +343,93 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
     )
 
     preview_b64 = pil_to_base64_data_url(pil_img, format="JPEG", quality=80, max_dim=512)
-    raw_crop_class = m1_result.get("predicted_class", "unknown")
-    canonical_crop_id = normalize_crop_id(raw_crop_class) or raw_crop_class
-    crop_display_label = format_class_name(canonical_crop_id)
-    crop_confidence = m1_result.get("confidence", 0.0)
-    top_list = m1_result.get("top_k", [])
-    is_plant = m1_result.get("status") == "valid"
 
-    # Stage 2: Model 2 V4 Crop-Aware Disease / Healthy Classification
+    # -----------------------------------------------------------------------
+    # Safeguard B: Open-Set Crop Recognition / Unsupported-Crop Rejection
+    # -----------------------------------------------------------------------
+    crop_guard = evaluate_crop_acceptance(
+        top_k_list=m1_result.get("top_k", []),
+        raw_probabilities=m1_result.get("all_probabilities"),
+        logits=m1_result.get("logits"),
+        feature_vector=m1_result.get("feature_vector"),
+    )
+
+    raw_crop_class = crop_guard.predicted_class
+    canonical_crop_id = normalize_crop_id(raw_crop_class) or raw_crop_class
+    crop_display_label = crop_guard.predicted_crop
+    crop_confidence = crop_guard.confidence
+    top_list = m1_result.get("top_k", [])
+    is_plant = True
+
+    # If crop is unsupported or ambiguous, DO NOT proceed to Model 2
+    if not crop_guard.proceed_to_disease_detection:
+        logger.info(
+            f"[OPEN_SET_REJECT] raw_crop={canonical_crop_id} status={crop_guard.crop_status} "
+            f"margin={crop_guard.margin:.3f} entropy={crop_guard.entropy:.3f}: {crop_guard.user_message}"
+        )
+        is_plant_content = (crop_guard.reason_code != "non_plant_image")
+        model1_dict = {
+            "status": crop_guard.status,
+            "crop_status": crop_guard.crop_status,
+            "reason_code": crop_guard.reason_code,
+            "predicted_crop": crop_guard.predicted_crop,
+            "predicted_class": crop_guard.predicted_class,
+            "predicted_label": crop_guard.predicted_crop,
+            "confidence": 0.0,
+            "raw_confidence": 0.0,
+            "percentage": "N/A",
+            "margin": crop_guard.margin,
+            "entropy": crop_guard.entropy,
+            "is_plant": is_plant_content,
+            "reason": crop_guard.user_message,
+            "message": crop_guard.user_message,
+            "warning": crop_guard.warning,
+            "top3": [],
+            "top_k": [],
+            "image_size": m1_result.get("image_size"),
+            "preview_url": preview_b64,
+            "validation": validation.to_dict(),
+            "crop_guard": crop_guard.to_dict(),
+        }
+
+        model2_dict = {
+            "status": "not_applicable",
+            "has_disease": False,
+            "primary_disease": None,
+            "primary_disease_slug": None,
+            "confidence": 0.0,
+            "percentage": "N/A",
+            "detections_count": 0,
+            "detections": [],
+            "annotated_preview_url": preview_b64,
+            "message": f"Disease classification skipped: {crop_guard.user_message}",
+        }
+
+        standardized_diagnosis = {
+            "crop": None,
+            "crop_display": crop_guard.predicted_crop,
+            "crop_confidence": 0.0,
+            "status": crop_guard.status,
+            "disease": None,
+            "disease_confidence": 0.0,
+            "reason_code": crop_guard.reason_code,
+        }
+
+        return {
+            **model1_dict,
+            "model1": model1_dict,
+            "model2": model2_dict,
+            "validation": validation.to_dict(),
+            "crop_guard": crop_guard.to_dict(),
+            "standardized_diagnosis": standardized_diagnosis,
+            "annotated_preview_url": preview_b64,
+        }
+
+    # Stage 2: Model 2 V4 Crop-Aware Disease / Healthy Classification (Only for Accepted Crops)
     try:
         m2_res = m2_classifier.predict_crop_aware(
             image_input=pil_img,
-            crop_name=canonical_crop_id if is_plant else None,
+            crop_name=canonical_crop_id,
             crop_confidence=crop_confidence,
         )
 
@@ -308,7 +453,7 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
                 "top_compatible": m2_res["top_compatible"],
                 "raw_top10": m2_res["raw_top10"],
                 "annotated_preview_url": preview_b64,
-                "message": f"Verified healthy foliage for {crop_display_label}." if is_plant else "Healthy specimen.",
+                "message": f"Verified healthy foliage for {crop_display_label}.",
             }
         elif final_status == "diseased" and final_disease:
             clean_title = format_disease_name_clean(final_disease) or final_disease
@@ -338,7 +483,6 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
             }
         else:
             # Uncertain / Inconclusive condition
-            # Preserve actual relevant model confidence instead of hardcoding 0.0
             actual_conf = (
                 disease_conf
                 if (disease_conf and disease_conf > 0)
@@ -379,25 +523,33 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
         }
 
     model1_dict = {
-        "status": m1_result.get("status", "valid"),
+        "status": crop_guard.status,
+        "crop_status": crop_guard.crop_status,
+        "reason_code": crop_guard.reason_code,
         "predicted_crop": crop_display_label,
         "predicted_class": canonical_crop_id,
         "predicted_label": crop_display_label,
         "confidence": crop_confidence,
-        "percentage": m1_result.get("percentage", "N/A"),
+        "raw_confidence": crop_guard.raw_confidence,
+        "percentage": f"{crop_guard.raw_confidence * 100:.1f}%",
+        "margin": crop_guard.margin,
+        "entropy": crop_guard.entropy,
         "is_plant": is_plant,
-        "reason": m1_result.get("reason", ""),
-        "message": m1_result.get("reason", ""),
+        "reason": crop_guard.user_message,
+        "message": crop_guard.user_message,
+        "warning": crop_guard.warning,
         "top3": top_list[:3],
         "top_k": top_list,
         "image_size": m1_result.get("image_size"),
         "preview_url": preview_b64,
+        "validation": validation.to_dict(),
+        "crop_guard": crop_guard.to_dict(),
     }
 
     # Standardized Diagnosis Contract
     standardized_diagnosis = {
-        "crop": canonical_crop_id if is_plant else None,
-        "crop_display": crop_display_label if is_plant else None,
+        "crop": canonical_crop_id,
+        "crop_display": crop_display_label,
         "crop_confidence": round(float(crop_confidence), 4),
         "status": model2_dict["status"],
         "disease": model2_dict.get("primary_disease_slug"),
@@ -408,6 +560,8 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
         **model1_dict,
         "model1": model1_dict,
         "model2": model2_dict,
+        "validation": validation.to_dict(),
+        "crop_guard": crop_guard.to_dict(),
         "standardized_diagnosis": standardized_diagnosis,
         "annotated_preview_url": preview_b64,
     }
@@ -458,6 +612,19 @@ def process_video_inference(
         crop_display_label = format_class_name(canonical_video_crop)
         crop_conf = final_pred.get("confidence", 0.0)
 
+        # Safeguard B: Open-Set Crop Guard on aggregated video prediction
+        video_crop_guard = evaluate_crop_acceptance(v_res.get("top_k", []))
+        if video_crop_guard.crop_status != "accepted":
+            raw_video_crop = video_crop_guard.predicted_class
+            canonical_video_crop = normalize_crop_id(raw_video_crop) or raw_video_crop
+            crop_display_label = video_crop_guard.predicted_crop
+            crop_conf = video_crop_guard.confidence
+
+        usable_plant_frames = v_res.get("valid_plant_frames", 0)
+        should_run_disease_classification = (
+            video_crop_guard.proceed_to_disease_detection and usable_plant_frames > 0
+        )
+
         # Multi-frame Model 2 V4 disease classification across valid plant frames
         frame_results = []
         all_disease_detections = []
@@ -484,26 +651,27 @@ def process_video_inference(
             f_disease_status = "uncertain"
             f_detections = []
 
-            # Only run disease classification on valid plant frames
+            # Only run disease classification on valid plant frames IF crop guard accepted the crop
             if f_status == "valid" and roi_img is not None:
                 valid_plant_frames += 1
                 f_crop_class = normalize_crop_id(f.get("predicted_class")) or canonical_video_crop
 
-                # Avoid repeating Model 2 inference on duplicate or identical frame ROIs
-                if (prev_m2_roi is not None
-                    and f_crop_class == prev_m2_crop
-                    and prev_m2_res is not None
-                    and (roi_img is prev_m2_roi or f.get("is_duplicate"))):
-                    m2_res = prev_m2_res
-                else:
-                    m2_res = m2_classifier.predict_crop_aware(
-                        image_input=roi_img,
-                        crop_name=f_crop_class,
-                        crop_confidence=crop_conf,
-                    )
-                    prev_m2_roi = roi_img
-                    prev_m2_crop = f_crop_class
-                    prev_m2_res = m2_res
+                if should_run_disease_classification:
+                    # Avoid repeating Model 2 inference on duplicate or identical frame ROIs
+                    if (prev_m2_roi is not None
+                        and f_crop_class == prev_m2_crop
+                        and prev_m2_res is not None
+                        and (roi_img is prev_m2_roi or f.get("is_duplicate"))):
+                        m2_res = prev_m2_res
+                    else:
+                        m2_res = m2_classifier.predict_crop_aware(
+                            image_input=roi_img,
+                            crop_name=f_crop_class,
+                            crop_confidence=crop_conf,
+                        )
+                        prev_m2_roi = roi_img
+                        prev_m2_crop = f_crop_class
+                        prev_m2_res = m2_res
 
                 f_disease_status = m2_res.get("status", "uncertain")
                 f_disease_conf = float(m2_res.get("disease_confidence", 0.0))
@@ -654,6 +822,21 @@ def process_video_inference(
                 "message": "No valid plant frames available for disease analysis.",
             }
 
+        if not video_crop_guard.proceed_to_disease_detection:
+            m2_summary = {
+                "status": "not_applicable",
+                "has_disease": False,
+                "primary_disease": None,
+                "primary_disease_slug": None,
+                "confidence": 0.0,
+                "percentage": "N/A",
+                "supporting_frames": 0,
+                "evaluated_frames": valid_plant_frames,
+                "detections_count": 0,
+                "detections": [],
+                "message": f"Disease classification skipped: {video_crop_guard.user_message}",
+            }
+
         video_duration = v_res["video"].get("duration_seconds", 0.0)
         t_m2_ms = (time.perf_counter() - t_m2_start) * 1000
         t_total_ms = (time.perf_counter() - t0) * 1000
@@ -663,12 +846,19 @@ def process_video_inference(
         )
 
         return {
-            "status": final_pred.get("status", "valid"),
-            "predicted_crop": crop_display_label,
-            "predicted_class": canonical_video_crop,
-            "predicted_label": crop_display_label,
+            "status": video_crop_guard.status if valid_plant_frames > 0 else "rejected",
+            "crop_status": video_crop_guard.crop_status if valid_plant_frames > 0 else "rejected",
+            "reason_code": video_crop_guard.reason_code if valid_plant_frames > 0 else "non_plant_image",
+            "predicted_crop": crop_display_label if valid_plant_frames > 0 else "No Valid Plant Frames",
+            "predicted_class": canonical_video_crop if valid_plant_frames > 0 else None,
+            "predicted_label": crop_display_label if valid_plant_frames > 0 else "No Valid Plant Frames",
             "confidence": crop_conf,
-            "percentage": final_pred.get("percentage", "N/A"),
+            "raw_confidence": video_crop_guard.raw_confidence if valid_plant_frames > 0 else 0.0,
+            "percentage": f"{crop_conf * 100:.1f}%",
+            "margin": video_crop_guard.margin if valid_plant_frames > 0 else 0.0,
+            "entropy": video_crop_guard.entropy if valid_plant_frames > 0 else 1.0,
+            "crop_guard": video_crop_guard.to_dict() if valid_plant_frames > 0 else None,
+            "warning": video_crop_guard.warning if valid_plant_frames > 0 else None,
             "frames_processed": v_res["frames_used"],
             "frames_used": v_res["frames_used"],
             "valid_frames_count": v_res.get("valid_plant_frames", 0),

@@ -96,7 +96,14 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
   const cropConfidence = videoInference ? videoInference.confidence : model1?.confidence;
   const cropConfidencePct = typeof cropConfidence === 'number' ? (cropConfidence * 100).toFixed(1) : (typeof cropConfidence === 'string' ? cropConfidence : null);
 
-  const hasDiseaseModel = Boolean(model2 && model2.status && model2.status !== 'not_applicable' && model2.status !== 'not_connected');
+  const reasonCode = model1?.reason_code || videoInference?.reason_code;
+  const cropStatus = model1?.crop_status || videoInference?.crop_status;
+  const isValidationRejected = (model1?.validation && model1.validation.valid === false) || model1?.status === 'rejected';
+  const isUnsupportedCrop = cropStatus === 'unsupported_crop' || reasonCode === 'unsupported_crop';
+  const isUncertainCrop = cropStatus === 'uncertain_crop' || reasonCode === 'uncertain_crop';
+  const isSafeguardTriggered = isValidationRejected || isUnsupportedCrop || isUncertainCrop;
+
+  const hasDiseaseModel = Boolean(model2 && model2.status && model2.status !== 'not_applicable' && model2.status !== 'not_connected' && !isSafeguardTriggered);
   const isUncertain = model2?.status === 'uncertain';
   const hasDisease = !isUncertain && Boolean(model2?.has_disease || (model2?.detections && model2.detections.length > 0));
   const rawDiseaseName = model2?.primary_disease || (hasDisease ? 'Disease Detected' : isUncertain ? 'Inconclusive — verify image' : 'No disease detected');
@@ -152,9 +159,66 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
         </div>
 
         {/* ========================================================
-            SECTION 1: 🌱 PLANT IDENTIFICATION (Model 1)
+            SAFEGUARD ALERT / REJECTION CARD or SECTION 1 PLANT ID
             ======================================================== */}
-        {hasPlantResult && (
+        {isSafeguardTriggered ? (
+          <div className={`safeguard-rejection-card ${isUnsupportedCrop ? 'unsupported' : isUncertainCrop ? 'uncertain' : 'rejected'}`}>
+            <div className="model-card-header">
+              <div className="model-badge-row">
+                {isUnsupportedCrop || isUncertainCrop ? (
+                  <AlertTriangle size={18} color="#f59e0b" />
+                ) : (
+                  <AlertOctagon size={18} color="#f43f5e" />
+                )}
+                <span className="model-title" style={{ color: isUnsupportedCrop || isUncertainCrop ? '#fbbf24' : '#fb7185' }}>
+                  {isUnsupportedCrop
+                    ? 'UNSUPPORTED CROP'
+                    : isUncertainCrop
+                    ? 'UNCERTAIN CROP'
+                    : reasonCode === 'blurry_image'
+                    ? 'BLURRY PHOTO DETECTED'
+                    : reasonCode === 'low_visibility'
+                    ? 'LOW VISIBILITY / POOR LIGHTING'
+                    : reasonCode === 'non_plant_image'
+                    ? 'NON-PLANT IMAGE'
+                    : reasonCode === 'invalid_file'
+                    ? 'INVALID FILE FORMAT'
+                    : 'IMAGE VALIDATION REJECTED'}
+                </span>
+              </div>
+              <span className={`safeguard-badge ${isUnsupportedCrop ? 'badge-unsupported' : isUncertainCrop ? 'badge-uncertain' : 'badge-rejected'}`}>
+                {isUnsupportedCrop
+                  ? 'Unsupported Crop'
+                  : isUncertainCrop
+                  ? 'Uncertain Crop'
+                  : reasonCode === 'non_plant_image'
+                  ? 'Non-Plant Image'
+                  : reasonCode || cropStatus || 'Rejected'}
+              </span>
+            </div>
+
+            <div className="safeguard-message-box">
+              <p>{model1?.message || model1?.reason || 'Image could not be verified for disease diagnosis.'}</p>
+            </div>
+
+            <div className="safeguard-action-row">
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>
+                Disease diagnosis is withheld to protect crops from incorrect treatments.
+              </span>
+              <button
+                className="btn-replace-image"
+                onClick={() => {
+                  const cameraBtn = document.getElementById('composer-camera-btn');
+                  if (cameraBtn) cameraBtn.click();
+                }}
+                title="Upload or capture a new photo"
+              >
+                <ImageIcon size={14} />
+                <span>Replace Image</span>
+              </button>
+            </div>
+          </div>
+        ) : hasPlantResult && (
           <div className="model-card model1-card">
             <div className="model-card-header">
               <div className="model-badge-row">
@@ -200,6 +264,12 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                     <div className="result-field-row">
                       <span className="result-field-label">Confidence:</span>
                       <span className="result-field-value">{cropConfidencePct}%</span>
+                    </div>
+                  )}
+                  {model1?.warning && (
+                    <div className="safeguard-warning-callout">
+                      <Info size={15} color="#fbbf24" style={{ flexShrink: 0, marginTop: '2px' }} />
+                      <span>{model1.warning}</span>
                     </div>
                   )}
                 </div>

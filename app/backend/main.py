@@ -693,29 +693,36 @@ async def unified_chat_endpoint(
             m1_status = m1.get("status", "valid")
             m2_status = m2.get("status", "uncertain")
 
-            if m1_status != "valid":
-                eff_status = "uncertain"
-            elif m2_status == "healthy":
-                eff_status = "healthy"
-            elif m2_status == "detected" and m2.get("has_disease"):
-                eff_status = "diseased"
+            val_info = image_result.get("validation") or m1.get("validation") or {}
+            guard_info = image_result.get("crop_guard") or m1.get("crop_guard") or {}
+            is_valid_image = val_info.get("valid", True)
+            is_accepted_crop = guard_info.get("proceed_to_disease_detection", True) if guard_info else (m1_status == "valid")
+
+            if not is_valid_image or not is_accepted_crop:
+                # Safeguard triggered: block visual crop/disease evidence to downstream RAG
+                visual_evidence = None
             else:
-                eff_status = "uncertain"
+                if m2_status == "healthy":
+                    eff_status = "healthy"
+                elif m2_status == "detected" and m2.get("has_disease"):
+                    eff_status = "diseased"
+                else:
+                    eff_status = "uncertain"
 
-            crop_name_vis = image_result.get("predicted_crop") or m1.get("predicted_crop")
-            disease_slug_vis = m2.get("primary_disease_slug") or m2.get("primary_disease")
-            has_valid_crop_evidence = bool(crop_name_vis and crop_name_vis.strip().lower() not in ("unknown", "plant", ""))
-            has_valid_disease_evidence = bool(disease_slug_vis and disease_slug_vis.strip().lower() not in ("unknown", ""))
+                crop_name_vis = image_result.get("predicted_crop") or m1.get("predicted_crop")
+                disease_slug_vis = m2.get("primary_disease_slug") or m2.get("primary_disease")
+                has_valid_crop_evidence = bool(crop_name_vis and crop_name_vis.strip().lower() not in ("unknown", "plant", ""))
+                has_valid_disease_evidence = bool(disease_slug_vis and disease_slug_vis.strip().lower() not in ("unknown", ""))
 
-            visual_evidence = {
-                "crop": crop_name_vis if has_valid_crop_evidence else None,
-                "crop_confidence": image_result.get("confidence") or m1.get("confidence", 0.0),
-                "disease": disease_slug_vis if has_valid_disease_evidence else None,
-                "disease_name": m2.get("primary_disease"),
-                "disease_confidence": m2.get("confidence", 0.0),
-                "status": eff_status,
-                "incompatibility_flag": bool(has_valid_crop_evidence and has_valid_disease_evidence and m2_status == "uncertain" and not m2.get("has_disease")),
-            }
+                visual_evidence = {
+                    "crop": crop_name_vis if has_valid_crop_evidence else None,
+                    "crop_confidence": image_result.get("confidence") or m1.get("confidence", 0.0),
+                    "disease": disease_slug_vis if has_valid_disease_evidence else None,
+                    "disease_name": m2.get("primary_disease"),
+                    "disease_confidence": m2.get("confidence", 0.0),
+                    "status": eff_status,
+                    "incompatibility_flag": bool(has_valid_crop_evidence and has_valid_disease_evidence and m2_status == "uncertain" and not m2.get("has_disease")),
+                }
     elif video_result:
         if video_result.get("status") in ("unavailable", "error"):
             vision_unavailable = True
@@ -724,30 +731,34 @@ async def unified_chat_endpoint(
             m2 = video_result.get("model2", {}) or {}
             vid_status = video_result.get("status", "valid")
             m2_status = m2.get("status", "uncertain")
+            video_guard = video_result.get("crop_guard") or {}
+            is_accepted_video = video_guard.get("proceed_to_disease_detection", True) if video_guard else (vid_status == "valid")
+            has_plant_frames = video_result.get("valid_plant_frames", 0) > 0
 
-            if vid_status != "valid":
-                eff_status = "uncertain"
-            elif m2_status == "healthy":
-                eff_status = "healthy"
-            elif m2_status == "detected" and m2.get("has_disease"):
-                eff_status = "diseased"
+            if not is_accepted_video or not has_plant_frames:
+                visual_evidence = None
             else:
-                eff_status = "uncertain"
+                if m2_status == "healthy":
+                    eff_status = "healthy"
+                elif m2_status == "detected" and m2.get("has_disease"):
+                    eff_status = "diseased"
+                else:
+                    eff_status = "uncertain"
 
-            crop_name_vid = video_result.get("predicted_crop")
-            disease_slug_vid = m2.get("primary_disease_slug") or m2.get("primary_disease")
-            has_valid_crop_vid = bool(crop_name_vid and crop_name_vid.strip().lower() not in ("unknown", "plant", ""))
-            has_valid_disease_vid = bool(disease_slug_vid and disease_slug_vid.strip().lower() not in ("unknown", ""))
+                crop_name_vid = video_result.get("predicted_crop")
+                disease_slug_vid = m2.get("primary_disease_slug") or m2.get("primary_disease")
+                has_valid_crop_vid = bool(crop_name_vid and crop_name_vid.strip().lower() not in ("unknown", "plant", ""))
+                has_valid_disease_vid = bool(disease_slug_vid and disease_slug_vid.strip().lower() not in ("unknown", ""))
 
-            visual_evidence = {
-                "crop": crop_name_vid if has_valid_crop_vid else None,
-                "crop_confidence": video_result.get("confidence", 0.0),
-                "disease": disease_slug_vid if has_valid_disease_vid else None,
-                "disease_name": m2.get("primary_disease"),
-                "disease_confidence": m2.get("confidence", 0.0),
-                "status": eff_status,
-                "incompatibility_flag": bool(has_valid_crop_vid and has_valid_disease_vid and m2_status == "uncertain" and not m2.get("has_disease")),
-            }
+                visual_evidence = {
+                    "crop": crop_name_vid if has_valid_crop_vid else None,
+                    "crop_confidence": video_result.get("confidence", 0.0),
+                    "disease": disease_slug_vid if has_valid_disease_vid else None,
+                    "disease_name": m2.get("primary_disease"),
+                    "disease_confidence": m2.get("confidence", 0.0),
+                    "status": eff_status,
+                    "incompatibility_flag": bool(has_valid_crop_vid and has_valid_disease_vid and m2_status == "uncertain" and not m2.get("has_disease")),
+                }
 
     # Execute deterministic AgriculturalAssistant reasoning and knowledge retrieval
     t_r0 = time.perf_counter()
@@ -764,6 +775,29 @@ async def unified_chat_endpoint(
         )
         knowledge_data = {
             "status": "checkpoint_unavailable",
+            "text": assistant_message,
+        }
+    elif image_result and image_result.get("validation", {}).get("valid") is False:
+        val_msg = image_result.get("validation", {}).get("message") or image_result.get("message")
+        assistant_message = val_msg
+        knowledge_data = {
+            "status": "validation_rejected",
+            "reason_code": image_result.get("validation", {}).get("reason_code"),
+            "text": assistant_message,
+        }
+    elif image_result and image_result.get("crop_guard", {}).get("proceed_to_disease_detection") is False:
+        guard_msg = image_result.get("crop_guard", {}).get("user_message") or image_result.get("message")
+        assistant_message = guard_msg
+        knowledge_data = {
+            "status": image_result.get("crop_guard", {}).get("crop_status"),
+            "reason_code": image_result.get("crop_guard", {}).get("reason_code"),
+            "text": assistant_message,
+        }
+    elif video_result and (video_result.get("crop_guard", {}).get("proceed_to_disease_detection") is False or video_result.get("valid_plant_frames", 0) == 0):
+        video_msg = video_result.get("model2", {}).get("message") or video_result.get("status_note") or "No usable plant frames found in video."
+        assistant_message = video_msg
+        knowledge_data = {
+            "status": "video_rejected",
             "text": assistant_message,
         }
     else:
