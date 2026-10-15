@@ -388,7 +388,8 @@ async def inference_image_endpoint(file: UploadFile = File(...)):
 @app.post("/api/inference/video")
 async def inference_video_endpoint(
     file: UploadFile = File(...),
-    target_frames: int = Form(8),
+    target_frames: Optional[int] = Form(None),
+    sample_fps: Optional[float] = Form(2.0),
 ):
     """Run Model 1 & Model 2 video classification across representative frames."""
     ext = Path(file.filename or "video.mp4").suffix.lower()
@@ -419,6 +420,7 @@ async def inference_video_endpoint(
                     file_bytes,
                     original_filename=file.filename or "video.mp4",
                     target_frames=target_frames,
+                    sample_fps=sample_fps,
                 )
         t_total = (time.perf_counter() - t0) * 1000
         logger.info(f"[PERF_TIMING] /api/inference/video total={t_total:.1f}ms")
@@ -451,7 +453,8 @@ async def unified_chat_endpoint(
     audio_file: Optional[UploadFile] = File(None),
     image_file: Optional[UploadFile] = File(None),
     video_file: Optional[UploadFile] = File(None),
-    target_frames: int = Form(8),
+    target_frames: Optional[int] = Form(None),
+    sample_fps: Optional[float] = Form(2.0),
 ):
     """Coordinate multimodal inputs (typed text, speech, image, video).
 
@@ -633,9 +636,13 @@ async def unified_chat_endpoint(
     if video_file is not None and vid_bytes:
         t_vid0 = time.perf_counter()
         try:
-            effective_target_frames = int(target_frames.default if hasattr(target_frames, "default") else (target_frames or 8))
+            parsed_target = int(target_frames.default if hasattr(target_frames, "default") else target_frames) if target_frames is not None else None
         except Exception:
-            effective_target_frames = 8
+            parsed_target = None
+        try:
+            parsed_fps = float(sample_fps.default if hasattr(sample_fps, "default") else sample_fps) if sample_fps is not None else 2.0
+        except Exception:
+            parsed_fps = 2.0
 
         try:
             async with _VIDEO_SEMAPHORE:
@@ -644,7 +651,8 @@ async def unified_chat_endpoint(
                         process_video_inference,
                         vid_bytes,
                         original_filename=video_file.filename or "video.mp4",
-                        target_frames=effective_target_frames,
+                        target_frames=parsed_target,
+                        sample_fps=parsed_fps,
                     )
         except (VideoProcessingError, ValueError) as exc:
             logger.warning(f"Video validation constraint failed: {exc}")

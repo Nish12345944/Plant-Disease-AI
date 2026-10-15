@@ -28,6 +28,8 @@ from knowledge.sources import (
     SOURCE_TAMU,
     SOURCE_EPPO,
     SOURCE_CABI,
+    SOURCE_UC_IPM_APPLE_SCAB,
+    SOURCE_UC_IPM_PEACH_BROWN_ROT,
 )
 
 FRUIT_DISEASES: dict[str, DiseaseRecord] = {
@@ -353,7 +355,7 @@ FRUIT_DISEASES: dict[str, DiseaseRecord] = {
         treatment_limitations="Fungicide sprays cannot repair corky cracked fruit lesions; primary ascospore control in spring is critical.",
         quality_level="HIGH",
         treatment_category="curative treatment",
-        sources=[SOURCE_CORNELL, SOURCE_PENN_STATE, SOURCE_PURDUE, SOURCE_USDA_ARS],
+        sources=[SOURCE_UC_IPM_APPLE_SCAB],
     ),
 
     "cherry__leaf_spot": DiseaseRecord(
@@ -699,7 +701,7 @@ FRUIT_DISEASES: dict[str, DiseaseRecord] = {
         treatment_limitations="Fungicides cannot cure already rotting fruit; sprays during bloom and the 3-week pre-harvest ripening window are mandatory.",
         quality_level="HIGH",
         treatment_category="curative treatment",
-        sources=[SOURCE_PENN_STATE, SOURCE_UGA, SOURCE_CORNELL, SOURCE_PURDUE, SOURCE_USDA_ARS],
+        sources=[SOURCE_UC_IPM_PEACH_BROWN_ROT],
     ),
 
     "peach__leaf_curl": DiseaseRecord(

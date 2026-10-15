@@ -16,6 +16,8 @@ from knowledge.sources import (
     SOURCE_PURDUE, SOURCE_USDA_ARS, SOURCE_WASHINGTON_STATE,
     SOURCE_NC_STATE_BLUEBERRY_ANTHRACNOSE, SOURCE_MSU_BLUEBERRY_ANTHRACNOSE,
     SOURCE_UC_IPM_STRAWBERRY_BOTRYTIS, SOURCE_UC_IPM_GRAPE_POWDERY_MILDEW,
+    SOURCE_UC_IPM_GRAPE_BLACK_ROT, SOURCE_OSU_GRAPE_BLACK_ROT,
+    SOURCE_UC_IPM_GRAPE_DOWNY_MILDEW, SOURCE_OSU_GRAPE_DOWNY_MILDEW,
 )
 
 BERRY_DISEASES = {
@@ -417,7 +419,7 @@ BERRY_DISEASES = {
         ),
         similar_diseases=["grape__downy_mildew", "grape__anthracnose", "grape__botrytis_bunch_rot"],
         severity_indicators="Black wrinkled mummified berries covered in pycnidia, leaf spots with ringed pycnidia, >20% fruit cluster loss.",
-        sources=[SOURCE_CORNELL, SOURCE_NC_STATE, SOURCE_PURDUE, SOURCE_UC_IPM],
+        sources=[SOURCE_UC_IPM_GRAPE_BLACK_ROT, SOURCE_OSU_GRAPE_BLACK_ROT],
         quality_level="HIGH"
     ),
 
@@ -500,7 +502,7 @@ BERRY_DISEASES = {
         ),
         similar_diseases=["grape__powdery_mildew", "grape__black_rot"],
         severity_indicators="Brilliant white downy sporulation on leaf underside and berry clusters, severe defoliation before veraison.",
-        sources=[SOURCE_CORNELL, SOURCE_NC_STATE, SOURCE_UC_IPM, SOURCE_PURDUE],
+        sources=[SOURCE_UC_IPM_GRAPE_DOWNY_MILDEW, SOURCE_OSU_GRAPE_DOWNY_MILDEW],
         quality_level="HIGH"
     ),
 

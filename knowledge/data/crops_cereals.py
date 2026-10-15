@@ -12,7 +12,12 @@ from knowledge.schema import (
 )
 from knowledge.sources import (
     SOURCE_PURDUE, SOURCE_IOWA_STATE, SOURCE_PENN_STATE, SOURCE_UNL,
-    SOURCE_USDA_ARS, SOURCE_FAO, SOURCE_IRRI, SOURCE_CIMMYT
+    SOURCE_USDA_ARS, SOURCE_FAO, SOURCE_IRRI, SOURCE_CIMMYT,
+    SOURCE_USDA_ARS_WHEAT_LEAF_RUST, SOURCE_USDA_ARS_WHEAT_STRIPE_RUST,
+    SOURCE_USDA_ARS_WHEAT_STEM_RUST, SOURCE_UNL_WHEAT_LEAF_RUST,
+    SOURCE_OSU_CORN_COMMON_SMUT, SOURCE_OSU_CORN_NORTHERN_LEAF_BLIGHT,
+    SOURCE_UNL_WHEAT_HEAD_SCAB, SOURCE_OSU_WHEAT_HEAD_SCAB,
+    SOURCE_USDA_ARS_WHEAT_RUST,
 )
 
 CEREAL_DISEASES = {
@@ -138,7 +143,7 @@ CEREAL_DISEASES = {
         ),
         similar_diseases=["corn__gray_leaf_spot", "corn__southern_corn_leaf_blight", "corn__goss_wilt"],
         severity_indicators="Cigar-shaped lesions covering >40% of ear leaf and upper canopy at dough stage (R4), premature stalk death.",
-        sources=[SOURCE_PURDUE, SOURCE_IOWA_STATE, SOURCE_UNL, SOURCE_PENN_STATE],
+        sources=[SOURCE_OSU_CORN_NORTHERN_LEAF_BLIGHT],
         quality_level="HIGH"
     ),
 
@@ -252,7 +257,7 @@ CEREAL_DISEASES = {
         ),
         similar_diseases=["corn__head_smut_(sphacelotheca_reiliana)", "corn__crazy_top"],
         severity_indicators="Large ruptured black powdery galls on ears and stalks, complete destruction of ear grain.",
-        sources=[SOURCE_PURDUE, SOURCE_IOWA_STATE, SOURCE_UNL, SOURCE_PENN_STATE],
+        sources=[SOURCE_OSU_CORN_COMMON_SMUT],
         quality_level="HIGH"
     ),
 
@@ -508,7 +513,7 @@ CEREAL_DISEASES = {
         ),
         similar_diseases=["wheat__bacterial_leaf_streak_(black_chaff)", "wheat__loose_smut", "wheat__take-all"],
         severity_indicators="Bleached spikelets with salmon-pink spore masses, chalky pink tombstone kernels, high DON vomitoxin levels.",
-        sources=[SOURCE_PURDUE, SOURCE_PENN_STATE, SOURCE_UNL, SOURCE_USDA_ARS],
+        sources=[SOURCE_UNL_WHEAT_HEAD_SCAB, SOURCE_OSU_WHEAT_HEAD_SCAB],
         quality_level="HIGH"
     ),
 
@@ -572,7 +577,7 @@ CEREAL_DISEASES = {
         ),
         similar_diseases=["wheat__stripe_rust", "wheat__stem_rust"],
         severity_indicators="Randomly scattered orange pustules covering >25% of flag leaf area before milk stage.",
-        sources=[SOURCE_PURDUE, SOURCE_UNL, SOURCE_PENN_STATE, SOURCE_CIMMYT],
+        sources=[SOURCE_USDA_ARS_WHEAT_LEAF_RUST, SOURCE_UNL_WHEAT_LEAF_RUST],
         quality_level="HIGH"
     ),
 
@@ -821,7 +826,7 @@ CEREAL_DISEASES = {
         ),
         similar_diseases=["wheat__leaf_rust", "wheat__stripe_rust"],
         severity_indicators="Ragged torn epidermis surrounding large reddish-brown to black pustules on stems, widespread stem lodging.",
-        sources=[SOURCE_USDA_ARS, SOURCE_CIMMYT, SOURCE_FAO, SOURCE_UNL],
+        sources=[SOURCE_USDA_ARS_WHEAT_STEM_RUST],
         quality_level="HIGH"
     ),
 
@@ -885,7 +890,65 @@ CEREAL_DISEASES = {
         ),
         similar_diseases=["wheat__leaf_rust", "wheat__stem_rust"],
         severity_indicators="Bright yellow parallel linear stripes covering >30% of flag leaf, head glume infection.",
-        sources=[SOURCE_PURDUE, SOURCE_UNL, SOURCE_PENN_STATE, SOURCE_CIMMYT],
+        sources=[SOURCE_USDA_ARS_WHEAT_STRIPE_RUST],
+        quality_level="HIGH"
+    ),
+
+    "wheat__rust": DiseaseRecord(
+        id="wheat__rust",
+        canonical_name="Wheat Rust",
+        crop="wheat",
+        pathogen_type=PathogenType.FUNGAL,
+        pathogen_name="Puccinia spp. (P. triticina, P. striiformis, P. graminis)",
+        affected_parts=[PlantPart.LEAF, PlantPart.STEM, PlantPart.HEAD],
+        symptoms=[
+            "Pustules (uredinia) producing powdery orange, yellow, or reddish-brown spores on foliage, leaf sheaths, or stems",
+            "Linear yellow stripes, scattered circular orange pustules, or torn epidermal reddish-brown lesions across the canopy",
+            "Extensive chlorosis surrounding pustules, premature foliar desiccation, reduced photosynthetic area, and shriveled grain"
+        ],
+        symptom_progression="Airborne urediniospores land on moist foliage -> penetrate stomata -> erupt into sporulating pustules in 7-14 days -> rapid airborne dissemination across fields.",
+        development_conditions="Foliar moisture or dew exceeding 6 hours across moderate temperatures (10-25°C).",
+        spread_transmission="Windborne urediniospores transported across continental wind pathways.",
+        infection_sources="Volunteer wheat, green bridge between cropping seasons, and alternate hosts.",
+        immediate_actions=[
+            "Scout flag leaves weekly through flowering",
+            "Apply labeled triazole or strobilurin fungicide if pustules reach economic threshold on flag leaf"
+        ],
+        treatment=TreatmentPlan(
+            curative=[
+                CulturalControl(
+                    description="Scout fields regularly and protect flag leaves prior to head emergence.",
+                    source_id=SOURCE_USDA_ARS_WHEAT_RUST.id
+                )
+            ],
+            management=[
+                CulturalControl(
+                    description="Select resistant wheat cultivars and break the green bridge by controlling volunteer wheat.",
+                    source_id=SOURCE_USDA_ARS_WHEAT_RUST.id
+                )
+            ],
+            chemical=[
+                ChemicalControl(
+                    active_ingredient="Propiconazole",
+                    application_purpose="Foliar protectant and curative spray at flag leaf emergence (Feekes 8-9).",
+                    limitations="Observe pre-harvest intervals and maximum seasonal application limits.",
+                    source_id=SOURCE_USDA_ARS_WHEAT_RUST.id
+                )
+            ]
+        ),
+        prevention=PreventionProtocol(
+            cultural_practices=[
+                "Plant rust-resistant wheat varieties recommended for your region",
+                "Eradicate volunteer wheat at least two weeks before autumn planting"
+            ],
+            sanitation_measures=[
+                "Destroy volunteer wheat seedlings in fallow periods to interrupt spore cycling"
+            ],
+            resistant_varieties="Cultivars with multi-gene rust resistance."
+        ),
+        similar_diseases=["wheat__leaf_rust", "wheat__stripe_rust", "wheat__stem_rust"],
+        severity_indicators="Pustules present on flag leaf or stem before soft dough stage.",
+        sources=[SOURCE_USDA_ARS_WHEAT_RUST],
         quality_level="HIGH"
     ),
 }

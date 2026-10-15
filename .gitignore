@@ -24,8 +24,10 @@ data/processed/
 
 # Runtime / logs / temp media
 *.log
+*.err
 *.tmp
 *.bak
+_*
 temp_multimodal_uploads/
 temp_test_videos/
 reports/video_debug/

@@ -18,7 +18,7 @@ from knowledge.sources import (
     SOURCE_UGA_PEPPER_BLOSSOM_END_ROT, SOURCE_NC_STATE_TOMATO_EARLY_BLIGHT,
     SOURCE_NC_STATE_TOMATO_LATE_BLIGHT, SOURCE_NC_STATE_TOMATO_SEPTORIA_LEAF_SPOT,
     SOURCE_NC_STATE_PEPPER_TOMATO_BACTERIAL_SPOT, SOURCE_UC_IPM_POTATO_EARLY_BLIGHT,
-    SOURCE_UC_IPM_POTATO_LATE_BLIGHT,
+    SOURCE_UC_IPM_POTATO_LATE_BLIGHT, SOURCE_RUTGERS_EGGPLANT_PHOMOPSIS,
 )
 
 SOLANACEOUS_DISEASES = {
@@ -426,7 +426,7 @@ SOLANACEOUS_DISEASES = {
         ),
         similar_diseases=["eggplant__phytophthora_blight", "eggplant__cercospora_leaf_spot"],
         severity_indicators="Soft sunken fruit rot with concentric black pycnidia on >15% of fruit, stem cankers causing shoot collapse.",
-        sources=[SOURCE_UF_IFAS, SOURCE_NC_STATE, SOURCE_PURDUE, SOURCE_CORNELL],
+        sources=[SOURCE_RUTGERS_EGGPLANT_PHOMOPSIS],
         quality_level="HIGH"
     ),
 
@@ -566,7 +566,7 @@ SOLANACEOUS_DISEASES = {
         ),
         similar_diseases=["potato__late_blight", "potato__brown_spot_(alternaria_alternata)"],
         severity_indicators="Target-board lesions covering >30% of canopy, premature vine death, dark sunken corky tuber rot.",
-        sources=[SOURCE_CORNELL, SOURCE_PENN_STATE, SOURCE_PURDUE, SOURCE_UC_IPM],
+        sources=[SOURCE_UC_IPM_POTATO_EARLY_BLIGHT],
         quality_level="HIGH"
     ),
 
@@ -652,7 +652,7 @@ SOLANACEOUS_DISEASES = {
         ),
         similar_diseases=["potato__early_blight", "potato__blackleg_(pectobacterium)"],
         severity_indicators="Rapidly expanding black water-soaked lesions with white frosty sporulation on leaf underside, stem girdling, widespread canopy collapse.",
-        sources=[SOURCE_CORNELL, SOURCE_PENN_STATE, SOURCE_PURDUE, SOURCE_UC_IPM, SOURCE_USDA_ARS],
+        sources=[SOURCE_UC_IPM_POTATO_LATE_BLIGHT],
         quality_level="HIGH"
     ),
 

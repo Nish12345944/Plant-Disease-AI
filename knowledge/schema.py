@@ -329,7 +329,7 @@ class DiseaseRecord:
         # Extract source IDs and SourceRecord objects helper
         src_ids: list[str] = []
         src_records: list[SourceRecord] = []
-        raw_sources = (sources or []) + (primary_sources or [])
+        raw_sources = sources or []
         if raw_sources:
             for s in raw_sources:
                 if isinstance(s, SourceRecord):
@@ -339,8 +339,8 @@ class DiseaseRecord:
                     src_ids.append(s.source_id)
                 elif hasattr(s, "name"):
                     src_ids.append(s.name)
-                else:
-                    src_ids.append(str(s))
+                elif isinstance(s, str) and (s.startswith("SRC_") or "_" in s):
+                    src_ids.append(s)
         self.sources = list(dict.fromkeys(src_ids))
         self.source_records = src_records
 

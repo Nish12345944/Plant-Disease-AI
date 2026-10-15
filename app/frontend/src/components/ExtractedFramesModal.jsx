@@ -24,8 +24,16 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
 
   const frames = videoData.frame_results || videoData.frame_records || [];
   const validFrames = frames.filter(f => f.quality_status === 'valid' || f.status === 'valid').length;
-  const diseaseFrames = frames.filter(f => f.disease_detections && f.disease_detections.length > 0).length;
+  const diseaseFrames = frames.filter(f => (f.disease_detections && f.disease_detections.length > 0) || f.disease_status === 'diseased').length;
   const m2Summary = videoData.model2 || {};
+
+  const totalDecoded = videoData.total_decoded_frames || videoData.video_metadata?.frame_count || frames.length;
+  const sampledCount = videoData.sampled_frames_count || frames.length;
+  const rejectedCount = videoData.rejected_frames_count ?? (frames.length - validFrames);
+  const m1Count = videoData.model1_inference_count ?? frames.length;
+  const m2Count = videoData.model2_inference_count ?? (m2Summary.status && m2Summary.status !== 'not_applicable' && m2Summary.status !== 'not_run' ? validFrames : 0);
+  const durationSec = videoData.video_duration_sec || videoData.video_metadata?.duration_seconds || 0;
+  const fps = videoData.fps || videoData.video_metadata?.fps || 30.0;
 
   return (
     <div className="modal-overlay animate-fade-in" onClick={onClose}>
@@ -39,7 +47,10 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
             <div>
               <h3>Extracted Video Inference Frames</h3>
               <p className="modal-subtitle">
-                Total Frames: {frames.length} • Valid Plant Frames: {validFrames} • Diseased Frames: {diseaseFrames} • Video: {videoData.video_name || 'Uploaded Video'}
+                Decoded: {totalDecoded} • Sampled: {sampledCount} • Valid Plant: {validFrames} • Rejected: {rejectedCount} • Diseased: {diseaseFrames}
+              </p>
+              <p className="modal-subtitle" style={{ fontSize: '0.75rem', marginTop: '2px', color: 'var(--text-dim)' }}>
+                Duration: {durationSec.toFixed(1)}s ({fps.toFixed(1)} fps) • M1 Runs: {m1Count} • M2 Runs: {m2Count} • Video: {videoData.video_name || 'Uploaded Video'}
               </p>
             </div>
           </div>
@@ -81,7 +92,7 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
               const isValid = frame.quality_status === 'valid' || frame.status === 'valid';
               const isBlurry = frame.quality_status === 'blurry' || frame.status === 'blurry';
               const isNoPlant = frame.quality_status === 'unknown' || frame.status === 'unknown' || frame.quality_status === 'no_plant';
-              const hasDiseaseDets = frame.disease_detections && frame.disease_detections.length > 0;
+              const hasDiseaseDets = (frame.disease_detections && frame.disease_detections.length > 0) || frame.disease_status === 'diseased';
 
               let displayImg = frame.thumbnail || frame.thumbnail_url;
               if (viewMode === 'roi') {
@@ -122,11 +133,11 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
                       </span>
                     </div>
 
-                    {/* Frame-level Model 2 Disease tag if detected in annotated debug view mode */}
-                    {hasDiseaseDets && viewMode === 'annotated' && (
+                    {/* Frame-level Model 2 Disease tag */}
+                    {hasDiseaseDets && (
                       <div className="frame-disease-tag-row">
                         <span className="frame-disease-chip">
-                          <AlertOctagon size={11} /> {typeof (frame.disease_detections[0]?.disease_label || frame.disease_detections[0]?.disease) === 'string' ? (frame.disease_detections[0]?.disease_label || frame.disease_detections[0]?.disease) : 'Disease'} ({frame.disease_detections[0]?.percentage || `${((frame.disease_detections[0]?.confidence || 0) * 100).toFixed(0)}%`})
+                          <AlertOctagon size={11} /> {typeof (frame.disease_label || frame.disease) === 'string' ? (frame.disease_label || frame.disease) : (frame.disease_detections?.[0]?.disease_label || 'Disease')} ({frame.disease_detections?.[0]?.percentage || `${((frame.disease_confidence || 0) * 100).toFixed(0)}%`})
                         </span>
                       </div>
                     )}
@@ -145,6 +156,21 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
                       {isNoPlant && (
                         <span className="tag-status no-plant">
                           <ShieldAlert size={12} /> Low Conf / No Plant
+                        </span>
+                      )}
+                      {isValid && frame.disease_status === 'healthy' && (
+                        <span className="tag-status healthy" style={{ color: 'var(--primary-emerald)', background: 'rgba(16, 185, 129, 0.1)', marginLeft: '4px' }}>
+                          <CheckCircle2 size={11} /> Healthy
+                        </span>
+                      )}
+                      {isValid && (frame.disease_status === 'not_run' || frame.disease_status === 'not_applicable') && (
+                        <span className="tag-status not-run" style={{ color: 'var(--text-dim)', background: 'rgba(255, 255, 255, 0.05)', marginLeft: '4px' }}>
+                          M2 Skipped
+                        </span>
+                      )}
+                      {isValid && frame.disease_status === 'uncertain' && !hasDiseaseDets && (
+                        <span className="tag-status uncertain" style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)', marginLeft: '4px' }}>
+                          <AlertCircle size={11} /> Inconclusive
                         </span>
                       )}
                     </div>
@@ -169,8 +195,23 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
 
         <div className="modal-footer">
           <div className="modal-summary-text">
-            Plant: <strong className="text-emerald">{typeof (videoData.predicted_crop || videoData.predicted_label) === 'string' ? (videoData.predicted_crop || videoData.predicted_label) : 'Unknown'}</strong> ({((videoData.confidence || 0) * 100).toFixed(1)}%) •
-            Disease: <strong className={m2Summary.has_disease ? 'text-rose' : 'text-emerald'}>{typeof m2Summary.primary_disease === 'string' ? m2Summary.primary_disease : (m2Summary.primary_disease?.name || 'Healthy Specimen')}</strong> ({typeof m2Summary.percentage === 'string' ? m2Summary.percentage : '100%'}) across {frames.length} frames.
+            Plant: <strong className="text-emerald">{typeof (videoData.predicted_crop || videoData.predicted_label) === 'string' ? (videoData.predicted_crop || videoData.predicted_label) : 'Unknown'}</strong> ({((videoData.confidence || 0) * 100).toFixed(1)}%) •{' '}
+            Disease:{' '}
+            {(() => {
+              if (m2Summary.status === 'not_applicable' || m2Summary.status === 'not_run') {
+                return <strong style={{ color: '#f59e0b' }}>Disease analysis withheld / skipped ({m2Summary.message ? 'crop unverified' : 'not run'})</strong>;
+              }
+              if (m2Summary.status === 'uncertain') {
+                return <strong style={{ color: '#f59e0b' }}>Inconclusive / Uncertain condition</strong>;
+              }
+              if (m2Summary.has_disease) {
+                return <strong className="text-rose">{typeof m2Summary.primary_disease === 'string' ? m2Summary.primary_disease : 'Disease Detected'} ({typeof m2Summary.percentage === 'string' ? m2Summary.percentage : `${((m2Summary.confidence || 0) * 100).toFixed(1)}%`})</strong>;
+              }
+              if (m2Summary.status === 'healthy') {
+                return <strong className="text-emerald">{typeof m2Summary.primary_disease === 'string' ? m2Summary.primary_disease : 'Healthy Foliage'} ({typeof m2Summary.percentage === 'string' ? m2Summary.percentage : '100%'})</strong>;
+              }
+              return <strong style={{ color: 'var(--text-muted)' }}>Not analyzed</strong>;
+            })()} across {frames.length} sampled frames.
           </div>
           <button className="btn-secondary" onClick={onClose}>
             Close

@@ -604,7 +604,7 @@ PILOT_DISEASES: dict[str, DiseaseRecord] = {
                 source_ids=["SRC_UF_IFAS"],
             )
         ],
-        sources=["SRC_FAO_PLANT", "SRC_UF_IFAS"],
+        sources=["SRC_PROMUSA_BANANA_CORDANA"],
     ),
 
     "ginger__leaf_spot": DiseaseRecord(

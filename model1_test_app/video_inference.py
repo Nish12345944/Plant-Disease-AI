@@ -36,22 +36,28 @@ from video.processor import FrameQualityFilter, QualityFilterConfig
 logger = logging.getLogger(__name__)
 
 # Video sampling frame targets
-TARGET_FRAMES_DEFAULT = 8
+DEFAULT_SAMPLE_FPS = 2.0
+TARGET_FRAMES_DEFAULT = None  # None indicates dynamic computation based on sample_fps & video duration
+FALLBACK_TARGET_FRAMES = 8
 MIN_TARGET_FRAMES = 4
-MAX_TARGET_FRAMES = 16
+MAX_TARGET_FRAMES = 60
 MAX_FRAME_DIMENSION = 512
 MAX_VIDEO_DURATION_SECONDS = 30.0
 MAX_VIDEO_SIZE_BYTES = 50 * 1024 * 1024  # 50 MB
-DUPLICATE_DIFF_THRESHOLD = 4.0  # Mean pixel diff threshold for duplicate frames
+DUPLICATE_DIFF_THRESHOLD = 2.0  # Mean pixel diff threshold for duplicate frames
+SCENE_CHANGE_DIFF_THRESHOLD = 15.0  # Pixel diff threshold for scene transition
 
 __all__ = [
+    "DEFAULT_SAMPLE_FPS",
     "TARGET_FRAMES_DEFAULT",
+    "FALLBACK_TARGET_FRAMES",
     "MIN_TARGET_FRAMES",
     "MAX_TARGET_FRAMES",
     "MAX_FRAME_DIMENSION",
     "MAX_VIDEO_DURATION_SECONDS",
     "MAX_VIDEO_SIZE_BYTES",
     "DUPLICATE_DIFF_THRESHOLD",
+    "SCENE_CHANGE_DIFF_THRESHOLD",
     "compute_frame_difference",
     "predict_video",
     "extract_adaptive_video_frames",
@@ -99,8 +105,10 @@ def compute_uniform_indices(total_frames: int, num_samples: int) -> list[int]:
 
 def extract_adaptive_video_frames(
     video_path: Union[str, Path],
-    target_frames: int = TARGET_FRAMES_DEFAULT,
+    target_frames: Optional[int] = None,
+    sample_fps: Optional[float] = DEFAULT_SAMPLE_FPS,
     min_target: int = MIN_TARGET_FRAMES,
+    max_target: int = MAX_TARGET_FRAMES,
     quality_filter: bool = True,
     filter_config: Optional[QualityFilterConfig] = None,
     thumbnail_size: tuple[int, int] = (320, 240),
@@ -111,8 +119,10 @@ def extract_adaptive_video_frames(
 
     Args:
         video_path: Path to target video file.
-        target_frames: Desired target frame count (default: 8).
+        target_frames: Optional explicit target frame count. If None, computed from duration * sample_fps.
+        sample_fps: Desired sampling rate (default: 2.0 FPS -> ~20 frames for 10s video).
         min_target: Minimum target frame count (default: 4).
+        max_target: Maximum target frame count to bound memory/compute (default: 60).
         quality_filter: Whether to filter out dark, bright, or blurry frames.
         filter_config: Thresholds for quality filter.
         thumbnail_size: Target size for UI preview thumbnails.
@@ -126,23 +136,39 @@ def extract_adaptive_video_frames(
     metadata = get_video_metadata(v_path, max_duration_seconds=max_duration_seconds)
     total_frames = metadata["frame_count"]
     fps = metadata["fps"] if metadata["fps"] > 0 else 30.0
+    duration_sec = metadata.get("duration_seconds", 0.0)
 
     if total_frames <= 0:
         raise ValueError(f"Video '{v_path.name}' has 0 decodable frames.")
 
-    try:
-        target_frames = int(target_frames.default if hasattr(target_frames, "default") else (target_frames or TARGET_FRAMES_DEFAULT))
-    except Exception:
-        target_frames = TARGET_FRAMES_DEFAULT
+    # Resolve target frames dynamically:
+    # 1. If explicit positive target_frames is passed, honor it.
+    # 2. Otherwise compute based on duration * sample_fps (targeting 2 FPS -> ~20 frames for 10s).
+    parsed_target: Optional[int] = None
+    if target_frames is not None:
+        try:
+            parsed_target = int(target_frames.default if hasattr(target_frames, "default") else target_frames)
+        except Exception:
+            parsed_target = None
 
-    effective_target = min(target_frames, total_frames)
+    if parsed_target is not None and parsed_target > 0:
+        desired_target = parsed_target
+    else:
+        eff_fps = float(sample_fps) if (sample_fps is not None and float(sample_fps) > 0) else DEFAULT_SAMPLE_FPS
+        if duration_sec > 0:
+            desired_target = int(round(duration_sec * eff_fps))
+        else:
+            desired_target = FALLBACK_TARGET_FRAMES
+
+    desired_target = max(min_target, min(max_target, desired_target))
+    effective_target = min(desired_target, total_frames)
     if total_frames < min_target:
         effective_target = total_frames
 
     q_filter = FrameQualityFilter(filter_config or DEFAULT_VIDEO_FILTER_CONFIG) if quality_filter else None
 
-    # Step 1: Initial candidate pool uniformly distributed across duration
-    initial_pool_size = min(total_frames, max(effective_target + 4, int(effective_target * 1.5)))
+    # Step 1: Initial candidate pool uniformly distributed across duration (spanning start to finish)
+    initial_pool_size = min(total_frames, max(effective_target, int(effective_target * 1.5)))
     candidate_indices = compute_uniform_indices(total_frames, initial_pool_size)
 
     cap = cv2.VideoCapture(str(v_path))
@@ -184,8 +210,12 @@ def extract_adaptive_video_frames(
             prev_bgr = accepted_pool[-1].get("frame_bgr")
             if prev_bgr is not None and compute_frame_difference(frame_bgr, prev_bgr) < DUPLICATE_DIFF_THRESHOLD:
                 is_dup = True
-                is_acc = False
-                reason = "near-identical duplicate frame skipped"
+                # In low-motion or synthetic videos, do not discard if pool would be starved below effective_target
+                if len(accepted_pool) >= effective_target:
+                    is_acc = False
+                    reason = "near-identical duplicate frame skipped"
+                else:
+                    reason = "accepted (low-motion frame)"
 
         # Resized RGB & BGR
         full_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
@@ -220,7 +250,7 @@ def extract_adaptive_video_frames(
 
     # Step 2: Adaptive replenishment if needed
     if len(accepted_pool) < effective_target and len(evaluated_indices) < total_frames:
-        step_stride = max(1, total_frames // (effective_target * 3))
+        step_stride = max(1, total_frames // max(1, effective_target * 3))
         secondary_indices = [
             i for i in range(0, total_frames, step_stride) if i not in evaluated_indices
         ]
@@ -238,7 +268,7 @@ def extract_adaptive_video_frames(
     elif accepted_pool:
         selected_frames = accepted_pool
     else:
-        best_rejected = sorted(rejected_pool, key=lambda x: x["quality_score"], reverse=True)
+        best_rejected = sorted(rejected_pool, key=lambda x: x.get("quality_score", 0.0), reverse=True)
         selected_frames = best_rejected[:effective_target]
 
     selected_frames = sorted(selected_frames, key=lambda x: x["frame_index"])
@@ -259,6 +289,9 @@ def extract_adaptive_video_frames(
         "selected_frames": selected_frames,
         "rejected_frames": rejected_pool,
         "total_evaluated": len(evaluated_indices),
+        "total_decoded": total_frames,
+        "target_frames": effective_target,
+        "sample_fps": sample_fps or DEFAULT_SAMPLE_FPS,
         "status_note": status_note,
     }
 
@@ -268,8 +301,10 @@ def predict_video(
     model: nn.Module,
     idx_to_class: dict[int, str],
     device: torch.device,
-    target_frames: int = TARGET_FRAMES_DEFAULT,
+    target_frames: Optional[int] = None,
+    sample_fps: Optional[float] = DEFAULT_SAMPLE_FPS,
     min_target: int = MIN_TARGET_FRAMES,
+    max_target: int = MAX_TARGET_FRAMES,
     quality_filter: bool = True,
     top_k: int = 3,
     filter_config: Optional[QualityFilterConfig] = None,
@@ -278,7 +313,6 @@ def predict_video(
     debug_dir: Optional[str | Path] = "reports/video_debug",
     detect_disease: bool = True,
     disease_conf_threshold: float = 0.20,
-    sample_fps: Optional[float] = None,
     **kwargs: Any,
 ) -> dict[str, Any]:
     """Execute complete video inference: sample representative frames, extract tight plant ROIs, predict with Model 1, detect disease with Model 2, and aggregate.
@@ -286,17 +320,14 @@ def predict_video(
     Pipeline:
         FULL FRAME -> candidate tight plant ROI extraction -> Model 1 crop inference -> Model 2 disease detection on plant ROI -> Aggregation
     """
-    try:
-        target_frames = int(target_frames.default if hasattr(target_frames, "default") else (target_frames or TARGET_FRAMES_DEFAULT))
-    except Exception:
-        target_frames = TARGET_FRAMES_DEFAULT
-
     effective_blur_threshold = blur_threshold if blur_threshold is not None else DEFAULT_MIN_BLUR_SCORE
 
     extraction = extract_adaptive_video_frames(
         video_path=video_path,
         target_frames=target_frames,
+        sample_fps=sample_fps,
         min_target=min_target,
+        max_target=max_target,
         quality_filter=quality_filter,
         filter_config=filter_config or QualityFilterConfig(min_blur_score=effective_blur_threshold),
     )
@@ -313,8 +344,11 @@ def predict_video(
     valid_plant_prob_vectors: list[np.ndarray] = []
     video_disease_detections: list[dict[str, Any]] = []
 
+    model1_inference_count = 0
     prev_best_roi_bgr: Optional[np.ndarray] = None
     prev_best_probs: Optional[np.ndarray] = None
+    prev_smoothed_probs: Optional[np.ndarray] = None
+    prev_scene_bgr: Optional[np.ndarray] = None
 
     if save_debug_rois and debug_dir:
         os.makedirs(debug_dir, exist_ok=True)
@@ -413,6 +447,7 @@ def predict_video(
                     logits = model(tensor)
                     probs = torch.softmax(logits, dim=1)[0].cpu().numpy()
 
+                model1_inference_count += 1
                 top_idx = int(np.argmax(probs))
                 top_cls_name = idx_to_class[top_idx]
                 top_conf = float(probs[top_idx])
@@ -431,6 +466,8 @@ def predict_video(
 
         # Select the best plant ROI for this frame (highest confidence plant classification)
         best_roi = max(roi_results, key=lambda r: r["top_conf"])
+        primary_roi = roi_results[0] if roi_results else best_roi
+        primary_roi_pil = primary_roi.get("roi_pil") if primary_roi else None
         best_probs = best_roi["probs"]
         best_top_cls = best_roi["top_class"]
         best_top_conf = best_roi["top_conf"]
@@ -441,6 +478,19 @@ def predict_video(
         prev_best_roi_bgr = best_roi_bgr
         prev_best_probs = best_probs
 
+        # Temporal smoothing across continuous scenes to stabilize frame-level crop predictions
+        scene_diff = compute_frame_difference(frame_bgr, prev_scene_bgr) if (prev_scene_bgr is not None and frame_bgr is not None) else 999.0
+        if prev_smoothed_probs is not None and scene_diff < SCENE_CHANGE_DIFF_THRESHOLD:
+            smoothed_probs = 0.65 * best_probs + 0.35 * prev_smoothed_probs
+        else:
+            smoothed_probs = best_probs.copy()
+        prev_smoothed_probs = smoothed_probs
+        prev_scene_bgr = frame_bgr
+
+        smoothed_top_idx = int(np.argmax(smoothed_probs))
+        smoothed_top_cls = idx_to_class[smoothed_top_idx]
+        smoothed_top_conf = float(smoothed_probs[smoothed_top_idx])
+
         # Save ROI debug image only if explicitly requested
         if save_debug_rois and debug_dir and best_roi_bgr is not None:
             roi_debug_path = os.path.join(debug_dir, f"frame_{seq_num:03d}_idx_{idx:03d}_roi.jpg")
@@ -450,7 +500,7 @@ def predict_video(
         roi_thumb = best_roi_pil.resize((240, 240), Image.Resampling.LANCZOS)
         roi_annotated_thumb = roi_thumb
 
-        # Model 2 Disease Detection on the SAME Plant ROI
+        # Model 2 Disease Detection on the SAME Plant ROI (if enabled directly)
         frame_disease_detections = []
         if detect_disease and best_roi_pil is not None:
             try:
@@ -471,8 +521,8 @@ def predict_video(
             except Exception as exc:
                 logger.warning(f"Frame {idx} Model 2 disease detection skipped: {exc}")
 
-        # Top-K for this frame
-        top_k_indices = np.argsort(best_probs)[::-1][:top_k]
+        # Top-K for this frame (from temporally stabilized probabilities)
+        top_k_indices = np.argsort(smoothed_probs)[::-1][:top_k]
         frame_top_k = []
         for r, c in enumerate(top_k_indices, start=1):
             raw_c = idx_to_class[int(c)]
@@ -481,11 +531,11 @@ def predict_video(
                 "rank": r,
                 "class_name": canonical_c,
                 "label": format_class_name(canonical_c),
-                "confidence": float(best_probs[c]),
-                "percentage": f"{float(best_probs[c]) * 100:.2f}%",
+                "confidence": float(smoothed_probs[c]),
+                "percentage": f"{float(smoothed_probs[c]) * 100:.2f}%",
             })
 
-        if best_top_conf < DEFAULT_CONFIDENCE_THRESHOLD:
+        if smoothed_top_conf < DEFAULT_CONFIDENCE_THRESHOLD:
             frame_records.append({
                 "frame_number": seq_num,
                 "frame_index": idx,
@@ -493,13 +543,17 @@ def predict_video(
                 "predicted_class": "unknown",
                 "predicted_label": "Unknown",
                 "status": "unknown",
-                "confidence": best_top_conf,
-                "percentage": f"{best_top_conf * 100:.2f}% (Low Conf)",
-                "reason": f"Low identification confidence ({best_top_conf * 100:.1f}% < {DEFAULT_CONFIDENCE_THRESHOLD * 100:.0f}%)",
+                "confidence": smoothed_top_conf,
+                "raw_confidence": best_top_conf,
+                "raw_class": best_top_cls,
+                "percentage": f"{smoothed_top_conf * 100:.2f}% (Low Conf)",
+                "reason": f"Low identification confidence ({smoothed_top_conf * 100:.1f}% < {DEFAULT_CONFIDENCE_THRESHOLD * 100:.0f}%)",
                 "quality_score": q_score,
                 "thumbnail": thumb,
                 "roi_thumbnail": roi_thumb,
                 "roi_annotated_thumbnail": roi_annotated_thumb,
+                "roi_pil": best_roi_pil,
+                "primary_roi_pil": primary_roi_pil,
                 "roi_box": best_box,
                 "rois_found": len(candidate_rois),
                 "assessment": assessment,
@@ -507,7 +561,7 @@ def predict_video(
                 "disease_detections": frame_disease_detections,
             })
         else:
-            canonical_best = normalize_crop_id(best_top_cls) or best_top_cls
+            canonical_best = normalize_crop_id(smoothed_top_cls) or smoothed_top_cls
             frame_records.append({
                 "frame_number": seq_num,
                 "frame_index": idx,
@@ -515,20 +569,24 @@ def predict_video(
                 "predicted_class": canonical_best,
                 "predicted_label": format_class_name(canonical_best),
                 "status": "valid",
-                "confidence": best_top_conf,
-                "percentage": f"{best_top_conf * 100:.2f}%",
+                "confidence": smoothed_top_conf,
+                "raw_confidence": best_top_conf,
+                "raw_class": best_top_cls,
+                "percentage": f"{smoothed_top_conf * 100:.2f}%",
                 "reason": f"Identified from tight plant ROI {best_box}",
                 "quality_score": q_score,
                 "thumbnail": thumb,
                 "roi_thumbnail": roi_thumb,
                 "roi_annotated_thumbnail": roi_annotated_thumb,
+                "roi_pil": best_roi_pil,
+                "primary_roi_pil": primary_roi_pil,
                 "roi_box": best_box,
                 "rois_found": len(candidate_rois),
                 "assessment": assessment,
                 "top_k": frame_top_k,
                 "disease_detections": frame_disease_detections,
             })
-            valid_plant_prob_vectors.append(best_probs)
+            valid_plant_prob_vectors.append(smoothed_probs)
 
         # Release heavy frame buffers immediately after ROI inference to bound memory
         f_data["frame_bgr"] = None
@@ -649,6 +707,9 @@ def predict_video(
         "accepted_frames_count": len(valid_plant_prob_vectors),
         "frames_rejected": len(rejected_frames),
         "total_evaluated": extraction["total_evaluated"],
+        "total_decoded": extraction.get("total_decoded", metadata.get("frame_count", 0)),
+        "total_decoded_frames": extraction.get("total_decoded", metadata.get("frame_count", 0)),
+        "model1_inference_count": model1_inference_count,
         "frame_records": frame_records,
         "status_note": status_note,
         "mean_probabilities": mean_prob_vector,

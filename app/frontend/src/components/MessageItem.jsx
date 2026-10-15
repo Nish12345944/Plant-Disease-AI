@@ -406,51 +406,61 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                   <p key={idx} className="assistant-paragraph">{paragraph}</p>
                 ))}
             </div>
-            {Array.isArray(data.knowledge_sources) && data.knowledge_sources.length > 0 && (
-              <div className="knowledge-sources-row">
-                <span className="sources-label">Sources:</span>
-                {data.knowledge_sources.map((src, idx) => {
-                  if (!src) return null;
-                  if (typeof src === 'string') {
-                    return (
-                      <span key={idx} className="source-citation-badge">{src}</span>
-                    );
-                  }
-                  if (typeof src === 'object') {
-                    const titleText = src.title || src.name || src.organization || src.source_id || 'Reference Source';
-                    const orgText = src.organization && !src.title?.includes(src.organization) ? ` (${src.organization})` : '';
-                    const isGeneral = Boolean(src.is_general);
-                    const label = isGeneral ? `[General] ${titleText}${orgText}` : `${titleText}${orgText}`;
-                    const targetUrl = src.url || src.url_or_doi;
-                    if (targetUrl) {
+            {(() => {
+              const activeSources = (Array.isArray(data.knowledge_sources) && data.knowledge_sources.length > 0)
+                ? data.knowledge_sources
+                : (Array.isArray(data.knowledge?.sources) && data.knowledge.sources.length > 0)
+                  ? data.knowledge.sources
+                  : (Array.isArray(data.knowledge?.citations) && data.knowledge.citations.length > 0)
+                    ? data.knowledge.citations
+                    : null;
+              if (!activeSources || activeSources.length === 0) return null;
+              return (
+                <div className="knowledge-sources-row">
+                  <span className="sources-label">Sources:</span>
+                  {activeSources.map((src, idx) => {
+                    if (!src) return null;
+                    if (typeof src === 'string') {
                       return (
-                        <a
-                          key={idx}
-                          href={targetUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="source-citation-badge source-citation-link"
-                          title={`Open verified article: ${label}`}
-                        >
-                          <span>{label}</span>
-                          <ExternalLink size={10} style={{ opacity: 0.85, flexShrink: 0 }} />
-                        </a>
+                        <span key={idx} className="source-citation-badge">{src}</span>
+                      );
+                    }
+                    if (typeof src === 'object') {
+                      const titleText = src.title || src.name || src.organization || src.source_id || 'Reference Source';
+                      const orgText = src.organization && !src.title?.includes(src.organization) ? ` (${src.organization})` : '';
+                      const isGeneral = Boolean(src.is_general);
+                      const label = isGeneral ? `[General] ${titleText}${orgText}` : `${titleText}${orgText}`;
+                      const targetUrl = src.url || src.url_or_doi;
+                      if (targetUrl) {
+                        return (
+                          <a
+                            key={idx}
+                            href={targetUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="source-citation-badge source-citation-link"
+                            title={`Open verified article: ${label}`}
+                          >
+                            <span>{label}</span>
+                            <ExternalLink size={10} style={{ opacity: 0.85, flexShrink: 0 }} />
+                          </a>
+                        );
+                      }
+                      return (
+                        <span key={idx} className="source-citation-badge" title={label}>
+                          {label}
+                        </span>
                       );
                     }
                     return (
-                      <span key={idx} className="source-citation-badge" title={label}>
-                        {label}
+                      <span key={idx} className="source-citation-badge">
+                        {String(src)}
                       </span>
                     );
-                  }
-                  return (
-                    <span key={idx} className="source-citation-badge">
-                      {String(src)}
-                    </span>
-                  );
-                })}
-              </div>
-            )}
+                  })}
+                </div>
+              );
+            })()}
           </div>
         )}
 

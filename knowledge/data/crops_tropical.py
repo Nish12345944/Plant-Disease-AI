@@ -13,7 +13,9 @@ from knowledge.schema import (
 )
 from knowledge.sources import (
     SOURCE_USDA_ARS, SOURCE_FAO, SOURCE_UF_IFAS, SOURCE_UC_IPM,
-    SOURCE_ICAR, SOURCE_CABI, SOURCE_EPPO
+    SOURCE_ICAR, SOURCE_CABI, SOURCE_EPPO,
+    SOURCE_PROMUSA_BANANA_ANTHRACNOSE, SOURCE_PROMUSA_BANANA_CORDANA, SOURCE_PROMUSA_BANANA_PANAMA,
+    SOURCE_UC_IPM_CITRUS_CANKER, SOURCE_UC_IPM_CITRUS_GREENING,
 )
 
 TROPICAL_DISEASES = {
@@ -88,7 +90,7 @@ TROPICAL_DISEASES = {
         ),
         similar_diseases=["banana__cigar_end_rot", "banana__crown_rot"],
         severity_indicators="More than 25% peel surface covered with salmon-pink sporulating sunken lesions, finger drop.",
-        sources=[SOURCE_FAO, SOURCE_UF_IFAS, SOURCE_CABI],
+        sources=[SOURCE_PROMUSA_BANANA_ANTHRACNOSE],
         quality_level="HIGH"
     ),
 
@@ -358,7 +360,7 @@ TROPICAL_DISEASES = {
         ),
         similar_diseases=["banana__black_leaf_streak", "banana__yellow_sigatoka"],
         severity_indicators="Coalescence of multiple zoned lesions covering >30% of functional leaf area on upper canopy.",
-        sources=[SOURCE_FAO, SOURCE_UF_IFAS, SOURCE_CABI],
+        sources=[SOURCE_PROMUSA_BANANA_CORDANA],
         quality_level="HIGH"
     ),
 
@@ -423,7 +425,7 @@ TROPICAL_DISEASES = {
         ),
         similar_diseases=["banana__bunchy_top", "banana__burl", "banana__moko_disease"],
         severity_indicators="Vascular browning inside corm/pseudostem, skirt of collapsed yellow leaves, complete wilt of the mat.",
-        sources=[SOURCE_FAO, SOURCE_EPPO, SOURCE_CABI],
+        sources=[SOURCE_PROMUSA_BANANA_PANAMA],
         quality_level="HIGH"
     ),
 
@@ -493,7 +495,7 @@ TROPICAL_DISEASES = {
         ),
         similar_diseases=["citrus__greening_disease", "citrus__black_spot", "citrus__scab"],
         severity_indicators="Extensive corky eruptions on fruit peel, premature fruit drop >20%, severe defoliation and twig dieback.",
-        sources=[SOURCE_UF_IFAS, SOURCE_UC_IPM, SOURCE_USDA_ARS, SOURCE_EPPO],
+        sources=[SOURCE_UC_IPM_CITRUS_CANKER],
         quality_level="HIGH"
     ),
 
@@ -564,7 +566,7 @@ TROPICAL_DISEASES = {
         ),
         similar_diseases=["citrus__canker", "citrus__stubborn_disease", "citrus__mineral_deficiencies"],
         severity_indicators="Widespread asymmetrical blotchy mottle across multiple scaffolds, root loss >50%, lopsided bitter green fruit drop.",
-        sources=[SOURCE_UF_IFAS, SOURCE_UC_IPM, SOURCE_USDA_ARS, SOURCE_EPPO],
+        sources=[SOURCE_UC_IPM_CITRUS_GREENING],
         quality_level="HIGH"
     ),
 

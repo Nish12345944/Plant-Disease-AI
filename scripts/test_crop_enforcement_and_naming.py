@@ -148,7 +148,9 @@ def run_all_tests():
     assert "Bell Pepper" in bp_res2["human_readable"]
 
     # Backend image inference check
-    real_bell_path = WORKSPACE / r"data\processed\model2_retraining_v1\test\bell_pepper\blossom_end_rot\3f66f50342_bell_pepper_blossom_end_rot_Google_0327.jpg"
+    real_bell_path = WORKSPACE / r"data\processed\model2_retraining_v2\test\bell_pepper\blossom_end_rot\3f66f50342_bell_pepper_blossom_end_rot_Google_0327.jpg"
+    if not real_bell_path.exists():
+        real_bell_path = WORKSPACE / r"data\processed\model2_retraining_v1\test\bell_pepper\blossom_end_rot\3f66f50342_bell_pepper_blossom_end_rot_Google_0327.jpg"
     assert real_bell_path.exists(), f"Image not found at {real_bell_path}"
     real_bp_bytes = real_bell_path.read_bytes()
     backend_res = process_image_inference(real_bp_bytes)

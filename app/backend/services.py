@@ -570,15 +570,11 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
 def process_video_inference(
     file_bytes: bytes,
     original_filename: str = "video.mp4",
-    target_frames: int = TARGET_FRAMES_DEFAULT,
+    target_frames: Optional[int] = None,
+    sample_fps: Optional[float] = 2.0,
     disease_conf_threshold: float = 0.20,
 ) -> dict[str, Any]:
     """Execute video inference across representative frames with Model 1 and Model 2 V4."""
-    try:
-        target_frames = int(target_frames.default if hasattr(target_frames, "default") else (target_frames or TARGET_FRAMES_DEFAULT))
-    except Exception:
-        target_frames = TARGET_FRAMES_DEFAULT
-
     if len(file_bytes) > MAX_VIDEO_SIZE_BYTES:
         size_mb = len(file_bytes) / (1024 * 1024)
         max_mb = MAX_VIDEO_SIZE_BYTES / (1024 * 1024)
@@ -604,6 +600,7 @@ def process_video_inference(
             idx_to_class=idx_to_class,
             device=DEVICE,
             target_frames=target_frames,
+            sample_fps=sample_fps,
             quality_filter=True,
             top_k=3,
             detect_disease=False,
@@ -618,7 +615,11 @@ def process_video_inference(
         crop_conf = final_pred.get("confidence", 0.0)
 
         # Safeguard B: Open-Set Crop Guard on aggregated video prediction
-        video_crop_guard = evaluate_crop_acceptance(v_res.get("top_k", []))
+        video_crop_guard = evaluate_crop_acceptance(
+            top_k_list=v_res.get("top_k", []),
+            raw_probabilities=v_res.get("mean_probabilities"),
+            min_margin=0.04,  # Video aggregation margin threshold accommodates intra-video leaf variance
+        )
         if video_crop_guard.crop_status != "accepted":
             raw_video_crop = video_crop_guard.predicted_class
             canonical_video_crop = normalize_crop_id(raw_video_crop) or raw_video_crop
@@ -637,6 +638,7 @@ def process_video_inference(
         healthy_frames_count = 0
         uncertain_frames_count = 0
         valid_plant_frames = 0
+        m2_inference_count = 0
 
         prev_m2_roi = None
         prev_m2_crop = None
@@ -648,69 +650,89 @@ def process_video_inference(
             roi_thumb_b64 = pil_to_base64_data_url(f["roi_thumbnail"], format="JPEG", quality=80) if f.get("roi_thumbnail") else None
 
             f_status = f.get("status", "valid")
-            roi_img = f.get("roi_thumbnail") or f.get("thumbnail")
+            roi_img = f.get("primary_roi_pil") or f.get("roi_pil") or f.get("roi_thumbnail") or f.get("thumbnail")
 
             f_disease_slug = None
             f_disease_label = None
             f_disease_conf = 0.0
-            f_disease_status = "uncertain"
+            f_disease_status = "not_run" if not should_run_disease_classification else "uncertain"
             f_detections = []
 
             # Only run disease classification on valid plant frames IF crop guard accepted the crop
             if f_status == "valid" and roi_img is not None:
                 valid_plant_frames += 1
-                f_crop_class = normalize_crop_id(f.get("predicted_class")) or canonical_video_crop
+                # Use canonical video consensus crop to avoid oscillating crop context
+                f_crop_class = canonical_video_crop or normalize_crop_id(f.get("predicted_class"))
 
-                if should_run_disease_classification:
-                    # Avoid repeating Model 2 inference on duplicate or identical frame ROIs
-                    if (prev_m2_roi is not None
-                        and f_crop_class == prev_m2_crop
-                        and prev_m2_res is not None
-                        and (roi_img is prev_m2_roi or f.get("is_duplicate"))):
-                        m2_res = prev_m2_res
-                    else:
-                        m2_res = m2_classifier.predict_crop_aware(
-                            image_input=roi_img,
-                            crop_name=f_crop_class,
-                            crop_confidence=crop_conf,
-                        )
-                        prev_m2_roi = roi_img
-                        prev_m2_crop = f_crop_class
-                        prev_m2_res = m2_res
+                if should_run_disease_classification and f_crop_class:
+                    try:
+                        # Avoid repeating Model 2 inference on duplicate or identical frame ROIs
+                        if (prev_m2_roi is not None
+                            and f_crop_class == prev_m2_crop
+                            and prev_m2_res is not None
+                            and (roi_img is prev_m2_roi or f.get("is_duplicate"))):
+                            m2_res = prev_m2_res
+                        else:
+                            m2_res = m2_classifier.predict_crop_aware(
+                                image_input=roi_img,
+                                crop_name=f_crop_class,
+                                crop_confidence=crop_conf,
+                            )
+                            # If tight ROI is ambiguous, evaluate full frame thumbnail
+                            if m2_res.get("status") == "uncertain" and f.get("thumbnail") and f.get("thumbnail") != roi_img:
+                                thumb_m2 = m2_classifier.predict_crop_aware(
+                                    image_input=f.get("thumbnail"),
+                                    crop_name=f_crop_class,
+                                    crop_confidence=crop_conf,
+                                )
+                                if thumb_m2.get("status") in ("diseased", "healthy"):
+                                    m2_res = thumb_m2
 
-                    f_disease_status = m2_res.get("status", "uncertain")
-                    f_disease_conf = float(m2_res.get("disease_confidence", 0.0))
+                            m2_inference_count += 1
+                            prev_m2_roi = roi_img
+                            prev_m2_crop = f_crop_class
+                            prev_m2_res = m2_res
 
-                    if f_disease_status == "diseased" and m2_res.get("disease"):
-                        f_disease_slug = m2_res["disease"]
-                        f_disease_label = format_disease_name_clean(f_disease_slug) or f_disease_slug
-                        det_dict = {
-                            "disease": f_disease_slug,
-                            "disease_label": f_disease_label,
-                            "confidence": round(f_disease_conf, 4),
-                            "percentage": f"{f_disease_conf * 100:.1f}%",
-                            "bbox": f.get("roi_box"),
-                            "frame_index": f["frame_index"],
-                            "frame_number": f["frame_number"],
-                            "timestamp_seconds": f["timestamp_seconds"],
-                        }
-                        f_detections.append(det_dict)
-                        all_disease_detections.append(det_dict)
+                        f.pop("primary_roi_pil", None)
+                        f.pop("roi_pil", None)
 
-                        if f_disease_slug not in disease_candidates:
-                            disease_candidates[f_disease_slug] = {
-                                "label": f_disease_label,
-                                "count": 0,
-                                "confidences": [],
+                        f_disease_status = m2_res.get("status", "uncertain")
+                        f_disease_conf = float(m2_res.get("disease_confidence", 0.0))
+
+                        if f_disease_status == "diseased" and m2_res.get("disease"):
+                            f_disease_slug = m2_res["disease"]
+                            f_disease_label = format_disease_name_clean(f_disease_slug) or f_disease_slug
+                            det_dict = {
+                                "disease": f_disease_slug,
+                                "disease_label": f_disease_label,
+                                "confidence": round(f_disease_conf, 4),
+                                "percentage": f"{f_disease_conf * 100:.1f}%",
+                                "bbox": f.get("roi_box"),
+                                "frame_index": f["frame_index"],
+                                "frame_number": f["frame_number"],
+                                "timestamp_seconds": f["timestamp_seconds"],
                             }
-                        disease_candidates[f_disease_slug]["count"] += 1
-                        disease_candidates[f_disease_slug]["confidences"].append(f_disease_conf)
-                    elif f_disease_status == "healthy":
-                        healthy_frames_count += 1
-                    else:
+                            f_detections.append(det_dict)
+                            all_disease_detections.append(det_dict)
+
+                            if f_disease_slug not in disease_candidates:
+                                disease_candidates[f_disease_slug] = {
+                                    "label": f_disease_label,
+                                    "count": 0,
+                                    "confidences": [],
+                                }
+                            disease_candidates[f_disease_slug]["count"] += 1
+                            disease_candidates[f_disease_slug]["confidences"].append(f_disease_conf)
+                        elif f_disease_status == "healthy":
+                            healthy_frames_count += 1
+                        else:
+                            uncertain_frames_count += 1
+                    except Exception as exc:
+                        logger.warning(f"Frame {f.get('frame_index')} Model 2 inference failed: {exc}")
+                        f_disease_status = "failed"
                         uncertain_frames_count += 1
                 else:
-                    f_disease_status = "not_applicable"
+                    f_disease_status = "not_run"
                     f_disease_conf = 0.0
 
             frame_results.append({
@@ -744,8 +766,8 @@ def process_video_inference(
             })
 
         # Temporal Disease Aggregation across valid plant frames
-        min_support_count = 3 if valid_plant_frames >= 10 else 2
-        min_support_ratio = 0.20
+        min_support_count = 3 if valid_plant_frames >= 12 else 2
+        min_support_ratio = 0.15
 
         ranked_diseases = []
         for slug, dinfo in disease_candidates.items():
@@ -769,7 +791,35 @@ def process_video_inference(
 
         ranked_diseases.sort(key=lambda x: x["score"], reverse=True)
 
-        if ranked_diseases:
+        if not video_crop_guard.proceed_to_disease_detection:
+            m2_summary = {
+                "status": "not_applicable",
+                "has_disease": False,
+                "primary_disease": "Disease analysis withheld (crop unverified)",
+                "primary_disease_slug": None,
+                "confidence": 0.0,
+                "percentage": "N/A",
+                "supporting_frames": 0,
+                "evaluated_frames": 0,
+                "detections_count": 0,
+                "detections": [],
+                "message": f"Disease classification skipped: {video_crop_guard.user_message}",
+            }
+        elif valid_plant_frames == 0:
+            m2_summary = {
+                "status": "not_applicable",
+                "has_disease": False,
+                "primary_disease": "No plant frames available for disease analysis",
+                "primary_disease_slug": None,
+                "confidence": 0.0,
+                "percentage": "N/A",
+                "supporting_frames": 0,
+                "evaluated_frames": 0,
+                "detections_count": 0,
+                "detections": [],
+                "message": "No valid plant foliage frames available for disease analysis.",
+            }
+        elif ranked_diseases:
             top_dis = ranked_diseases[0]
             top_conf = top_dis["max_conf"]
             m2_summary = {
@@ -786,35 +836,20 @@ def process_video_inference(
                 "detections": all_disease_detections,
                 "message": f"Diagnosed {top_dis['label']} on {crop_display_label} ({top_conf * 100:.1f}% confidence across {top_dis['count']}/{valid_plant_frames} supporting frames).",
             }
-        elif valid_plant_frames > 0:
-            if healthy_frames_count >= (valid_plant_frames * 0.40):
-                m2_summary = {
-                    "status": "healthy",
-                    "has_disease": False,
-                    "primary_disease": "Healthy Specimen / No Disease Detected",
-                    "primary_disease_slug": None,
-                    "confidence": 1.0,
-                    "percentage": "100.0%",
-                    "supporting_frames": healthy_frames_count,
-                    "evaluated_frames": valid_plant_frames,
-                    "detections_count": 0,
-                    "detections": [],
-                    "message": f"Verified healthy foliage for {crop_display_label} across {valid_plant_frames} video frames.",
-                }
-            else:
-                m2_summary = {
-                    "status": "uncertain",
-                    "has_disease": False,
-                    "primary_disease": "Inconclusive / Uncertain",
-                    "primary_disease_slug": None,
-                    "confidence": round(float(top_conf if ranked_diseases else 0.0), 4),
-                    "percentage": f"{(top_conf if ranked_diseases else 0.0) * 100:.1f}%" if ranked_diseases else "N/A",
-                    "supporting_frames": 0,
-                    "evaluated_frames": valid_plant_frames,
-                    "detections_count": 0,
-                    "detections": [],
-                    "message": f"Condition uncertain across {valid_plant_frames} frames for {crop_display_label}. Crop-disease compatibility or confidence threshold not met.",
-                }
+        elif healthy_frames_count >= max(1, int(valid_plant_frames * 0.40)):
+            m2_summary = {
+                "status": "healthy",
+                "has_disease": False,
+                "primary_disease": "Healthy Specimen / No Disease Detected",
+                "primary_disease_slug": None,
+                "confidence": 1.0,
+                "percentage": "100.0%",
+                "supporting_frames": healthy_frames_count,
+                "evaluated_frames": valid_plant_frames,
+                "detections_count": 0,
+                "detections": [],
+                "message": f"Verified healthy foliage for {crop_display_label} across {valid_plant_frames} video frames.",
+            }
         else:
             m2_summary = {
                 "status": "uncertain",
@@ -824,25 +859,10 @@ def process_video_inference(
                 "confidence": 0.0,
                 "percentage": "N/A",
                 "supporting_frames": 0,
-                "evaluated_frames": 0,
-                "detections_count": 0,
-                "detections": [],
-                "message": "No valid plant frames available for disease analysis.",
-            }
-
-        if not video_crop_guard.proceed_to_disease_detection:
-            m2_summary = {
-                "status": "not_applicable",
-                "has_disease": False,
-                "primary_disease": None,
-                "primary_disease_slug": None,
-                "confidence": 0.0,
-                "percentage": "N/A",
-                "supporting_frames": 0,
                 "evaluated_frames": valid_plant_frames,
                 "detections_count": 0,
                 "detections": [],
-                "message": f"Disease classification skipped: {video_crop_guard.user_message}",
+                "message": f"Condition uncertain across {valid_plant_frames} frames for {crop_display_label}. Crop-disease compatibility or confidence threshold not met.",
             }
 
         video_duration = v_res["video"].get("duration_seconds", 0.0)
@@ -869,11 +889,18 @@ def process_video_inference(
             "warning": video_crop_guard.warning if valid_plant_frames > 0 else None,
             "frames_processed": v_res["frames_used"],
             "frames_used": v_res["frames_used"],
-            "valid_frames_count": v_res.get("valid_plant_frames", 0),
-            "valid_plant_frames": v_res.get("valid_plant_frames", 0),
+            "valid_frames_count": valid_plant_frames,
+            "valid_plant_frames": valid_plant_frames,
+            "total_decoded_frames": v_res.get("total_decoded_frames", v_res["video"].get("frame_count", 0)),
+            "sampled_frames_count": len(frame_results),
+            "accepted_plant_frames": valid_plant_frames,
+            "rejected_frames_count": v_res["frames_rejected"],
+            "model1_inference_count": v_res.get("model1_inference_count", len(frame_results)),
+            "model2_inference_count": m2_inference_count,
             "frames_rejected": v_res["frames_rejected"],
             "total_evaluated": v_res["total_evaluated"],
             "video_duration_sec": video_duration,
+            "fps": v_res["video"].get("fps", 30.0),
             "video_name": Path(original_filename).name,
             "video_metadata": v_res["video"],
             "status_note": v_res.get("status_note"),

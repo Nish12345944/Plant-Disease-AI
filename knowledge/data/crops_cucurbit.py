@@ -12,7 +12,8 @@ from knowledge.schema import (
 )
 from knowledge.sources import (
     SOURCE_CORNELL, SOURCE_UC_IPM, SOURCE_PURDUE, SOURCE_NC_STATE,
-    SOURCE_UF_IFAS, SOURCE_USDA_ARS, SOURCE_FAO
+    SOURCE_UF_IFAS, SOURCE_USDA_ARS, SOURCE_FAO,
+    SOURCE_NC_STATE_CUCURBIT_DOWNY_MILDEW, SOURCE_UC_IPM_CUCURBIT_POWDERY_MILDEW,
 )
 
 CUCURBIT_DISEASES = {
@@ -234,7 +235,7 @@ CUCURBIT_DISEASES = {
         ),
         similar_diseases=["cucumber__downy_mildew", "squash__powdery_mildew"],
         severity_indicators="White powdery coating over >50% of leaf area, extensive leaf necrosis, premature vine death.",
-        sources=[SOURCE_CORNELL, SOURCE_UC_IPM, SOURCE_PURDUE, SOURCE_NC_STATE],
+        sources=[SOURCE_UC_IPM_CUCURBIT_POWDERY_MILDEW],
         quality_level="HIGH"
     ),
 
@@ -311,7 +312,7 @@ CUCURBIT_DISEASES = {
         ),
         similar_diseases=["zucchini__powdery_mildew", "cucumber__powdery_mildew"],
         severity_indicators="Severe powdery covering on crown leaves, extensive leaf collapse, exposed sunscalded fruit.",
-        sources=[SOURCE_CORNELL, SOURCE_PURDUE, SOURCE_UC_IPM, SOURCE_NC_STATE],
+        sources=[SOURCE_UC_IPM_CUCURBIT_POWDERY_MILDEW],
         quality_level="HIGH"
     ),
 
@@ -450,7 +451,7 @@ CUCURBIT_DISEASES = {
         ),
         similar_diseases=["zucchini__powdery_mildew", "cucumber__downy_mildew", "cucumber__angular_leaf_spot"],
         severity_indicators="Velvety purple-gray sporulation on leaf underside, rapid angular foliar necrosis across >40% of canopy.",
-        sources=[SOURCE_NC_STATE, SOURCE_UF_IFAS, SOURCE_CORNELL, SOURCE_UC_IPM],
+        sources=[SOURCE_NC_STATE_CUCURBIT_DOWNY_MILDEW],
         quality_level="HIGH"
     ),
 
@@ -526,7 +527,7 @@ CUCURBIT_DISEASES = {
         ),
         similar_diseases=["zucchini__downy_mildew", "squash__powdery_mildew", "cucumber__powdery_mildew"],
         severity_indicators="Dense white powdery coating over >50% of canopy, extensive foliar crisping and leaf death.",
-        sources=[SOURCE_CORNELL, SOURCE_UC_IPM, SOURCE_NC_STATE, SOURCE_PURDUE],
+        sources=[SOURCE_UC_IPM_CUCURBIT_POWDERY_MILDEW],
         quality_level="HIGH"
     ),
 
