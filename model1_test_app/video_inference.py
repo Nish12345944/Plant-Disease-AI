@@ -238,10 +238,12 @@ def extract_adaptive_video_frames(
 
     selected_frames = sorted(selected_frames, key=lambda x: x["frame_index"])
 
-    # Release heavy buffers from rejected frames to prevent memory spikes
+    # Release heavy buffers from rejected frames to prevent memory spikes (preserving any chosen fallback frames)
+    selected_ids = {id(f) for f in selected_frames}
     for r in rejected_pool:
-        r["frame_bgr"] = None
-        r["frame_image"] = None
+        if id(r) not in selected_ids:
+            r["frame_bgr"] = None
+            r["frame_image"] = None
 
     status_note = None
     if len(selected_frames) < min_target:
@@ -271,6 +273,8 @@ def predict_video(
     debug_dir: Optional[str | Path] = "reports/video_debug",
     detect_disease: bool = True,
     disease_conf_threshold: float = 0.20,
+    sample_fps: Optional[float] = None,
+    **kwargs: Any,
 ) -> dict[str, Any]:
     """Execute complete video inference: sample representative frames, extract tight plant ROIs, predict with Model 1, detect disease with Model 2, and aggregate.
 
@@ -627,6 +631,8 @@ def predict_video(
         "video": metadata,
         "frames_used": len(frame_records),
         "valid_plant_frames": len(valid_plant_prob_vectors),
+        "sampled_frames_count": len(frame_records),
+        "accepted_frames_count": len(valid_plant_prob_vectors),
         "frames_rejected": len(rejected_frames),
         "total_evaluated": extraction["total_evaluated"],
         "frame_records": frame_records,

@@ -95,18 +95,28 @@ def extract_tight_plant_rois(
     R = img_bgr[:, :, 2].astype(np.float32)
 
     # 1. Multi-spectral vegetation detection
-    green_mask = (H >= 24) & (H <= 95) & (S >= 22) & (V >= 18)
-    chroma_green = (G > (R + 6)) & (G > (B + 6)) & (S >= 18)
-    yellow_mask = (H >= 15) & (H < 24) & (S >= 28) & (V >= 25)
-    brown_mask = (H >= 8) & (H < 18) & (S >= 25) & (V >= 18) & (V <= 170)
-    warm_mask = ((H <= 15) | (H >= 165)) & (S >= 35) & (V >= 30)
-    berry_mask = (H >= 95) & (H <= 135) & (S >= 15) & (S <= 95) & (V >= 15) & (V <= 135)
-    cool_mask = (H >= 135) & (H <= 165) & (S >= 20) & (V >= 15)
+    green_foliage = (H >= 24) & (H <= 95) & (S >= 20) & (V >= 18) & (G > R) & (G > B)
+    exg = 2 * G - R - B
+    chlorophyll_mask = green_foliage & (exg > 3)
+    yellow_chlorosis = (H >= 15) & (H < 24) & (S >= 25) & (V >= 25) & (G > B)
+    brown_necrotic = (H >= 8) & (H < 18) & (S >= 22) & (V >= 18) & (V <= 170)
 
-    raw_plant_mask = (green_mask | chroma_green | yellow_mask | brown_mask | warm_mask | berry_mask | cool_mask).astype(np.uint8) * 255
+    vegetative_mask = chlorophyll_mask | yellow_chlorosis | brown_necrotic
+    veg_coverage = float(np.sum(vegetative_mask) / total_pixels) if total_pixels > 0 else 0.0
+
+    warm_fruit = ((H <= 15) | (H >= 165)) & (S >= 35) & (V >= 30)
+    berry_fruit = (H >= 95) & (H <= 135) & (S >= 25) & (V >= 20) & (V <= 135)
+    cool_flower = (H >= 135) & (H <= 165) & (S >= 25) & (V >= 20)
+
+    if veg_coverage > 0.002:
+        raw_mask_bool = vegetative_mask | warm_fruit | berry_fruit | cool_flower
+    else:
+        raw_mask_bool = vegetative_mask
+
+    raw_plant_mask = raw_mask_bool.astype(np.uint8) * 255
 
     # 2. Non-plant suppression (human skin, white lab coats, cyan nitrile gloves)
-    skin_mask = (Cr >= 133) & (Cr <= 173) & (Cb >= 77) & (Cb <= 127)
+    skin_mask = (Cr >= 133) & (Cr <= 173) & (Cb >= 77) & (Cb <= 127) & (R > G) & (G > B) & ((R - G) >= 6)
     white_coat_mask = (V >= 160) & (S <= 35) & (np.abs(R - G) < 20) & (np.abs(G - B) < 20)
     nitrile_mask = (B > (R + 45)) & (B > 115) & (H >= 95) & (H <= 130) & (S > 75)
 

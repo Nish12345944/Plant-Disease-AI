@@ -193,6 +193,19 @@ def run_safeguard_tests():
     assert r_wheat_val.valid and r_wheat_val.status == "valid", f"Failed wheat validation: {r_wheat_val}"
     assert r_wheat_val.reason_code is None
     print(f"  -> [PASS] Real wheat image successfully validated (coverage: {r_wheat_val.metrics['plant_coverage']:.2%}).")
+
+    # Verify supported bell pepper fruit with blossom-end rot passes Safeguards A & B and proceeds to disease diagnosis
+    bp_rot_path = PROJECT_ROOT / "data/processed/model2_retraining_v2/test/bell_pepper/blossom_end_rot/190568c5bb_bell_pepper_blossom_end_rot_Bing_0198.jpg"
+    if bp_rot_path.exists():
+        with open(bp_rot_path, "rb") as f:
+            bp_bytes = f.read()
+        bp_val = validate_plant_image(bp_bytes)
+        assert bp_val.valid, f"Bell pepper blossom-end rot validation failed: {bp_val}"
+        bp_res = process_image_inference(bp_bytes)
+        assert bp_res["status"] == "valid" and bp_res["crop_status"] == "accepted", f"Crop guard falsely rejected: {bp_res}"
+        assert bp_res["predicted_crop"] == "Bell Pepper"
+        assert bp_res["model2"]["status"] == "detected"
+        print(f"  -> [PASS] Supported Bell Pepper with blossom-end rot accepted and diagnosed ({bp_res['model2']['primary_disease']}, {bp_res['model2']['confidence'] * 100:.1f}%).")
     passed += 1
 
     # -------------------------------------------------------------------------

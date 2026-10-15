@@ -342,13 +342,19 @@ def predict_image(
             "image_size": (w, h),
         }
 
-    # Direct Model 1 Preprocessing & Inference
+    # Direct Model 1 Preprocessing & Inference with Feature Embedding Extraction
     tensor = transform(img_rgb).unsqueeze(0).to(device)
 
     infer_ctx = torch.inference_mode if hasattr(torch, "inference_mode") else torch.no_grad
     with infer_ctx():
-        logits = model(tensor)
+        # EfficientNet-B2 forward pass decomposing feature extraction and linear classification
+        feats = model.features(tensor)
+        feats = model.avgpool(feats)
+        feats = torch.flatten(feats, 1)
+        logits = model.classifier(feats)
         probs = torch.softmax(logits, dim=1)[0].cpu().numpy()
+        f_vec = feats[0].detach().cpu().numpy()
+        f_norm = f_vec / max(float(np.linalg.norm(f_vec)), 1e-12)
 
     num_classes = len(idx_to_class)
     k = min(top_k, num_classes)
@@ -381,6 +387,8 @@ def predict_image(
             "reason": f"Low identification confidence ({top_pred['confidence'] * 100:.1f}% < {min_confidence * 100:.0f}%)",
             "top_k": top_k_list,
             "all_probabilities": probs,
+            "logits": logits[0].detach().cpu().numpy(),
+            "feature_vector": f_norm,
             "image_size": (w, h),
             "_preprocessed_tensor": tensor,
         }
@@ -394,6 +402,8 @@ def predict_image(
         "reason": "Plant successfully identified",
         "top_k": top_k_list,
         "all_probabilities": probs,
+        "logits": logits[0].detach().cpu().numpy(),
+        "feature_vector": f_norm,
         "image_size": (w, h),
         "_preprocessed_tensor": tensor,
     }

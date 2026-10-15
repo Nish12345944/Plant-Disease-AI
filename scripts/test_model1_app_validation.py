@@ -41,7 +41,7 @@ def run_tests():
 
     # 2. Test 1: Known Tomato Image
     print("\n[TEST 1] Testing Known Tomato Image...")
-    tom_path = PROJECT_ROOT / "data/processed/model1_balanced/test/tomato/tomato_fruit_diseased_001434.jpg"
+    tom_path = PROJECT_ROOT / "data/processed/model1_expanded/test/tomato/tomato_025d504a4b_tomato_leaves_diseased_001052.jpg"
     tom_res = predict_image(tom_path, model, idx_to_class, device)
     print(f"  -> Prediction: {tom_res['predicted_label']} ({tom_res['percentage']})")
     print(f"  -> Top-3: {[(x['label'], x['percentage']) for x in tom_res['top_k']]}")
@@ -50,7 +50,7 @@ def run_tests():
 
     # 3. Test 2: Known Cucumber Image
     print("\n[TEST 2] Testing Known Cucumber Image...")
-    cuc_path = PROJECT_ROOT / "data/processed/model1_balanced/test/cucumber/cucumber_fruit_diseased_002851.jpg"
+    cuc_path = PROJECT_ROOT / "data/processed/model1_expanded/test/cucumber/cucumber_0a3ad890fb_cucumber_fruit_diseased_001733.jpg"
     cuc_res = predict_image(cuc_path, model, idx_to_class, device)
     print(f"  -> Prediction: {cuc_res['predicted_label']} ({cuc_res['percentage']})")
     print(f"  -> Top-3: {[(x['label'], x['percentage']) for x in cuc_res['top_k']]}")
