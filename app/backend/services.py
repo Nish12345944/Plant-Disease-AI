@@ -574,6 +574,11 @@ def process_video_inference(
     disease_conf_threshold: float = 0.20,
 ) -> dict[str, Any]:
     """Execute video inference across representative frames with Model 1 and Model 2 V4."""
+    try:
+        target_frames = int(target_frames.default if hasattr(target_frames, "default") else (target_frames or TARGET_FRAMES_DEFAULT))
+    except Exception:
+        target_frames = TARGET_FRAMES_DEFAULT
+
     if len(file_bytes) > MAX_VIDEO_SIZE_BYTES:
         size_mb = len(file_bytes) / (1024 * 1024)
         max_mb = MAX_VIDEO_SIZE_BYTES / (1024 * 1024)
@@ -673,37 +678,40 @@ def process_video_inference(
                         prev_m2_crop = f_crop_class
                         prev_m2_res = m2_res
 
-                f_disease_status = m2_res.get("status", "uncertain")
-                f_disease_conf = float(m2_res.get("disease_confidence", 0.0))
+                    f_disease_status = m2_res.get("status", "uncertain")
+                    f_disease_conf = float(m2_res.get("disease_confidence", 0.0))
 
-                if f_disease_status == "diseased" and m2_res.get("disease"):
-                    f_disease_slug = m2_res["disease"]
-                    f_disease_label = format_disease_name_clean(f_disease_slug) or f_disease_slug
-                    det_dict = {
-                        "disease": f_disease_slug,
-                        "disease_label": f_disease_label,
-                        "confidence": round(f_disease_conf, 4),
-                        "percentage": f"{f_disease_conf * 100:.1f}%",
-                        "bbox": f.get("roi_box"),
-                        "frame_index": f["frame_index"],
-                        "frame_number": f["frame_number"],
-                        "timestamp_seconds": f["timestamp_seconds"],
-                    }
-                    f_detections.append(det_dict)
-                    all_disease_detections.append(det_dict)
-
-                    if f_disease_slug not in disease_candidates:
-                        disease_candidates[f_disease_slug] = {
-                            "label": f_disease_label,
-                            "count": 0,
-                            "confidences": [],
+                    if f_disease_status == "diseased" and m2_res.get("disease"):
+                        f_disease_slug = m2_res["disease"]
+                        f_disease_label = format_disease_name_clean(f_disease_slug) or f_disease_slug
+                        det_dict = {
+                            "disease": f_disease_slug,
+                            "disease_label": f_disease_label,
+                            "confidence": round(f_disease_conf, 4),
+                            "percentage": f"{f_disease_conf * 100:.1f}%",
+                            "bbox": f.get("roi_box"),
+                            "frame_index": f["frame_index"],
+                            "frame_number": f["frame_number"],
+                            "timestamp_seconds": f["timestamp_seconds"],
                         }
-                    disease_candidates[f_disease_slug]["count"] += 1
-                    disease_candidates[f_disease_slug]["confidences"].append(f_disease_conf)
-                elif f_disease_status == "healthy":
-                    healthy_frames_count += 1
+                        f_detections.append(det_dict)
+                        all_disease_detections.append(det_dict)
+
+                        if f_disease_slug not in disease_candidates:
+                            disease_candidates[f_disease_slug] = {
+                                "label": f_disease_label,
+                                "count": 0,
+                                "confidences": [],
+                            }
+                        disease_candidates[f_disease_slug]["count"] += 1
+                        disease_candidates[f_disease_slug]["confidences"].append(f_disease_conf)
+                    elif f_disease_status == "healthy":
+                        healthy_frames_count += 1
+                    else:
+                        uncertain_frames_count += 1
                 else:
-                    uncertain_frames_count += 1
+                    f_disease_status = "not_applicable"
+                    f_disease_conf = 0.0
 
             frame_results.append({
                 "frame_idx": f["frame_index"],
@@ -857,7 +865,7 @@ def process_video_inference(
             "percentage": f"{crop_conf * 100:.1f}%",
             "margin": video_crop_guard.margin if valid_plant_frames > 0 else 0.0,
             "entropy": video_crop_guard.entropy if valid_plant_frames > 0 else 1.0,
-            "crop_guard": video_crop_guard.to_dict() if valid_plant_frames > 0 else None,
+            "crop_guard": video_crop_guard.to_dict() if video_crop_guard else None,
             "warning": video_crop_guard.warning if valid_plant_frames > 0 else None,
             "frames_processed": v_res["frames_used"],
             "frames_used": v_res["frames_used"],

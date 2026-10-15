@@ -14,7 +14,11 @@ from knowledge.schema import (
 )
 from knowledge.sources import (
     SOURCE_CORNELL, SOURCE_UC_IPM, SOURCE_PURDUE, SOURCE_NC_STATE,
-    SOURCE_UF_IFAS, SOURCE_PENN_STATE, SOURCE_USDA_ARS, SOURCE_FAO
+    SOURCE_UF_IFAS, SOURCE_PENN_STATE, SOURCE_USDA_ARS, SOURCE_FAO,
+    SOURCE_UGA_PEPPER_BLOSSOM_END_ROT, SOURCE_NC_STATE_TOMATO_EARLY_BLIGHT,
+    SOURCE_NC_STATE_TOMATO_LATE_BLIGHT, SOURCE_NC_STATE_TOMATO_SEPTORIA_LEAF_SPOT,
+    SOURCE_NC_STATE_PEPPER_TOMATO_BACTERIAL_SPOT, SOURCE_UC_IPM_POTATO_EARLY_BLIGHT,
+    SOURCE_UC_IPM_POTATO_LATE_BLIGHT,
 )
 
 SOLANACEOUS_DISEASES = {
@@ -148,7 +152,7 @@ SOLANACEOUS_DISEASES = {
         ),
         similar_diseases=["bell_pepper__sunscald", "bell_pepper__anthracnose"],
         severity_indicators="Sunken black leathery lesions at blossom end on >15% of fruit crop.",
-        sources=[SOURCE_UF_IFAS, SOURCE_UC_IPM, SOURCE_PURDUE, SOURCE_CORNELL],
+        sources=[SOURCE_UGA_PEPPER_BLOSSOM_END_ROT],
         quality_level="HIGH"
     ),
 
@@ -1056,7 +1060,7 @@ SOLANACEOUS_DISEASES = {
         ),
         similar_diseases=["tomato__septoria_leaf_spot", "tomato__late_blight", "tomato__bacterial_leaf_spot"],
         severity_indicators="Target-board lesions ascending past mid-canopy, defoliation >35%, leathery stem-end fruit rot.",
-        sources=[SOURCE_CORNELL, SOURCE_NC_STATE, SOURCE_PURDUE, SOURCE_UC_IPM],
+        sources=[SOURCE_NC_STATE_TOMATO_EARLY_BLIGHT],
         quality_level="HIGH"
     ),
 

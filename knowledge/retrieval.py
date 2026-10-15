@@ -180,5 +180,11 @@ def retrieve_relevant_knowledge(
     # Clean and deduplicate source citations
     result["facts"] = facts
     result["source_ids"] = list(dict.fromkeys(collected_sources))
-    result["citations"] = format_source_citation(result["source_ids"])
+    result["citations"] = format_source_citation(
+        result["source_ids"],
+        disease_slug=d_rec.disease_slug if d_rec else (disease or ""),
+        crop=d_rec.crop if d_rec else (crop or ""),
+        disease=d_rec.common_name if d_rec else (disease or ""),
+        d_rec=d_rec,
+    )
     return result

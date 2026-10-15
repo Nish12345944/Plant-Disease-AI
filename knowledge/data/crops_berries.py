@@ -13,7 +13,9 @@ from knowledge.schema import (
 )
 from knowledge.sources import (
     SOURCE_CORNELL, SOURCE_UC_IPM, SOURCE_NC_STATE, SOURCE_UF_IFAS,
-    SOURCE_PURDUE, SOURCE_USDA_ARS, SOURCE_WASHINGTON_STATE
+    SOURCE_PURDUE, SOURCE_USDA_ARS, SOURCE_WASHINGTON_STATE,
+    SOURCE_NC_STATE_BLUEBERRY_ANTHRACNOSE, SOURCE_MSU_BLUEBERRY_ANTHRACNOSE,
+    SOURCE_UC_IPM_STRAWBERRY_BOTRYTIS, SOURCE_UC_IPM_GRAPE_POWDERY_MILDEW,
 )
 
 BERRY_DISEASES = {
@@ -84,7 +86,7 @@ BERRY_DISEASES = {
         ),
         similar_diseases=["blueberry__botrytis_blight", "blueberry__mummy_berry"],
         severity_indicators="Salmon-pink spore masses on softening fruit, blossom blighting, >15% fruit rot at harvest.",
-        sources=[SOURCE_NC_STATE, SOURCE_CORNELL, SOURCE_PURDUE, SOURCE_UC_IPM],
+        sources=[SOURCE_NC_STATE_BLUEBERRY_ANTHRACNOSE, SOURCE_MSU_BLUEBERRY_ANTHRACNOSE],
         quality_level="HIGH"
     ),
 

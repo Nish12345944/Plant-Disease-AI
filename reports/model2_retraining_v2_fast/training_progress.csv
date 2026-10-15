@@ -1,0 +1,1 @@
+epoch,stage,train_loss,train_acc,train_macro_f1,val_loss,val_acc,val_top3_acc,val_macro_f1,val_weighted_f1,val_healthy_f1,val_disease_macro_f1,learning_rate,epoch_seconds,elapsed_seconds,checkpoint_source

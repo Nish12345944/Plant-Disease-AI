@@ -1,0 +1,2 @@
+epoch,total_epochs,train_loss,train_acc,val_loss,val_acc,val_macro_f1,lr_backbone,lr_head,duration_sec,best_score,is_best
+1,3,0.1993,0.9531,0.4052,0.8932,0.8355,2e-05,0.0003,1622.0,0.8421,0

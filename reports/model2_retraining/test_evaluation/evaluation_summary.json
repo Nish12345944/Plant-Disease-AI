@@ -1,0 +1,31 @@
+{
+  "model_architecture": "EfficientNet-B2",
+  "checkpoint_evaluated": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\models\\model2_retraining_v1\\best_model.pth",
+  "checkpoint_epoch": 4,
+  "validation_macro_f1_at_checkpoint": 0.6814662679821278,
+  "dataset_manifest": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\data\\processed\\model2_retraining_v1_manifest.csv",
+  "test_images_count": 2304,
+  "num_classes": 143,
+  "execution_device": "cpu",
+  "gpu_device_name": "CPU",
+  "evaluation_timestamp": "2026-10-12 11:59:52",
+  "evaluation_duration_seconds": 137.45,
+  "metrics": {
+    "test_loss": 0.9618,
+    "top1_accuracy": 0.8346,
+    "top3_accuracy": 0.9236,
+    "macro_f1": 0.5731,
+    "macro_precision": 0.6233,
+    "macro_recall": 0.5682,
+    "weighted_f1": 0.8435,
+    "healthy_f1": 0.9745,
+    "disease_macro_f1": 0.5138
+  },
+  "artifacts_generated": {
+    "summary_json": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\reports\\model2_retraining\\test_evaluation\\evaluation_summary.json",
+    "classification_report_csv": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\reports\\model2_retraining\\test_evaluation\\test_classification_report.csv",
+    "predictions_csv": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\reports\\model2_retraining\\test_evaluation\\test_predictions.csv",
+    "confusion_matrix_csv": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\reports\\model2_retraining\\test_evaluation\\confusion_matrix.csv",
+    "confusion_matrix_png": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\reports\\model2_retraining\\test_evaluation\\confusion_matrix.png"
+  }
+}

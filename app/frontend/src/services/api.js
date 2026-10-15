@@ -103,7 +103,9 @@ export async function predictVideo(videoFile, targetFrames = 8) {
       if (err.detail) errorDetail = err.detail;
       else if (err.message) errorDetail = err.message;
     } catch {
-      if (res.status === 502) {
+      if (res.status === 400) {
+        errorDetail = 'The uploaded video file is unsupported or corrupted. Please upload a valid plant video clip (MP4, WebM, MOV, AVI).';
+      } else if (res.status === 502) {
         errorDetail = 'Backend service is starting up or temporarily unavailable (HTTP 502 Bad Gateway). Please retry in a few moments.';
       } else if (res.status === 503) {
         errorDetail = 'Service temporarily unavailable (HTTP 503). Vision model checkpoint is unavailable.';
@@ -149,7 +151,9 @@ export async function sendChatMessage({ text = '', file = null, inputType = 'tex
       if (err.detail) errorDetail = err.detail;
       else if (err.message) errorDetail = err.message;
     } catch {
-      if (res.status === 502) {
+      if (res.status === 400) {
+        errorDetail = 'The uploaded file is unsupported, corrupted, or exceeded limits. Please verify your file and try again.';
+      } else if (res.status === 502) {
         errorDetail = 'Backend service is starting up or temporarily unavailable (HTTP 502 Bad Gateway). Please retry in a few moments.';
       } else if (res.status === 503) {
         errorDetail = 'Service temporarily unavailable (HTTP 503). The requested model checkpoint is unavailable or service is loading.';

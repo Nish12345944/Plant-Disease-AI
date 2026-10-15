@@ -1,0 +1,17 @@
+{
+  "experiment": "model1_domain_shift_e2",
+  "run_id": "run2",
+  "description": "Controlled top-backbone fine-tuning (features[6:] @ 2e-5, classifier @ 3e-4)",
+  "base_checkpoint": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\models\\model1_expanded\\best_model.pth",
+  "best_epoch": 3,
+  "epochs": 3,
+  "batch_size": 32,
+  "lr_backbone": 2e-05,
+  "lr_head": 0.0003,
+  "weight_decay": 0.0001,
+  "seed": 42,
+  "best_val_macro_f1": 0.8485,
+  "total_train_duration_sec": 5359.13,
+  "checkpoint": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\models\\model1_domain_shift_e2\\best_model.pth",
+  "recovery_checkpoint": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\models\\model1_domain_shift_e2\\recovery_checkpoint.pth"
+}

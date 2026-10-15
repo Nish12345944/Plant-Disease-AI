@@ -1,0 +1,3140 @@
+{
+  "device": "cuda",
+  "checkpoint_epoch": 10,
+  "mapping_agrees_with_checkpoint": false,
+  "counts": {
+    "cucumber/train": {
+      "rows": 500,
+      "unique_sha": 500,
+      "on_disk": 500
+    },
+    "cucumber/val": {
+      "rows": 65,
+      "unique_sha": 65,
+      "on_disk": 65
+    },
+    "cucumber/test": {
+      "rows": 65,
+      "unique_sha": 65,
+      "on_disk": 65
+    },
+    "zucchini/train": {
+      "rows": 315,
+      "unique_sha": 315,
+      "on_disk": 315
+    },
+    "zucchini/val": {
+      "rows": 39,
+      "unique_sha": 39,
+      "on_disk": 39
+    },
+    "zucchini/test": {
+      "rows": 39,
+      "unique_sha": 39,
+      "on_disk": 39
+    }
+  },
+  "cross_split_sha_duplicates": 0,
+  "organs": {
+    "cucumber/00b69e0c78_cucumber_leaves_diseased": {
+      "val": 1
+    },
+    "cucumber/00dca778a7_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/01c0e01bd9_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/0238989fb9_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/02611dfe8c_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/02a37778e6_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/02dec4e9ae_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/030bd9a4e5_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/03523f1205_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/0362cfd4e0_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/038667e63f_cucumber_leaves_healthy": {
+      "test": 1
+    },
+    "cucumber/0433770e01_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/0450ca81bf_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/04ada95490_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/05b1775c30_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/05da4aa31e_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/0639b10187_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/06eafb4dda_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/0877c8104a_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/08bc736ab6_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/08bd51dbbb_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/094bc5cb83_cucumber_leaves_healthy": {
+      "val": 1
+    },
+    "cucumber/095cce511f_cucumber_leaves_healthy": {
+      "val": 1
+    },
+    "cucumber/0a3ad890fb_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/0a55e8cdf9_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/0a60eb1de8_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/0ada241c8c_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/0b5c925aad_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/0b7d781c0c_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/0bf8f0abf1_cucumber_leaves_diseased": {
+      "test": 1
+    },
+    "cucumber/0ca38f9219_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/0d36cf629b_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/0dac85c53b_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/0db25bcf37_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/0de9cd3258_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/0edc8390d0_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/0fff0f50a7_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/1080a84332_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/108172b2c5_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/108313bcaf_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/10ba511f6e_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/10e81accc2_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/10f73f6e75_cucumber_leaves_healthy": {
+      "val": 1
+    },
+    "cucumber/1121f6c4ec_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/11937e60c5_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/120fbf0fbb_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/123a8c1c26_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/1263447e90_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/128ea142e7_cucumber_leaves_healthy": {
+      "test": 1
+    },
+    "cucumber/13faea5794_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/14943c6e1c_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/151d29ab78_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/158ce4e9f6_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/1673a8dd89_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/16a4396c2c_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/16eaf16af5_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/172bca6377_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/17c0f869cd_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/184c8929be_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/188eb43c99_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/18a5423678_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/18d10897be_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/191e21c5a2_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/1d32ce17f1_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/1d5123d307_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/1d9ad74971_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/1e639f70bc_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/1eff4e6ec4_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/1f135f434b_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/21612f5909_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/22ad8dd560_cucumber_leaves_diseased": {
+      "test": 1
+    },
+    "cucumber/22d1814177_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/2438e9124a_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/2592fda007_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/2595d9e93a_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/259e0ab264_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/25b08c53af_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/25c83c27de_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/2672a94653_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/26736ad05f_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/26927365c4_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/26bcff7f2b_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/26d5613c94_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/274db04db0_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/27575472a2_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/2808a1b104_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/2860c9849c_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/287fab9c6f_cucumber_leaves_diseased": {
+      "val": 1
+    },
+    "cucumber/2885f4d418_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/28ac59b7e6_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/28ca2212c8_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/297ef2edf2_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/29efbc3fa1_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/2a59a0984e_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/2afd2f52ec_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/2b9e62e0b3_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/2d0cab65ed_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/2d2c4db568_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/2e2ffd9c4a_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/2e6b44829a_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/2e74d0763f_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/2ee1fe556a_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/2f0641c66f_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/2fb2ee5074_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/2ff820b6a0_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/303c6e3dff_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/306cbb5d76_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/307001c4ff_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/308b2d2dfd_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/3140118834_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/314279673c_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/31755e01cc_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/31c7598fa1_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/31d51230fc_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/31e1167b0b_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/31e88d3d88_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/329b686ab3_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/32a826babd_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/3392478cbe_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/34d3a6b50e_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/3589b8428a_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/35eb7852f3_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/360d19f0bb_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/36643da0b8_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/369932d268_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/36b6ab22c5_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/3722888c63_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/38aed435ce_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/38c72086d4_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/38cdf43902_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/393804a97d_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/394be2fd15_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/39925e6e62_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/399ed754de_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/3a4b4e91da_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/3a73cd04e6_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/3bb53b513c_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/3bc7f591b9_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/3caffd5ed3_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/3d1ba0ee2c_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/3d1dded466_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/3daee81512_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/3dc4ed94ed_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/3dcf17aeb8_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/3e34a2162b_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/3e4c25f78d_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/3e5600ae53_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/3ecfd6f924_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/3f81203dfd_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/3fbbd96344_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/3feaabf00c_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/4103d1a792_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/4160388a08_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/41dfe0b354_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/41f31f6910_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/423685fa78_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/424a92150a_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/4260cad96e_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/433ca57025_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/445980a7ad_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/4508c5c9d0_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/45fdbad4e1_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/461f4fd8a5_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/467584298f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/46cd3c85d4_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/4704f42c9e_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/4761283c2f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/4761ceac4d_cucumber_leaves_unknown": {
+      "train": 1
+    },
+    "cucumber/47af5d65c2_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/47d42d36b9_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/4801f97d35_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/48a1e41437_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/48adc8b9d8_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/4937168019_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/499eb03c6c_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/4a2f3fa0d4_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/4ca6d4409e_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/4cfa4d6953_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/4dfec6326b_cucumber_leaves_healthy": {
+      "val": 1
+    },
+    "cucumber/4eadbad80e_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/4f2fbf8e3f_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/4fd29d8a73_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/50aba47f7f_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/51b94b04a9_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/51cb114cd1_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/51e416537e_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/52403937b3_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/52bc0f99d0_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/52e356e6c8_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/5330b3f802_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/538c5b23e5_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/5397e05bb0_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/54c6ad6cab_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/54ed42fc53_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/54ff3871a8_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/5678f581f5_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/577f69f6a4_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/5939f42821_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/59939db1ad_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/59b803bf9e_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/59bc64c192_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/5b12fddad8_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/5b33f77264_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/5b35af58a9_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/5b79d849f3_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/5be03e2379_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/5c15f51545_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/5ca6378284_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/5cf04e854a_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/5d524479a2_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/5e8c2c2dc2_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/5eea9e9042_cucumber_leaves_healthy": {
+      "test": 1
+    },
+    "cucumber/5ff317a7a3_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/60b88b1753_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/6121372bfd_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/618725e757_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/61a57b9b5e_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/620ffba192_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/6213fd9a6e_cucumber_leaves_diseased": {
+      "test": 1
+    },
+    "cucumber/629cdcf6e7_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/635f9384ee_cucumber_leaves_diseased": {
+      "val": 1
+    },
+    "cucumber/63c930c866_cucumber_leaves_healthy": {
+      "test": 1
+    },
+    "cucumber/63ea80f411_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/6461a0c74b_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/648978992d_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/64978e2dcd_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/66f167d28e_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/67fc44ee80_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/68fabb7233_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/690ce0e0d9_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/69d92fc24b_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/6a02bdcb1d_cucumber_leaves_diseased": {
+      "test": 1
+    },
+    "cucumber/6a9b430e53_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/6ab717d3b8_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/6abbc4419b_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/6ad8311f04_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/6c804450ac_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/6c8bb523a3_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/6c8f83e894_cucumber_leaves_diseased": {
+      "val": 1
+    },
+    "cucumber/6cff235487_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/6d1e2933fb_cucumber_leaves_healthy": {
+      "val": 1
+    },
+    "cucumber/6d3a25213f_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/6d53bc5f08_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/6d8932c997_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/6e44cb06e1_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/6e592348c5_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/6e6bea94bb_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/6e6eb78dae_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/6e87ec7358_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/6efbe007fb_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/70608bca4a_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/7073f4469a_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/715f6f2904_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/71ebef26c2_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/725bb9b847_cucumber_leaves_unknown": {
+      "train": 1
+    },
+    "cucumber/730e2a4d3b_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/7313bb1ec4_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/73e6b8f83f_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/73f032d977_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/743290ed71_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/75163a76d2_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/75629de02a_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/75670db6b7_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/7586f7c4b1_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/75918a654f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/75a730506f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/760ad9865b_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/76956cb152_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/76d1364795_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/76de06f2a0_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/773a048cfa_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/77410fa5dd_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/7744fb3a86_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/77adae7037_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/77bd3b9730_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/77c05f1c03_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/77c29b6c14_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/77db4eeee4_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/78060af74e_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/782105bb1a_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/789683d6be_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/78a6f3f9ad_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/78bfec60e4_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/78f7246ec3_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/79154ba57e_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/7992852107_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/7abbd44b8b_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/7bc9e6fa85_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/7bcd4dac9e_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/7bd5a1e36e_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/7d2cd32095_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/7d59ef34b6_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/7da0c65d0e_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/7de978bb9f_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/7e657db0ee_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/7f366e374e_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/7f76ea589f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/7fe7e2f9b2_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/7ff743c019_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/800288f11b_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/802fd2cb24_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/81b3a9c2fe_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/82346af8f2_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/824e74b908_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/8274382cfd_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/82e887d2b5_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/8364ebfaa6_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/838686832a_cucumber_leaves_diseased": {
+      "val": 1
+    },
+    "cucumber/8452ac06f9_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/84ae2956d0_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/84b6966f54_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/84bc1e0416_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/854151ba2b_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/854be7324e_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/8584b2e30c_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/86167c6d4b_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/8638f1dfef_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/8643f98729_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/866222e358_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/8725ad25f2_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/877b7775d6_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/87e8b359bf_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/885b332fe8_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/887493845c_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/89d50e41f2_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/8a11dc69cc_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/8b3af04c90_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/8b4295f888_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/8bcf944be6_cucumber_leaves_healthy": {
+      "test": 1
+    },
+    "cucumber/8c04ed9898_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/8c2b6f6a54_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/8c432c5000_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/8cebe2d3de_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/8daccf8f59_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/8dea8c6808_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/8e60d7ff75_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/8eeb3f5b08_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/8ef7c47b41_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/8ffd413d6c_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/9040c804a4_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/904183ad38_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/9077d4ee2e_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/90b12839a1_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/90c1d8ee58_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/9170cd5442_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/91bb055afa_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/91bc10eb4e_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/91fb00bb7a_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/92152b73d5_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/9223228c94_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/92cc4475bd_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/938a6ce219_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/938ead5906_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/93e0c656af_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/93eef1fd61_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/93f376b39b_cucumber_leaves_diseased": {
+      "test": 1
+    },
+    "cucumber/9402bc4540_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/9411d7529f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/94c3976d04_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/94d9eb5499_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/94f266da8e_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/94f5df7c8e_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/951848d7aa_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/953dab6d97_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/957ee26063_cucumber_leaves_unknown": {
+      "train": 1
+    },
+    "cucumber/958344300d_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/960b579609_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/96ac908466_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/96bc4defe2_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/986abfdab4_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/98718ac6f9_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/987dff177a_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/98ef46d2f0_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/98ef56afbc_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/9942447867_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/9aec4187c0_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/9b35f0109c_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/9bce5d7206_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/9bfb33e1f1_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/9bfc43f50b_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/9c208b3eca_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/9c383ce2f8_cucumber_leaves_diseased": {
+      "val": 1
+    },
+    "cucumber/9c41a6bdd8_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/9c4fc94715_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/9c5bef66ff_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/9d19fcc853_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/9d62c6792c_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/9d7834084f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/9da65c9092_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/9da742b790_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/9dd8282455_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/9ebed41bb8_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/9ece025f1f_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/9f28016417_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/9f442b473e_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/9f4e2c1df5_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/9f602d7a2b_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/9faacc5af2_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/a181c61ebc_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/a29e6eebea_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/a2a14a1e66_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/a3fb0620f9_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/a450972663_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/a486f5357f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/a4f2ffd582_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/a5b0d614d8_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/a69f9749fc_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/a781d03013_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/a7d1623874_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/a7f40e9e96_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/a8ae7a7f18_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/a937c10e66_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/a947051a03_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/a9dafa9629_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/a9f64d1f9c_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/aa4cfd51c6_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/aa8be94f20_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/aac546ccc8_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/ab8b8cad51_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/aba8725308_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/abc727ce25_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/abc9c79362_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/ac46f4f438_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/ac4eeb1fdc_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/acc65335b8_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/ad5b2c4415_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/ad879f268a_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/adc6fc359f_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/ae11b87357_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/ae8a310f27_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/af05e9cfa5_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/afeade2d0e_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/affc2fb9f8_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/b015fd0b41_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/b050e72f18_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/b0cc3fe1de_cucumber_leaves_healthy": {
+      "val": 1
+    },
+    "cucumber/b0db6d0fae_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/b15583dc28_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/b1b2aa78e4_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/b2b7526f07_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/b2c0cb0281_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/b367cec63c_cucumber_leaves_diseased": {
+      "val": 1
+    },
+    "cucumber/b36a8f3060_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/b37d1462e5_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/b42145e5ca_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/b44e83f5a5_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/b48b34ed11_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/b50ce5ab6f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/b53dc0d800_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/b55e42f295_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/b5ed86886c_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/b5f373f096_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/b6028c6d00_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/b695f46d36_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/b6cb9cb1d0_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/b71708852f_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/b75b2ab568_cucumber_leaves_diseased": {
+      "test": 1
+    },
+    "cucumber/b78a537c1a_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/b7b42ab0de_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/b8fa48a41f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/b90d46ab3f_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/ba59d45ccf_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/ba726fe1f9_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/bbaf0daa2d_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/bbca560cbf_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/bbd64ec2ed_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/bcc9147e11_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/bd87163d8f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/be273ee908_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/bf6484731e_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/c081ee29d1_cucumber_leaves_unknown": {
+      "train": 1
+    },
+    "cucumber/c2352a5281_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/c2e897cebb_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/c4411fe53b_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/c50d816820_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/c549ec555a_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/c5d57a0130_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/c62901d1b6_cucumber_leaves_healthy": {
+      "test": 1
+    },
+    "cucumber/c667d54011_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/c69f5408b9_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/c84be45b63_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/c8813efc78_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/c8f72a3ff6_cucumber_leaves_diseased": {
+      "val": 1
+    },
+    "cucumber/c941dc525b_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/c9484a0721_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/c9549410e3_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/c9a437060a_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/c9c82dc6cb_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/c9ced16947_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/ca987276ca_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/caac76a4c3_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/cb1acc5896_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/cb241d967f_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/cb2db85f66_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/cb96862199_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/cbd21be934_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/cbdd44cea5_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/cc04da7967_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/cce5681fdb_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/cdce201dab_cucumber_leaves_diseased": {
+      "val": 1
+    },
+    "cucumber/ce3d209678_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/ce4c003e26_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/ce8b56c8ae_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/cf31ebd3ab_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/cf5987013f_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/cf7fb7009d_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/d01b40d5fa_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/d082292239_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/d09a2e49d8_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/d14aaa3270_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/d24514530e_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/d2b663d01b_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/d2c6032b1a_cucumber_leaves_diseased": {
+      "test": 1
+    },
+    "cucumber/d2dc4bce77_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/d329555ec7_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/d3bbc810fa_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/d400fe9601_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/d49c8d7fd2_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/d4c59085f5_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/d529b6624f_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/d53d333d4e_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/d543dd4634_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/d5b6a53ab2_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/d6408095eb_cucumber_leaves_healthy": {
+      "val": 1
+    },
+    "cucumber/d64468484d_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/d77418b60d_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/d7a9876501_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/d7abfc7947_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/d7e0be5790_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/d7e800c0a1_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/d85697f19e_cucumber_leaves_diseased": {
+      "val": 1
+    },
+    "cucumber/d85e193410_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/d950ee9b91_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/d993d2971f_cucumber_leaves_healthy": {
+      "val": 1
+    },
+    "cucumber/da1574b1e8_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/da96ff3ce2_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/db369e0963_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/db5229394f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/db53985b0a_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/db6dd069fe_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/dc0ab4e061_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/dcb1b8ed40_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/dd34d2eea5_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/dd8db57d74_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/ddd03b289f_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/de055508fc_cucumber_leaves_unknown": {
+      "train": 1
+    },
+    "cucumber/de5c9481b5_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/deeb676c6b_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/df19aea823_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/df8011a4e7_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/e027df02e0_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/e0cfcdc83e_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/e0f855091e_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/e179eb8ad1_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/e1a4f7a915_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/e1c9eb132a_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/e39fa0ed10_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/e3a8d37edd_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/e3bd3aa1c6_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/e49eb96f59_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/e4f7525f64_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/e52e76a71c_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/e53da110f7_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/e56c3d2599_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/e605fe7a90_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/e61f3f3454_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/e62769d3ab_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/e69094e47c_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/e69af9082c_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/e6b06a867d_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/e78c048893_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/e7f7890e7b_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/e806840e59_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/e807fd0d9c_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/e8c1b081d1_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/e8d2161a49_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/ea385fd3b1_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/eb5d7b3e73_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/eb85b005a5_cucumber_leaves_diseased": {
+      "test": 1
+    },
+    "cucumber/eb8ab58732_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/ebad644f8b_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/ebfc59626b_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/ebfcc3ac78_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/eca190ff6f_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/ecde0aa1b5_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/ee14516230_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/eef7d3d3cf_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/ef573c7196_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/efca37c31b_cucumber_leaves_diseased": {
+      "val": 1
+    },
+    "cucumber/f1fffb00c6_cucumber_leaves_diseased": {
+      "val": 1
+    },
+    "cucumber/f21d8760a4_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/f2acd5dfb1_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/f2df430c41_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/f3880b836b_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/f3bbe06529_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/f3bfd1cd19_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/f47974d8b2_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/f4a6649ce1_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/f549f18033_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/f58d6be82f_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/f5f8db0908_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/f7146725c6_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/f8b0ab169b_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/f8d5be9604_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/f975ebd460_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/f9a7972c98_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/fa0ed4b822_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/fa2f95850d_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/fa30424648_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/fa558eb27d_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/fabafa2403_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/fb2edf9561_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/fb6c053543_cucumber_stem_diseased": {
+      "test": 1
+    },
+    "cucumber/fbbe4b3368_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/fbf38664f7_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/fc36c1882a_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/fc426851b3_cucumber_fruit_diseased": {
+      "test": 1
+    },
+    "cucumber/fc63d144d2_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/fc71127194_cucumber_stem_diseased": {
+      "val": 1
+    },
+    "cucumber/fcce8a9445_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/fd710edbd5_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/fd72176f03_cucumber_fruit_diseased": {
+      "val": 1
+    },
+    "cucumber/fd90086673_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/fda8d3914a_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/fdb8c767f5_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/fea30bcbb4_cucumber_stem_diseased": {
+      "train": 1
+    },
+    "cucumber/feb2eb4095_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "cucumber/ff54969cb8_cucumber_leaves_diseased": {
+      "train": 1
+    },
+    "cucumber/ff5c7ad5c4_cucumber_leaves_healthy": {
+      "train": 1
+    },
+    "cucumber/fff917dcbe_cucumber_fruit_diseased": {
+      "train": 1
+    },
+    "zucchini/00d27b120c_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/018a4752d1_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/02d7a1e2e0_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/02da704946_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/035634ff3a_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/035b1f29c0_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/0363882ddc_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/04741b83df_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/054fa64009_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/05695267cc_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/05f7440bec_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/079c83610e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/07bb01d530_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/07d062f177_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/085dbdea5e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/091c456812_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/09edf4dfa2_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/0b75c7e4a5_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/0be2678848_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/0c21b0e91e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/0c5147ceb9_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/0e14847d67_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/0e965ea100_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/0eb01c77f8_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/0ee9bbb230_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/0ef345750a_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/109ff85bfd_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/124634a98b_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/124e6a9a6b_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/13162b9368_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/144494edf5_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/147fa8a132_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/155873b61d_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/16bc8e9b73_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/16d9800de0_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/1906851051_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/1a8b5cb09b_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/1b3ec11ff5_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/1b5b0ccde6_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/1c1de7cf57_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/1d64949544_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/1ec41da09d_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/208011e4d6_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/21323113bc_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/22c4aa2999_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/23065f992a_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/24a41f550e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/2551233218_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/2626be8f68_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/27088d1f71_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/2729161e5e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/28f0ee85a2_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/2946bec683_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/2c06f4df6f_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/2c1bb6b035_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/2cf96f8c4d_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/2d1809d2f1_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/2e13a9139f_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/2f052cc86c_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/2f5b869ee6_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/2ff38efcd9_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/2ffa8f361e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/3038a7ac65_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/309b79b2d2_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/31f99ab9ce_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/33634d83e2_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/33f2743d14_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/3412e89fcf_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/34625e95a4_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/3500048504_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/3587cff897_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/35892ed978_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/367d8d1cad_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/36830dfd55_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/3784fa31fc_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/3789bfd1cc_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/37f4cea797_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/38329d5267_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/38cfb8b670_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/39019794bc_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/3aae5926ed_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/3b3e0de551_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/3bf0ebec7c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/3d58c92200_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/3d6e7f901d_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/3dac1be8f1_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/3deb0dde8b_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/3e1200b28c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/42332fa64a_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/42633c40e5_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/43a22d4049_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/43bdc888ef_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/44b9b4e694_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/450be3cb07_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/47cb0cf5f0_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/4877e13823_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/48b30dc276_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/48cd0c5ba0_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/49eb7856de_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/4bda72940b_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/4c5fea5d61_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/4d05f7b121_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/4d1cac0ccd_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/4dcd93fdfb_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/4ed83b44ed_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/4f290f9726_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/5020b90124_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/50ad7effa3_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/50fba3ac7a_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/51374bc1e7_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/51cdf13020_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/52da2eac2a_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/52f6c9cb5b_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/5340ca4322_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/550e76f7ca_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/554b0838d7_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/561989b8e8_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/56d7032661_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/5882ca23df_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/5b1be2f168_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/5cb217445c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/5d0ff777d0_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/5ddd520a84_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/5e05ccb8da_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/5eb8f55ad5_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/5fb9fef514_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/61ab64e83b_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/6209239275_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/6211ffb60c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/625dc57199_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/62a9629147_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/6317262c7c_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/63334dd7fa_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/6356af67b7_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/63b46365bc_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/63cd56305c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/64f46d9c8e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/655f4fba6e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/6631cb27be_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/67016649d0_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/67325970ab_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/67a6e04ba1_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/67fe362212_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/68bd45d715_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/693bf375fa_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/6961161517_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/6d7c4aa898_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/6df6cb0adf_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/7095e6bd90_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/718d5021a1_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/71a73e4436_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/721b125031_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/727673f1ee_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/72f3963599_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/73d231ff93_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/7416564fcc_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/741713e2b7_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/757b2b4bd8_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/75904cca43_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/75c7ebcfcc_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/76a070f7c1_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/7819c6a8f8_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/78c3718aad_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/7994a1f03e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/79a9bab07f_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/79b3365939_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/7a3922b026_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/7ab4501a17_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/7af9e610ec_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/7b5422dea8_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/7c0492261b_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/7c6054d9b4_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/7cd7ec25fa_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/7e030ef9f5_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/7e4be22338_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/7e83fa9544_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/7f9231f9cb_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/819b32752d_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/82759fd082_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/8396b66b5a_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/83e4a59683_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/84369249e2_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/857929e7d3_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/860ac659e3_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8692e01b30_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8845cdc899_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/892d9b1794_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/89dd732f8e_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/89f861134c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8a03d0d440_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8aee89befc_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8cf372ac43_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8d35e1b1ff_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/8db290f461_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8dc0050b0e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8e019f8540_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/8e0b3f0ab7_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8e533449ed_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8f149568ff_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8f505f806e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8f7e4817e3_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/8ff22789db_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/907c190913_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/90dd12630c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/92ebcaabf2_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/937c053fc5_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/93f6a04285_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/957208b96c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/95a41f78ca_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/9706755466_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/982fe7c745_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/983c833060_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/98eb68afb8_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/9935b1e6e8_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/9b6c130df0_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/9b82e91d59_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/9c767c93f6_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/9d20567742_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/9d6b24a5f4_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/9de31ad871_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/9e12f49e9e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/9e57d8709f_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/9e80c551b3_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/9f086e911d_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a008509da6_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/a0098296b0_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/a07ec8b25d_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/a16dc5034b_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a1ae265b66_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a1f037f558_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a37e83940b_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a3b5802778_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a3cebfb7a8_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a52492d2b4_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a5d7ad84d1_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a6556645aa_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a6e81cf42b_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a710ea4f8a_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a78dd96565_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a7e236c3f2_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a81539a2c6_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/a968620f71_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/aacff60fb3_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/ab890911cb_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/ac9e973d83_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/acad5e9d33_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/ad8c8df435_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/add8b2e50d_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/aec4d82188_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/af39f04151_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b0606f053c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b12a30ba51_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b162333847_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b1c9e259dc_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b26ee58f46_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b2fd571e7d_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/b30dcc583d_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b3991f5c69_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b3c6112f46_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b4501391a5_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b57fd5bb7b_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/b5c3897500_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/b6c75b2024_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b788020234_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b82682ccc7_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/b835fdcdbd_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/bae9239b62_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/bbdb7fe1f1_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/bbfd46cca9_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/bc9eabdb2b_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/bce1a649ba_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/bdafd02661_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/bdbe33b3dd_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/bddb55c44c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c036e4ab94_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c0493b6e88_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c1069bf203_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c13a0a856c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c203283144_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/c3292d962d_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c32d256ecd_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c363742c4f_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c41662cc60_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c45fe0c247_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c4dab4c570_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c4ea457923_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/c6242dfb97_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c746d64c99_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c85ba38264_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c906b1cb9f_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c990a0e513_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/c992a3f8d4_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/c9f69483c7_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/cace748c98_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/cc8beab9a9_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/ccad27dca4_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/cd07e60f7a_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/ce96561651_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/cec13ff1b4_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d0319810c8_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d07894a3fb_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/d18a633096_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d1dd4f1945_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d210bdc0d2_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d2293f3166_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d2d52bb0e7_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d35349dee2_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d35f7ebe2a_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d3d75fab2c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d45a32e15c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d4997452ba_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d56aadc5cf_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d594b0f29f_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/d5e2852c35_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d616d79c6d_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/d647f83d31_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d6690e5644_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d6a8b27f46_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d6aaafdd60_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d74c79d8bf_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/d78e2ed47d_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/d8411d8cda_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/da3de29622_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/da7278875f_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/da90bf7612_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/db2189a95e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/db286d5763_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/dbc8b174f0_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/dc94c7e8fd_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/ddbc023c17_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/ddfe41b75c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/de71e984d4_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/dfa2d77669_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e018b0bb00_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e046f7e574_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e0b214f0ee_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e253e40b05_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e3466cd6d5_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/e349c95b20_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/e37f6c6c7f_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e3a4630997_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e3bf33c21d_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/e4113536e9_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/e41ea7d458_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e44dede2f7_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e466a5973c_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e48af33e38_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e51e3868a0_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e5a036101e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e5ebe02e82_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/e6148a8df3_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e76871e4be_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e80b5f4f43_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e8b3983d2a_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e94af68946_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e96948fc84_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e9a77ef35d_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e9d9e549d6_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/e9f685d569_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/ea9ea91c73_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/eb4bce10d8_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/eb7f864430_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/eb9d5f9bf7_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/eba2b07135_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/ebc0c43123_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/ec04d35eb3_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/edd827296e_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/ede10a1679_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/ee7276bd06_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/ee940cae29_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/eeed053810_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/ef468ab5f1_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/ef6e3e3963_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/efa422acc7_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/f172213502_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/f19ee526b4_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/f1d5ee0725_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/f236b2fa33_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/f32c597f83_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/f4f1e4b115_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/f52f3cceaa_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/f5847d8f27_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/f62dacb7a6_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/f6593b833a_zucchini_leaves_diseased": {
+      "test": 1
+    },
+    "zucchini/f6725154d1_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/f6fadb1df9_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/f8d07f8999_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/fc35979e7f_zucchini_leaves_diseased": {
+      "val": 1
+    },
+    "zucchini/fc757d30dd_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/fd88d7dae1_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/ff1b759961_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/ff38ab2f44_zucchini_leaves_diseased": {
+      "train": 1
+    },
+    "zucchini/ffd5096454_zucchini_leaves_diseased": {
+      "test": 1
+    }
+  },
+  "confusion": {
+    "cucumber": {
+      "cucumber": 126,
+      "zucchini": 2,
+      "other": 2
+    },
+    "zucchini": {
+      "zucchini": 72,
+      "other": 5,
+      "cucumber": 1
+    }
+  },
+  "other_detail": {
+    "cucumber": {
+      "cabbage": 1,
+      "soybean": 1
+    },
+    "zucchini": {
+      "grape": 3,
+      "lettuce": 1,
+      "soybean": 1
+    }
+  },
+  "n_inferred": 208,
+  "n_errors": 10,
+  "near_dup_pairs": 181,
+  "near_dup_types": {
+    "within_split": 85,
+    "CROSS_LABEL": 63,
+    "CROSS_SPLIT": 33
+  }
+}

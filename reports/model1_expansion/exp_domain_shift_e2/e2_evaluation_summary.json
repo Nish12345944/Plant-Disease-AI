@@ -1,0 +1,56 @@
+{
+  "experiment": "model1_domain_shift_e2",
+  "run_id": "run2",
+  "description": "Controlled top-backbone fine-tuning (features[6:] @ 2e-5, classifier @ 3e-4)",
+  "checkpoint": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\models\\model1_domain_shift_e2\\best_model.pth",
+  "recovery_checkpoint": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\models\\model1_domain_shift_e2\\recovery_checkpoint.pth",
+  "train_duration_sec": 5359.13,
+  "eval_duration_sec": 146.3,
+  "overall_canonical_accuracy": {
+    "baseline_e0": 0.9062,
+    "experiment_e2": 0.9023,
+    "delta": -0.0039
+  },
+  "original_22_accuracy": {
+    "baseline_e0": 0.8911,
+    "experiment_e2": 0.8918,
+    "delta": 0.0007
+  },
+  "remaining_crops_accuracy": {
+    "baseline_e0": 0.9497,
+    "experiment_e2": 0.9428,
+    "delta": -0.007
+  },
+  "tomato": {
+    "support": 354,
+    "baseline_recall": 0.7797,
+    "e2_recall": 0.7966,
+    "baseline_to_potato": 21,
+    "e2_to_potato": 13,
+    "confusions": {
+      "basil": 18,
+      "potato": 13,
+      "apple": 7,
+      "bellpepper": 6,
+      "grape": 5
+    }
+  },
+  "cucumber": {
+    "support": 81,
+    "baseline_recall": 0.4568,
+    "e2_recall": 0.4321,
+    "baseline_to_zucchini": 29,
+    "e2_to_zucchini": 23,
+    "powdery_mildew_n": 22,
+    "baseline_pm_to_zucchini": 20,
+    "e2_pm_to_zucchini": 12,
+    "confusions": {
+      "zucchini": 23,
+      "basil": 9,
+      "grape": 4,
+      "tobacco": 2,
+      "soybean": 2
+    }
+  },
+  "criteria_met": false
+}

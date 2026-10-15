@@ -1,0 +1,13 @@
+{
+  "model_architecture": "efficientnet_b2",
+  "num_classes": 46,
+  "image_size": 224,
+  "epochs": 3,
+  "learning_rate": 0.001,
+  "weight_decay": 0.0001,
+  "seed": 42,
+  "imbalance_strategy": "Smoothed Inverse Frequency Loss Weights [0.5, 2.0] + Standard Shuffle",
+  "best_val_macro_f1": 0.8309,
+  "train_duration_sec": 2.4,
+  "checkpoint": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\models\\model1_domain_shift_e1\\best_model.pth"
+}

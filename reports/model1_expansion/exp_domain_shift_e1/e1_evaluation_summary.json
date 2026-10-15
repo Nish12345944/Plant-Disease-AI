@@ -1,0 +1,54 @@
+{
+  "experiment": "model1_domain_shift_e1",
+  "description": "Isolated classifier-head-only fine-tuning on existing training split with balanced loss weights",
+  "checkpoint": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\models\\model1_domain_shift_e1\\best_model.pth",
+  "train_duration_sec": 2.4,
+  "eval_duration_sec": 118.97,
+  "overall_accuracy": {
+    "baseline_e0": 0.7131,
+    "experiment_e1": 0.4635,
+    "delta": -0.2496
+  },
+  "original_22_accuracy": {
+    "baseline_e0": 0.2729,
+    "experiment_e1": 0.6577,
+    "delta": 0.3848
+  },
+  "other_44_crops_accuracy": {
+    "baseline_e0": 0.7483,
+    "experiment_e1": 0.4793,
+    "delta": -0.269
+  },
+  "tomato": {
+    "support": 98,
+    "baseline_recall": 0.2143,
+    "e1_recall": 0.2857,
+    "baseline_to_potato": 21,
+    "e1_to_potato": 12,
+    "confusions": {
+      "basil": 22,
+      "potato": 12,
+      "apple": 9,
+      "bellpepper": 4,
+      "eggplant": 3
+    }
+  },
+  "cucumber": {
+    "support": 57,
+    "baseline_recall": 0.2456,
+    "e1_recall": 0.1754,
+    "baseline_to_zucchini": 29,
+    "e1_to_zucchini": 26,
+    "powdery_mildew_n": 22,
+    "baseline_pm_to_zucchini": 20,
+    "e1_pm_to_zucchini": 13,
+    "confusions": {
+      "zucchini": 26,
+      "basil": 9,
+      "grape": 3,
+      "raspberry": 2,
+      "soybean": 2
+    }
+  },
+  "criteria_met": false
+}

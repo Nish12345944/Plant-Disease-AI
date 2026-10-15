@@ -1,0 +1,18 @@
+folder_name,total_files,valid_images,corrupt_images,extensions,min_width,max_width,min_height,max_height,min_aspect_ratio,max_aspect_ratio,unique_sha256_count,internal_duplicate_count
+Blueberry Fruit healthy,324,324,0,.jpg:323;.webp:1,162,3200,146,3333,0.5,2.873,250,74
+banana cigar end rot,204,204,0,.jpg:204,168,3024,147,4032,0.5,3.195,204,0
+broccoli\broccoli alternaria leaf spot - Google Search-20261012T045437Z-1-001,272,272,0,.jpg:272,183,5472,128,4032,0.561,3.425,272,0
+broccoli\broccoli downy mildew - Google Search-20261012T045435Z-1-001,232,232,0,.jpg:232,159,1250,148,678,0.5,3.425,232,0
+broccoli\broccoli healthy - Google Search-20261012T045434Z-1-001,158,158,0,.jpg:158,177,768,168,1024,0.448,2.674,158,0
+broccoli\broccoli ring spot - Google Search-20261012T045432Z-1-001,205,205,0,.jpg:205,165,1250,162,739,0.541,3.425,205,0
+celery anthracnose,98,98,0,.jpg:98,234,1250,168,737,0.561,3.514,98,0
+eggplant\eggplant phomopsis blight,35,35,0,.jpg:35,168,800,171,575,0.56,1.778,35,0
+eggplant\eggplant phytophthora spot,234,234,0,.jpg:234,179,1250,127,640,0.5,3.515,234,0
+eggplant\eggplant_phomopsis,88,88,0,.jpg:88,168,3072,164,5312,0.561,2.429,79,9
+lettuce\lettuce downy mildew kajal-20261012T045338Z-1-001,149,149,0,.jpg:149,190,2400,168,3103,0.55,3.425,149,0
+lettuce\lettuce mosaic virus kajal-20261012T045253Z-1-001,113,113,0,.jpg:113,183,6000,128,4000,0.562,3.417,113,0
+tomato\Late blight of tomato fruit kajal-20261012T045339Z-1-001,310,310,0,.jpg:310,168,1250,121,800,0.5,3.514,310,0
+tomato\early blight of tomato fruit kajal-20261012T045346Z-1-001,358,358,0,.jpg:358,46,3937,46,4032,0.627,3.425,193,165
+tomato\tomato fruit Anthracnose  kajal-20261012T045234Z-1-001,336,336,0,.jpg:333;.png:2;.webp:1,193,3484,119,4032,0.5,3.513,336,0
+tomato\tomato fruit fusarium wilt kajal-20261010T122606Z-1-001,231,231,0,.jpg:231,190,800,168,772,0.5,3.46,231,0
+tomato\tomato yellow curl virus - Google Search-20261012T045231Z-1-001,234,234,0,.jpg:234,175,3264,152,4096,0.5,3.324,234,0

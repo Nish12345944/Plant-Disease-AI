@@ -207,6 +207,7 @@ class SourceRecord:
     publication_year: Optional[int] = None
     source_tier: SourceTier = SourceTier.TIER_1
     notes: Optional[str] = None
+    is_general: bool = False
 
     @property
     def id(self) -> str:
@@ -225,6 +226,7 @@ class SourceRecord:
             "publication_year": self.publication_year,
             "source_tier": self.source_tier.value,
             "notes": self.notes,
+            "is_general": self.is_general,
         }
 
 
@@ -324,17 +326,23 @@ class DiseaseRecord:
             p.value if hasattr(p, "value") else str(p) for p in (affected_parts or [])
         ]
 
-        # Extract source IDs helper
+        # Extract source IDs and SourceRecord objects helper
         src_ids: list[str] = []
-        if sources:
-            for s in sources:
-                if hasattr(s, "source_id"):
+        src_records: list[SourceRecord] = []
+        raw_sources = (sources or []) + (primary_sources or [])
+        if raw_sources:
+            for s in raw_sources:
+                if isinstance(s, SourceRecord):
+                    src_records.append(s)
+                    src_ids.append(s.source_id)
+                elif hasattr(s, "source_id"):
                     src_ids.append(s.source_id)
                 elif hasattr(s, "name"):
                     src_ids.append(s.name)
                 else:
                     src_ids.append(str(s))
-        self.sources = src_ids
+        self.sources = list(dict.fromkeys(src_ids))
+        self.source_records = src_records
 
         # Symptoms
         norm_symptoms: list[SourcedFact] = []

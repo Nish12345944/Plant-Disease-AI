@@ -37,9 +37,12 @@ from app.backend.services import (
 from knowledge.assistant import AgriculturalAssistant
 from knowledge.database import get_knowledge_base
 from video.frame_extractor import (
+    EmptyVideoError,
+    InvalidVideoError,
     MAX_VIDEO_DURATION_SECONDS,
     MAX_VIDEO_SIZE_BYTES,
     VideoDurationExceededError,
+    VideoProcessingError,
     VideoSizeExceededError,
 )
 
@@ -420,8 +423,8 @@ async def inference_video_endpoint(
         t_total = (time.perf_counter() - t0) * 1000
         logger.info(f"[PERF_TIMING] /api/inference/video total={t_total:.1f}ms")
         return res
-    except (VideoDurationExceededError, VideoSizeExceededError) as exc:
-        logger.warning(f"Video limit exceeded: {exc}")
+    except (VideoProcessingError, ValueError) as exc:
+        logger.warning(f"Video validation failed: {exc}")
         raise HTTPException(status_code=400, detail=str(exc))
     except FileNotFoundError as exc:
         logger.warning(f"Video inference unavailable: {exc}")
@@ -630,15 +633,20 @@ async def unified_chat_endpoint(
     if video_file is not None and vid_bytes:
         t_vid0 = time.perf_counter()
         try:
+            effective_target_frames = int(target_frames.default if hasattr(target_frames, "default") else (target_frames or 8))
+        except Exception:
+            effective_target_frames = 8
+
+        try:
             async with _VIDEO_SEMAPHORE:
                 async with _INFERENCE_SEMAPHORE:
                     video_result = await run_in_threadpool(
                         process_video_inference,
                         vid_bytes,
                         original_filename=video_file.filename or "video.mp4",
-                        target_frames=target_frames,
+                        target_frames=effective_target_frames,
                     )
-        except (VideoDurationExceededError, VideoSizeExceededError) as exc:
+        except (VideoProcessingError, ValueError) as exc:
             logger.warning(f"Video validation constraint failed: {exc}")
             raise HTTPException(status_code=400, detail=str(exc))
         except FileNotFoundError as exc:
@@ -793,11 +801,23 @@ async def unified_chat_endpoint(
             "reason_code": image_result.get("crop_guard", {}).get("reason_code"),
             "text": assistant_message,
         }
-    elif video_result and (video_result.get("crop_guard", {}).get("proceed_to_disease_detection") is False or video_result.get("valid_plant_frames", 0) == 0):
-        video_msg = video_result.get("model2", {}).get("message") or video_result.get("status_note") or "No usable plant frames found in video."
+    elif video_result and (
+        ((video_result.get("crop_guard") or {}).get("proceed_to_disease_detection") is False)
+        or video_result.get("valid_plant_frames", 0) == 0
+        or video_result.get("status") in ("rejected", "error")
+    ):
+        video_guard = video_result.get("crop_guard") or {}
+        video_msg = (
+            video_guard.get("user_message")
+            or video_result.get("model2", {}).get("message")
+            or video_result.get("status_note")
+            or video_result.get("message")
+            or "No usable plant frames found in video."
+        )
         assistant_message = video_msg
         knowledge_data = {
-            "status": "video_rejected",
+            "status": video_guard.get("crop_status") or video_result.get("crop_status", "video_rejected"),
+            "reason_code": video_guard.get("reason_code") or video_result.get("reason_code", "non_plant_image"),
             "text": assistant_message,
         }
     else:

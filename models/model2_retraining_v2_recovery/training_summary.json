@@ -1,0 +1,9 @@
+{
+  "model_architecture": "EfficientNet-B2",
+  "num_classes": 144,
+  "completed_epochs": 20,
+  "resumed_from_epoch": 18,
+  "best_val_macro_f1": 0.6470905359335557,
+  "init_checkpoint": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\models\\model2_retraining_v2\\last_model.pth",
+  "total_training_time_minutes": 62.61
+}

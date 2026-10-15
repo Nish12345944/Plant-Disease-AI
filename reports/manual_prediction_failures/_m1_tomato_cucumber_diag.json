@@ -1,0 +1,124 @@
+{
+  "tomato": {
+    "n": 354,
+    "gt_canonical": "tomato",
+    "gt_in_legacy_vocab": true,
+    "expanded_top1_acc": 78.0,
+    "expanded_top5_acc": 90.7,
+    "legacy_top1_acc": 90.1,
+    "legacy_top5_acc": 99.4,
+    "legacy_predictable": 354,
+    "expanded_confusion": {
+      "tomato": 276,
+      "potato": 21,
+      "apple": 8,
+      "eggplant": 6,
+      "soybean": 5,
+      "carrot": 5,
+      "celery": 4,
+      "citrus": 3,
+      "zucchini": 3,
+      "basil": 3,
+      "grape": 2,
+      "corn": 2,
+      "broccoli": 2,
+      "coffee": 2,
+      "bellpepper": 2,
+      "plum": 2,
+      "lettuce": 2,
+      "cabbage": 1,
+      "ginger": 1,
+      "cucumber": 1,
+      "cherry": 1,
+      "french_bean": 1,
+      "orchid": 1
+    },
+    "legacy_confusion": {
+      "tomato": 319,
+      "bellpepper": 12,
+      "zucchini": 8,
+      "french_bean": 6,
+      "lettuce": 5,
+      "broccoli": 3,
+      "blueberry": 1
+    }
+  },
+  "cucumber": {
+    "n": 81,
+    "gt_canonical": "cucumber",
+    "gt_in_legacy_vocab": true,
+    "expanded_top1_acc": 45.7,
+    "expanded_top5_acc": 75.3,
+    "legacy_top1_acc": 49.4,
+    "legacy_top5_acc": 100.0,
+    "legacy_predictable": 81,
+    "expanded_confusion": {
+      "cucumber": 37,
+      "zucchini": 29,
+      "raspberry": 3,
+      "soybean": 3,
+      "potato": 2,
+      "grape": 2,
+      "wheat": 1,
+      "french_bean": 1,
+      "cabbage": 1,
+      "eggplant": 1,
+      "citrus": 1
+    },
+    "legacy_confusion": {
+      "cucumber": 40,
+      "zucchini": 36,
+      "french_bean": 3,
+      "bellpepper": 1,
+      "lettuce": 1
+    }
+  },
+  "zucchini": {
+    "n": 41,
+    "gt_canonical": "zucchini",
+    "gt_in_legacy_vocab": true,
+    "expanded_top1_acc": 100.0,
+    "expanded_top5_acc": 100.0,
+    "legacy_top1_acc": 97.6,
+    "legacy_top5_acc": 100.0,
+    "legacy_predictable": 41,
+    "expanded_confusion": {
+      "zucchini": 41
+    },
+    "legacy_confusion": {
+      "zucchini": 40,
+      "cucumber": 1
+    }
+  },
+  "squash": {
+    "n": 20,
+    "gt_canonical": "zucchini",
+    "gt_in_legacy_vocab": true,
+    "expanded_top1_acc": 90.0,
+    "expanded_top5_acc": 100.0,
+    "legacy_top1_acc": 95.0,
+    "legacy_top5_acc": 100.0,
+    "legacy_predictable": 20,
+    "expanded_confusion": {
+      "zucchini": 18,
+      "grape": 1,
+      "lettuce": 1
+    },
+    "legacy_confusion": {
+      "zucchini": 19,
+      "lettuce": 1
+    }
+  },
+  "_preprocessing_sensitivity": {
+    "tomato": {
+      "baseline_resize": 276,
+      "center_crop": 279,
+      "n": 354
+    },
+    "cucumber": {
+      "baseline_resize": 37,
+      "center_crop": 41,
+      "n": 81
+    }
+  }
+}

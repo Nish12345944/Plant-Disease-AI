@@ -1,0 +1,11 @@
+canonical_class,benchmark,test_support,raw_correct,raw_accuracy,raw_precision,raw_recall,raw_f1,crop_aware_correct,crop_aware_accuracy,crop_aware_f1,eligible_images_found,status
+eggplant__phomopsis_fruit_rot,Supplementary Benchmark (n=24),24,13,0.5417,0.5417,0.5417,0.5417,16,0.6667,0.6667,24,Evaluated on Verified Supplementary Benchmark
+carrot__cavity_spot,Supplementary Benchmark (n=0),0,0,0.0,0.0,0.0,0.0,0,0.0,0.0,0,Data Deficit: No additional external carrot cavity spot images present in data/external/. Historical V4 split exhausted.
+coffee__berry_blotch,Supplementary Benchmark (n=0),0,0,0.0,0.0,0.0,0.0,0,0.0,0.0,0,Data Deficit: No additional external coffee berry blotch images present in data/external/. Historical V4 split exhausted.
+maple__tar_spot,Supplementary Benchmark (n=0),0,0,0.0,0.0,0.0,0.0,0,0.0,0.0,0,Data Deficit: No additional external maple tar spot images present in data/external/. Historical V4 split exhausted.
+zucchini__yellow_mosaic_virus,Supplementary Benchmark (n=0),0,0,0.0,0.0,0.0,0.0,0,0.0,0.0,0,"Data Deficit: data/external/end_to_end_test/zucchini contains 18 images, but all are confirmed powdery mildew, not yellow mosaic virus."
+plum__brown_rot,Supplementary Benchmark (n=0),0,0,0.0,0.0,0.0,0.0,0,0.0,0.0,0,"Data Deficit: data/external/end_to_end_test/ contains 4 peach brown rot images, but 0 plum brown rot images."
+grape__grapevine_leafroll_disease,Supplementary Benchmark (n=0),0,0,0.0,0.0,0.0,0.0,0,0.0,0.0,0,Data Deficit: No additional external grape leafroll disease images present in data/external/.
+bean__halo_blight,Supplementary Benchmark (n=0),0,0,0.0,0.0,0.0,0.0,0,0.0,0.0,0,Data Deficit: data/external/end_to_end_test/bean contains 2 bean rust images; 0 halo blight images present.
+tobacco__mosaic_virus,Supplementary Benchmark (n=0),0,0,0.0,0.0,0.0,0.0,0,0.0,0.0,0,Data Deficit: data/external/model2_new_data/ contains lettuce mosaic virus (113 images); 0 tobacco mosaic virus images present.
+banana__panama_disease,Supplementary Benchmark (n=0),0,0,0.0,0.0,0.0,0.0,0,0.0,0.0,0,Data Deficit: data/external/ contains banana cigar end rot (204) and cordana/bunchy top/black leaf streak; 0 panama disease images present.

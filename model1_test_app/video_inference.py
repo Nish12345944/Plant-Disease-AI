@@ -130,6 +130,11 @@ def extract_adaptive_video_frames(
     if total_frames <= 0:
         raise ValueError(f"Video '{v_path.name}' has 0 decodable frames.")
 
+    try:
+        target_frames = int(target_frames.default if hasattr(target_frames, "default") else (target_frames or TARGET_FRAMES_DEFAULT))
+    except Exception:
+        target_frames = TARGET_FRAMES_DEFAULT
+
     effective_target = min(target_frames, total_frames)
     if total_frames < min_target:
         effective_target = total_frames
@@ -281,6 +286,11 @@ def predict_video(
     Pipeline:
         FULL FRAME -> candidate tight plant ROI extraction -> Model 1 crop inference -> Model 2 disease detection on plant ROI -> Aggregation
     """
+    try:
+        target_frames = int(target_frames.default if hasattr(target_frames, "default") else (target_frames or TARGET_FRAMES_DEFAULT))
+    except Exception:
+        target_frames = TARGET_FRAMES_DEFAULT
+
     effective_blur_threshold = blur_threshold if blur_threshold is not None else DEFAULT_MIN_BLUR_SCORE
 
     extraction = extract_adaptive_video_frames(
@@ -519,6 +529,10 @@ def predict_video(
                 "disease_detections": frame_disease_detections,
             })
             valid_plant_prob_vectors.append(best_probs)
+
+        # Release heavy frame buffers immediately after ROI inference to bound memory
+        f_data["frame_bgr"] = None
+        f_data["frame_image"] = None
 
     # Step 5: Final Aggregated Video Prediction across all valid frames
     if valid_plant_prob_vectors:

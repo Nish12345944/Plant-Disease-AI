@@ -57,12 +57,13 @@ SOURCE_REGISTRY: dict[str, SourceRecord] = {
     ),
     "SRC_NCSTATE_EXT": SourceRecord(
         source_id="SRC_NCSTATE_EXT",
-        title="NC State Extension Cucurbit Downy Mildew and Foliar Pathology Portal",
+        title="NC State Extension Plant Pathology & Agricultural Portal",
         organization="North Carolina State University Extension",
-        url_or_doi="https://content.ces.ncsu.edu/cucurbit-downy-mildew",
+        url_or_doi="https://content.ces.ncsu.edu/",
         publication_year=2024,
         source_tier=SourceTier.TIER_2,
-        notes="Epidemiology, spore trapping, and resistant cultivar selection for cucurbits.",
+        notes="General agronomic, horticultural, and foliar disease management publications.",
+        is_general=True,
     ),
     "SRC_UF_IFAS": SourceRecord(
         source_id="SRC_UF_IFAS",
@@ -312,6 +313,213 @@ SOURCE_CIMMYT = SourceRecord(
 )
 SOURCE_REGISTRY["SRC_CIMMYT"] = SOURCE_CIMMYT
 
+# ---------------------------------------------------------------------------
+# Verified Disease-Specific Extension Factsheets & Diagnostic Guides
+# ---------------------------------------------------------------------------
+SOURCE_NC_STATE_BLUEBERRY_ANTHRACNOSE = SourceRecord(
+    source_id="SRC_NCSTATE_BLUEBERRY_ANTHRACNOSE",
+    title="Anthracnose Fruit Rot of Blueberries",
+    organization="North Carolina State University Extension",
+    url_or_doi="https://content.ces.ncsu.edu/anthracnose-fruit-rot-of-blueberries",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Colletotrichum acutatum/fioriniae latent fruit infection, blossom blighting, and fungicide spray timing in blueberries.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_NCSTATE_BLUEBERRY_ANTHRACNOSE"] = SOURCE_NC_STATE_BLUEBERRY_ANTHRACNOSE
+
+SOURCE_MSU_BLUEBERRY_ANTHRACNOSE = SourceRecord(
+    source_id="SRC_MSU_BLUEBERRY_ANTHRACNOSE",
+    title="Anthracnose Fruit Rot Management in Blueberries",
+    organization="Michigan State University Extension",
+    url_or_doi="https://www.canr.msu.edu/news/anthracnose-fruit-rot-management-in-blueberries",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Bloom and pre-harvest fungicide timing, cultivar susceptibility, and post-harvest cooling for blueberry ripe rot.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_MSU_BLUEBERRY_ANTHRACNOSE"] = SOURCE_MSU_BLUEBERRY_ANTHRACNOSE
+
+SOURCE_UGA_PEPPER_BLOSSOM_END_ROT = SourceRecord(
+    source_id="SRC_UGA_PEPPER_BLOSSOM_END_ROT",
+    title="Blossom-End Rot and Calcium Nutrition of Pepper and Tomato",
+    organization="University of Georgia Cooperative Extension",
+    url_or_doi="https://extension.uga.edu/publications/detail.html?number=C938",
+    publication_year=2023,
+    source_tier=SourceTier.TIER_2,
+    notes="Abiotic calcium deficiency etiology, xylem transport, uniform soil moisture, and cultural management in solanaceous crops.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_UGA_PEPPER_BLOSSOM_END_ROT"] = SOURCE_UGA_PEPPER_BLOSSOM_END_ROT
+
+SOURCE_NC_STATE_TOMATO_EARLY_BLIGHT = SourceRecord(
+    source_id="SRC_NCSTATE_TOMATO_EARLY_BLIGHT",
+    title="Early Blight of Tomato",
+    organization="North Carolina State University Extension",
+    url_or_doi="https://content.ces.ncsu.edu/early-blight-of-tomato",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Alternaria solani concentric ring target spots, lower canopy defoliation, and protectant fungicide rotation.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_NCSTATE_TOMATO_EARLY_BLIGHT"] = SOURCE_NC_STATE_TOMATO_EARLY_BLIGHT
+
+SOURCE_NC_STATE_CUCURBIT_DOWNY_MILDEW = SourceRecord(
+    source_id="SRC_NCSTATE_CUCURBIT_DOWNY_MILDEW",
+    title="Cucurbit Downy Mildew",
+    organization="North Carolina State University Extension",
+    url_or_doi="https://content.ces.ncsu.edu/cucurbit-downy-mildew",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Pseudoperonospora cubensis angular foliar lesions, purplish sporulation, and regional spore forecasting for cucumber.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_NCSTATE_CUCURBIT_DOWNY_MILDEW"] = SOURCE_NC_STATE_CUCURBIT_DOWNY_MILDEW
+
+SOURCE_UC_IPM_CUCURBIT_POWDERY_MILDEW = SourceRecord(
+    source_id="SRC_UC_IPM_CUCURBIT_POWDERY_MILDEW",
+    title="Cucurbits: Powdery Mildew",
+    organization="University of California Statewide Integrated Pest Management Program (UC IPM)",
+    url_or_doi="https://ipm.ucanr.edu/agriculture/cucurbits/powdery-mildew/",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Podosphaera xanthii white talcum-like foliar coating, scouting, and fungicide rotation in cucurbits.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_UC_IPM_CUCURBIT_POWDERY_MILDEW"] = SOURCE_UC_IPM_CUCURBIT_POWDERY_MILDEW
+
+SOURCE_NC_STATE_TOMATO_LATE_BLIGHT = SourceRecord(
+    source_id="SRC_NCSTATE_TOMATO_LATE_BLIGHT",
+    title="Tomato Late Blight",
+    organization="North Carolina State University Extension",
+    url_or_doi="https://content.ces.ncsu.edu/tomato-late-blight",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Phytophthora infestans rapid foliar blighting, white sporangial down, and fungicide management.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_NCSTATE_TOMATO_LATE_BLIGHT"] = SOURCE_NC_STATE_TOMATO_LATE_BLIGHT
+
+SOURCE_NC_STATE_TOMATO_SEPTORIA_LEAF_SPOT = SourceRecord(
+    source_id="SRC_NCSTATE_TOMATO_SEPTORIA_LEAF_SPOT",
+    title="Septoria Leaf Spot of Tomato",
+    organization="North Carolina State University Extension",
+    url_or_doi="https://content.ces.ncsu.edu/septoria-leaf-spot-of-tomato",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Septoria lycopersici circular foliar spots with dark borders and fungal pycnidia.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_NCSTATE_TOMATO_SEPTORIA_LEAF_SPOT"] = SOURCE_NC_STATE_TOMATO_SEPTORIA_LEAF_SPOT
+
+SOURCE_NC_STATE_PEPPER_TOMATO_BACTERIAL_SPOT = SourceRecord(
+    source_id="SRC_NCSTATE_PEPPER_TOMATO_BACTERIAL_SPOT",
+    title="Bacterial Spot of Pepper and Tomato",
+    organization="North Carolina State University Extension",
+    url_or_doi="https://content.ces.ncsu.edu/bacterial-spot-of-pepper-and-tomato",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Xanthomonas bacterial spot foliar lesions, defoliation, and copper-mancozeb management.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_NCSTATE_PEPPER_TOMATO_BACTERIAL_SPOT"] = SOURCE_NC_STATE_PEPPER_TOMATO_BACTERIAL_SPOT
+
+SOURCE_UC_IPM_POTATO_EARLY_BLIGHT = SourceRecord(
+    source_id="SRC_UC_IPM_POTATO_EARLY_BLIGHT",
+    title="Potato: Early Blight",
+    organization="University of California Statewide Integrated Pest Management Program (UC IPM)",
+    url_or_doi="https://ipm.ucanr.edu/agriculture/potato/early-blight/",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Alternaria solani concentric leaf rings, tuber rot, and fungicide protection.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_UC_IPM_POTATO_EARLY_BLIGHT"] = SOURCE_UC_IPM_POTATO_EARLY_BLIGHT
+
+SOURCE_UC_IPM_POTATO_LATE_BLIGHT = SourceRecord(
+    source_id="SRC_UC_IPM_POTATO_LATE_BLIGHT",
+    title="Potato: Late Blight",
+    organization="University of California Statewide Integrated Pest Management Program (UC IPM)",
+    url_or_doi="https://ipm.ucanr.edu/agriculture/potato/late-blight/",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Phytophthora infestans foliar blighting and tuber rot management.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_UC_IPM_POTATO_LATE_BLIGHT"] = SOURCE_UC_IPM_POTATO_LATE_BLIGHT
+
+SOURCE_UC_IPM_APPLE_SCAB = SourceRecord(
+    source_id="SRC_UC_IPM_APPLE_SCAB",
+    title="Apple Scab",
+    organization="University of California Statewide Integrated Pest Management Program (UC IPM)",
+    url_or_doi="https://ipm.ucanr.edu/PMG/PESTNOTES/pn7413.html",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Venturia inaequalis olive velvety spots, Mills infection periods, and orchard sanitation.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_UC_IPM_APPLE_SCAB"] = SOURCE_UC_IPM_APPLE_SCAB
+
+SOURCE_UC_IPM_PEACH_BROWN_ROT = SourceRecord(
+    source_id="SRC_UC_IPM_PEACH_BROWN_ROT",
+    title="Peach: Brown Rot",
+    organization="University of California Statewide Integrated Pest Management Program (UC IPM)",
+    url_or_doi="https://ipm.ucanr.edu/agriculture/peach/brown-rot/",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Monilinia fructicola blossom and twig blight, fruit rot, and mummy removal.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_UC_IPM_PEACH_BROWN_ROT"] = SOURCE_UC_IPM_PEACH_BROWN_ROT
+
+SOURCE_UC_IPM_STRAWBERRY_BOTRYTIS = SourceRecord(
+    source_id="SRC_UC_IPM_STRAWBERRY_BOTRYTIS",
+    title="Strawberry: Botrytis Fruit Rot",
+    organization="University of California Statewide Integrated Pest Management Program (UC IPM)",
+    url_or_doi="https://ipm.ucanr.edu/agriculture/strawberry/botrytis-fruit-rot/",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Botrytis cinerea gray mold, blossom infection, and mulch/irrigation cultural control.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_UC_IPM_STRAWBERRY_BOTRYTIS"] = SOURCE_UC_IPM_STRAWBERRY_BOTRYTIS
+
+SOURCE_UC_IPM_GRAPE_POWDERY_MILDEW = SourceRecord(
+    source_id="SRC_UC_IPM_GRAPE_POWDERY_MILDEW",
+    title="Grape: Powdery Mildew",
+    organization="University of California Statewide Integrated Pest Management Program (UC IPM)",
+    url_or_doi="https://ipm.ucanr.edu/agriculture/grape/powdery-mildew/",
+    publication_year=2024,
+    source_tier=SourceTier.TIER_2,
+    notes="Erysiphe necator powdery mildew risk index, sulfur applications, and canopy airflow.",
+    is_general=False,
+)
+SOURCE_REGISTRY["SRC_UC_IPM_GRAPE_POWDERY_MILDEW"] = SOURCE_UC_IPM_GRAPE_POWDERY_MILDEW
+
+# ---------------------------------------------------------------------------
+# Canonical Disease-Specific Source Association Map
+# ---------------------------------------------------------------------------
+DISEASE_SPECIFIC_SOURCES: dict[str, list[SourceRecord]] = {
+    "blueberry__anthracnose": [SOURCE_NC_STATE_BLUEBERRY_ANTHRACNOSE, SOURCE_MSU_BLUEBERRY_ANTHRACNOSE],
+    "bell_pepper__blossom_end_rot": [SOURCE_UGA_PEPPER_BLOSSOM_END_ROT],
+    "tomato__early_blight": [SOURCE_NC_STATE_TOMATO_EARLY_BLIGHT],
+    "cucumber__downy_mildew": [SOURCE_NC_STATE_CUCURBIT_DOWNY_MILDEW],
+    "cucumber__powdery_mildew": [SOURCE_UC_IPM_CUCURBIT_POWDERY_MILDEW],
+    "squash__powdery_mildew": [SOURCE_UC_IPM_CUCURBIT_POWDERY_MILDEW],
+    "zucchini__powdery_mildew": [SOURCE_UC_IPM_CUCURBIT_POWDERY_MILDEW],
+    "zucchini__downy_mildew": [SOURCE_NC_STATE_CUCURBIT_DOWNY_MILDEW],
+    "tomato__late_blight": [SOURCE_NC_STATE_TOMATO_LATE_BLIGHT],
+    "tomato__septoria_leaf_spot": [SOURCE_NC_STATE_TOMATO_SEPTORIA_LEAF_SPOT],
+    "bell_pepper__bacterial_spot": [SOURCE_NC_STATE_PEPPER_TOMATO_BACTERIAL_SPOT],
+    "tomato__bacterial_leaf_spot": [SOURCE_NC_STATE_PEPPER_TOMATO_BACTERIAL_SPOT],
+    "potato__early_blight": [SOURCE_UC_IPM_POTATO_EARLY_BLIGHT],
+    "potato__late_blight": [SOURCE_UC_IPM_POTATO_LATE_BLIGHT],
+    "apple__scab": [SOURCE_UC_IPM_APPLE_SCAB],
+    "peach__brown_rot": [SOURCE_UC_IPM_PEACH_BROWN_ROT],
+    "strawberry__botrytis_blight": [SOURCE_UC_IPM_STRAWBERRY_BOTRYTIS],
+    "grape__powdery_mildew": [SOURCE_UC_IPM_GRAPE_POWDERY_MILDEW],
+}
+
 
 def get_source(source_id: str) -> SourceRecord:
     """Retrieve a registered source record by its unique identifier."""
@@ -322,11 +530,116 @@ def get_source(source_id: str) -> SourceRecord:
         title="Authoritative Agricultural Extension Record",
         organization="National Agricultural Extension Service",
         source_tier=SourceTier.TIER_2,
+        is_general=True,
     )
 
 
-def format_source_citation(source_ids: list[str]) -> list[dict[str, str]]:
-    """Format source IDs into readable citations for final response grounding."""
+def get_sources_for_disease(
+    disease_slug: Optional[str] = None,
+    crop: Optional[str] = None,
+    disease: Optional[str] = None,
+    d_rec: Optional[Any] = None,
+    fallback_ids: Optional[list[str]] = None,
+) -> list[SourceRecord]:
+    """
+    Retrieve verified disease-specific source records matching both crop and disease.
+    If exact disease-specific article exists, returns ONLY the verified specific articles.
+    """
+    candidates = []
+    if d_rec and hasattr(d_rec, "disease_slug") and d_rec.disease_slug:
+        candidates.append(str(d_rec.disease_slug).strip().lower())
+    if disease_slug:
+        candidates.append(str(disease_slug).strip().lower())
+    if crop and disease:
+        clean_c = str(crop).strip().lower().replace(" ", "_")
+        clean_d = str(disease).strip().lower().replace(" ", "_")
+        candidates.append(f"{clean_c}__{clean_d}")
+        candidates.append(clean_d)
+    if disease:
+        clean_d = str(disease).strip().lower().replace(" ", "_")
+        candidates.append(clean_d)
+
+    # 1. Match against registered disease-specific sources
+    for cand in candidates:
+        if cand in DISEASE_SPECIFIC_SOURCES and DISEASE_SPECIFIC_SOURCES[cand]:
+            return DISEASE_SPECIFIC_SOURCES[cand]
+        # Partial match on disease component
+        if "__" in cand:
+            crop_part, dis_part = cand.split("__", 1)
+            for k, recs in DISEASE_SPECIFIC_SOURCES.items():
+                if k == cand or (k.endswith(f"__{dis_part}") and k.startswith(crop_part)):
+                    return recs
+
+    # 2. Check if d_rec has directly attached source_records that are non-general
+    if d_rec and hasattr(d_rec, "source_records") and d_rec.source_records:
+        specific = [s for s in d_rec.source_records if isinstance(s, SourceRecord) and not s.is_general]
+        if specific:
+            return specific
+
+    # 3. Fallback: if fallback IDs or d_rec.sources are present, return them as general references
+    raw_ids = (fallback_ids or []) + (getattr(d_rec, "sources", []) if d_rec else [])
+    out_records = []
+    seen = set()
+    for sid in raw_ids:
+        if sid not in seen:
+            seen.add(sid)
+            rec = get_source(sid)
+            # Ensure marked as general reference
+            if not rec.is_general:
+                rec = SourceRecord(
+                    source_id=rec.source_id,
+                    title=f"[General Reference] {rec.title}" if not rec.title.startswith("[General Reference]") else rec.title,
+                    organization=rec.organization,
+                    url_or_doi=rec.url_or_doi,
+                    publication_year=rec.publication_year,
+                    source_tier=rec.source_tier,
+                    notes=rec.notes,
+                    is_general=True,
+                )
+            out_records.append(rec)
+    return out_records
+
+
+def format_source_citation(
+    source_ids: list[str],
+    disease_slug: Optional[str] = None,
+    crop: Optional[str] = None,
+    disease: Optional[str] = None,
+    d_rec: Optional[Any] = None,
+) -> list[dict[str, Any]]:
+    """
+    Format source provenance records into readable, actionable citations for final response grounding.
+    Preserves exact canonical article titles and URLs for verified disease diagnoses.
+    """
+    # 1. If disease context is present, prioritize exact disease-specific sources
+    if disease_slug or disease or d_rec:
+        specific_sources = get_sources_for_disease(
+            disease_slug=disease_slug,
+            crop=crop,
+            disease=disease,
+            d_rec=d_rec,
+            fallback_ids=source_ids,
+        )
+        if specific_sources:
+            citations = []
+            seen_urls = set()
+            for s in specific_sources:
+                target_url = s.url_or_doi or ""
+                key = target_url or s.source_id
+                if key not in seen_urls:
+                    seen_urls.add(key)
+                    citations.append({
+                        "source_id": s.source_id,
+                        "title": s.title,
+                        "organization": s.organization,
+                        "tier": s.source_tier.value,
+                        "url": target_url,
+                        "is_general": s.is_general,
+                    })
+            if citations:
+                return citations
+
+    # 2. General / Fallback formatting
     citations = []
     seen = set()
     for sid in source_ids:
@@ -339,5 +652,7 @@ def format_source_citation(source_ids: list[str]) -> list[dict[str, str]]:
                 "organization": s.organization,
                 "tier": s.source_tier.value,
                 "url": s.url_or_doi or "",
+                "is_general": getattr(s, "is_general", True),
             })
     return citations
+

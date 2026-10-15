@@ -16,7 +16,8 @@ import {
   ShieldCheck,
   AlertOctagon,
   Image as ImageIcon,
-  Activity
+  Activity,
+  ExternalLink
 } from 'lucide-react';
 
 export default function MessageItem({ message, onOpenFramesModal, onInspectTelemetry }) {
@@ -416,20 +417,23 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                     );
                   }
                   if (typeof src === 'object') {
-                    const label = src.title
-                      ? `${src.title}${src.organization ? ` (${src.organization})` : ''}`
-                      : (src.name || src.organization || src.source_id || 'Reference Source');
-                    if (src.url) {
+                    const titleText = src.title || src.name || src.organization || src.source_id || 'Reference Source';
+                    const orgText = src.organization && !src.title?.includes(src.organization) ? ` (${src.organization})` : '';
+                    const isGeneral = Boolean(src.is_general);
+                    const label = isGeneral ? `[General] ${titleText}${orgText}` : `${titleText}${orgText}`;
+                    const targetUrl = src.url || src.url_or_doi;
+                    if (targetUrl) {
                       return (
                         <a
                           key={idx}
-                          href={src.url}
+                          href={targetUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="source-citation-badge source-citation-link"
-                          title={`View source: ${label}`}
+                          title={`Open verified article: ${label}`}
                         >
-                          {label}
+                          <span>{label}</span>
+                          <ExternalLink size={10} style={{ opacity: 0.85, flexShrink: 0 }} />
                         </a>
                       );
                     }
