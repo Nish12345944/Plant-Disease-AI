@@ -74,6 +74,7 @@ from video.frame_extractor import (
 )
 from app.backend.image_validator import validate_plant_image
 from app.backend.open_set_crop_guard import evaluate_crop_acceptance, get_supported_crop_classes
+from knowledge.treatment import get_disease_treatment
 
 logger = logging.getLogger(__name__)
 
@@ -454,6 +455,7 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
                 "raw_top10": m2_res["raw_top10"],
                 "annotated_preview_url": preview_b64,
                 "message": f"Verified healthy foliage for {crop_display_label}.",
+                "treatment": get_disease_treatment(crop=canonical_crop_id, status="healthy"),
             }
         elif final_status == "diseased" and final_disease:
             clean_title = format_disease_name_clean(final_disease) or final_disease
@@ -480,6 +482,7 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
                 "raw_top10": m2_res["raw_top10"],
                 "annotated_preview_url": preview_b64,
                 "message": f"Diagnosed {clean_title} on {crop_display_label} ({disease_conf * 100:.1f}% confidence).",
+                "treatment": get_disease_treatment(crop=canonical_crop_id, disease=final_disease, status="diseased"),
             }
         else:
             # Uncertain / Inconclusive condition
@@ -507,6 +510,7 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
                 "raw_top10": m2_res["raw_top10"],
                 "annotated_preview_url": preview_b64,
                 "message": f"Condition uncertain on {crop_display_label}. Crop-disease compatibility or confidence threshold not met.",
+                "treatment": get_disease_treatment(crop=canonical_crop_id, disease=final_disease, status="uncertain"),
             }
     except Exception as exc:
         logger.error(f"Model 2 V4 image inference failed: {exc}", exc_info=True)
@@ -611,6 +615,7 @@ def process_video_inference(
         final_pred = v_res["final_prediction"]
         raw_video_crop = final_pred.get("class_name", "unknown")
         canonical_video_crop = normalize_crop_id(raw_video_crop) or raw_video_crop
+        video_canonical_crop = canonical_video_crop
         crop_display_label = format_class_name(canonical_video_crop)
         crop_conf = final_pred.get("confidence", 0.0)
 
@@ -623,6 +628,7 @@ def process_video_inference(
         if video_crop_guard.crop_status != "accepted":
             raw_video_crop = video_crop_guard.predicted_class
             canonical_video_crop = normalize_crop_id(raw_video_crop) or raw_video_crop
+            video_canonical_crop = canonical_video_crop
             crop_display_label = video_crop_guard.predicted_crop
             crop_conf = video_crop_guard.confidence
 
@@ -804,6 +810,7 @@ def process_video_inference(
                 "detections_count": 0,
                 "detections": [],
                 "message": f"Disease classification skipped: {video_crop_guard.user_message}",
+                "treatment": get_disease_treatment(crop=canonical_video_crop, status="uncertain"),
             }
         elif valid_plant_frames == 0:
             m2_summary = {
@@ -818,6 +825,7 @@ def process_video_inference(
                 "detections_count": 0,
                 "detections": [],
                 "message": "No valid plant foliage frames available for disease analysis.",
+                "treatment": get_disease_treatment(crop=canonical_video_crop, status="uncertain"),
             }
         elif ranked_diseases:
             top_dis = ranked_diseases[0]
@@ -835,6 +843,7 @@ def process_video_inference(
                 "detections_count": len(all_disease_detections),
                 "detections": all_disease_detections,
                 "message": f"Diagnosed {top_dis['label']} on {crop_display_label} ({top_conf * 100:.1f}% confidence across {top_dis['count']}/{valid_plant_frames} supporting frames).",
+                "treatment": get_disease_treatment(crop=canonical_video_crop, disease=top_dis["slug"], status="diseased"),
             }
         elif healthy_frames_count >= max(1, int(valid_plant_frames * 0.40)):
             m2_summary = {
@@ -849,6 +858,7 @@ def process_video_inference(
                 "detections_count": 0,
                 "detections": [],
                 "message": f"Verified healthy foliage for {crop_display_label} across {valid_plant_frames} video frames.",
+                "treatment": get_disease_treatment(crop=canonical_video_crop, status="healthy"),
             }
         else:
             m2_summary = {
@@ -863,6 +873,7 @@ def process_video_inference(
                 "detections_count": 0,
                 "detections": [],
                 "message": f"Condition uncertain across {valid_plant_frames} frames for {crop_display_label}. Crop-disease compatibility or confidence threshold not met.",
+                "treatment": get_disease_treatment(crop=canonical_video_crop, status="uncertain"),
             }
 
         video_duration = v_res["video"].get("duration_seconds", 0.0)

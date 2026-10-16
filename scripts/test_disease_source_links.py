@@ -607,6 +607,287 @@ def test_disease_source_pipeline():
             any((s.get("url") == expected_url and not s.get("is_general")) for s in res.sources)
         )
 
+    # =========================================================================
+    # TEST 20: Batch 1 — Solanaceous Diseases Verification (13 Combinations)
+    # =========================================================================
+    print("\n--- Case 20: Batch 1 — Solanaceous Diseases Verification (13 Combinations) ---")
+
+    batch1_cases = [
+        # Bell Pepper (3)
+        ("bell_pepper", "bell_pepper__frogeye_leaf_spot", "Frogeye Leaf Spot", "https://content.ces.ncsu.edu/cercospora-leaf-spot-frogeye-leaf-spot-on-pepper", ["frogeye_leaf_spot", "cercospora_leaf_spot", "frogeye"]),
+        ("bell_pepper", "bell_pepper__leaf_curl", "Leaf Curl", "https://ipm.ucanr.edu/agriculture/peppers/curly-top/", ["leaf_curl", "curly_top"]),
+        ("bell_pepper", "bell_pepper__powdery_mildew", "Powdery Mildew", "https://ipm.ucanr.edu/agriculture/peppers/powdery-mildew/", ["powdery_mildew"]),
+        # Tomato (5)
+        ("tomato", "tomato__anthracnose", "Anthracnose", "https://ipm.ucanr.edu/agriculture/tomato/anthracnose/", ["anthracnose"]),
+        ("tomato", "tomato__fruit_fusarium", "Fruit Fusarium", "https://ipm.ucanr.edu/agriculture/tomato/fusarium-rot/", ["fruit_fusarium", "fusarium_rot", "fusarium"]),
+        ("tomato", "tomato__leaf_mold", "Leaf Mold", "https://ipm.ucanr.edu/agriculture/tomato/leaf-mold/", ["leaf_mold"]),
+        ("tomato", "tomato__mosaic_virus", "Mosaic Virus", "https://ipm.ucanr.edu/agriculture/tomato/tobacco-mosaic/", ["mosaic_virus", "mosaic"]),
+        ("tomato", "tomato__yellow_leaf_curl_virus", "Yellow Leaf Curl Virus", "https://ipm.ucanr.edu/agriculture/tomato/tomato-yellow-leaf-curl/", ["yellow_leaf_curl_virus", "yellow_leaf_curl", "tylcv"]),
+        # Eggplant (5)
+        ("eggplant", "eggplant__cercospora_leaf_spot", "Cercospora Leaf Spot", "https://pnwhandbooks.org/plantdisease/host-disease/eggplant-solanum-melongena-cercospora-leaf-spot", ["cercospora_leaf_spot", "cercospora"]),
+        ("eggplant", "eggplant__mosaic_virus", "Mosaic Virus", "https://ipm.ucanr.edu/agriculture/eggplant/tobacco-mosaic/", ["mosaic_virus", "mosaic"]),
+        ("eggplant", "eggplant__pest_damage", "Pest Damage", "https://pnwhandbooks.org/insect/vegetable/vegetable-pests/hosts-pests/eggplant-flea-beetle", ["pest_damage", "flea_beetle", "flea_beetles"]),
+        ("eggplant", "eggplant__phytophthora_blight", "Phytophthora Blight", "https://www.vegetables.cornell.edu/pest-management/disease-factsheets/phytophthora-blight/", ["phytophthora_blight", "phytophthora"]),
+        ("eggplant", "eggplant__wilt_disease", "Wilt Disease", "https://pnwhandbooks.org/plantdisease/host-disease/eggplant-solanum-melongena-verticillium-wilt", ["wilt_disease", "verticillium_wilt", "wilt"]),
+    ]
+
+    for idx, (c_name, d_slug, d_display, expected_url, aliases) in enumerate(batch1_cases, 1):
+        # 1. Direct registry lookup
+        srcs = get_sources_for_disease(d_slug, crop=c_name, disease=d_display)
+        assert_check(f"20.{idx}a [{d_slug}] registered with disease-specific sources", len(srcs) >= 1)
+        has_expected = any(s.url_or_doi == expected_url for s in srcs)
+        assert_check(f"20.{idx}b [{d_slug}] contains exact primary URL: {expected_url}", has_expected)
+        assert_check(f"20.{idx}c [{d_slug}] sources are specific (is_general=False)", all(not s.is_general for s in srcs))
+        assert_check(f"20.{idx}d [{d_slug}] URLs are valid and non-generic", all(is_valid_url(s.url_or_doi) and not is_generic_portal_url(s.url_or_doi) for s in srcs))
+
+        # 2. Alias testing
+        for al in aliases:
+            al_srcs = get_sources_for_disease(crop=c_name, disease=al)
+            assert_check(f"20.{idx}e [{d_slug}] alias '{al}' resolves to specific source", any(s.url_or_doi == expected_url for s in al_srcs))
+
+        # 3. Runtime Assistant resolution
+        vis = {
+            "crop": c_name,
+            "crop_confidence": 0.99,
+            "disease": d_slug,
+            "disease_name": d_display,
+            "disease_confidence": 0.99,
+            "status": "diseased",
+        }
+        res = assistant.answer_query(query=f"How do I manage {d_display} on {c_name}?", visual_result=vis)
+        assert_check(
+            f"20.{idx}f [{d_slug}] runtime assistant returns expected citation URL",
+            any(s.get("url") == expected_url for s in res.sources),
+            f"Got: {[s.get('url') for s in res.sources]}"
+        )
+        assert_check(
+            f"20.{idx}g [{d_slug}] runtime assistant marks source as specific",
+            any(s.get("url") == expected_url and not s.get("is_general") for s in res.sources)
+        )
+
+    # Specific Bell Pepper -> Frogeye Leaf Spot check requested by user
+    print("\n--- Explicit User Check: Bell Pepper -> Frogeye Leaf Spot ---")
+    bp_frogeye = get_sources_for_disease("bell_pepper__frogeye_leaf_spot", crop="bell_pepper", disease="Frogeye Leaf Spot")
+    ncsu_frogeye = next((s for s in bp_frogeye if "cercospora-leaf-spot-frogeye-leaf-spot-on-pepper" in (s.url_or_doi or "")), None)
+    assert_check("20.14a NCSU Frogeye Leaf Spot on Pepper source present", ncsu_frogeye is not None)
+    if ncsu_frogeye:
+        assert_check("20.14b NCSU Frogeye title mentions pepper", "pepper" in ncsu_frogeye.title.lower())
+        assert_check("20.14c NCSU Frogeye URL is exact", ncsu_frogeye.url_or_doi == "https://content.ces.ncsu.edu/cercospora-leaf-spot-frogeye-leaf-spot-on-pepper")
+    uf_frogeye = next((s for s in bp_frogeye if "VH054" in (s.url_or_doi or "")), None)
+    assert_check("20.14d UF/IFAS Pepper Diseases source present", uf_frogeye is not None)
+
+    # =========================================================================
+    # TEST 21: Batch 2 — Cucurbits Diseases Verification (8 Combinations)
+    # =========================================================================
+    print("\n--- Case 21: Batch 2 — Cucurbits Diseases Verification (8 Combinations) ---")
+
+    batch2_cases = [
+        # Cucumber (6)
+        (
+            "cucumber",
+            "cucumber__angular_leaf_spot",
+            "Angular Leaf Spot",
+            "https://ipm.ucanr.edu/agriculture/cucurbits/angular-leaf-spot/",
+            ["angular_leaf_spot", "angular_spot"],
+            ["Pseudomonas syringae", "angular"],
+        ),
+        (
+            "cucumber",
+            "cucumber__anthracnose",
+            "Anthracnose",
+            "https://content.ces.ncsu.edu/anthracnose-of-cucurbits",
+            ["anthracnose"],
+            ["Colletotrichum", "anthracnose"],
+        ),
+        (
+            "cucumber",
+            "cucumber__bacterial_wilt",
+            "Bacterial Wilt",
+            "https://hort.extension.wisc.edu/articles/bacterial-wilt/",
+            ["bacterial_wilt"],
+            ["Erwinia", "bacterial wilt"],
+        ),
+        (
+            "cucumber",
+            "cucumber__belly_rot",
+            "Belly Rot",
+            "https://veggiescout.mgcafe.uky.edu/belly-rot-cucurbit-crops",
+            ["belly_rot", "rhizoctonia_fruit_rot"],
+            ["Rhizoctonia", "belly rot"],
+        ),
+        (
+            "cucumber",
+            "cucumber__gummy_stem_blight",
+            "Gummy Stem Blight",
+            "https://edis.ifas.ufl.edu/publication/PP280",
+            ["gummy_stem_blight"],
+            ["gummy stem blight", "black rot"],
+        ),
+        (
+            "cucumber",
+            "cucumber__pythium_fruit_rot",
+            "Pythium Fruit Rot",
+            "https://extension.msstate.edu/publications/cottony-leak-cucurbits",
+            ["pythium_fruit_rot", "cottony_leak"],
+            ["Pythium", "cottony leak"],
+        ),
+        # Zucchini (2)
+        (
+            "zucchini",
+            "zucchini__bacterial_wilt",
+            "Bacterial Wilt",
+            "https://hort.extension.wisc.edu/articles/bacterial-wilt/",
+            ["bacterial_wilt"],
+            ["Erwinia", "bacterial wilt"],
+        ),
+        (
+            "zucchini",
+            "zucchini__yellow_mosaic_virus",
+            "Yellow Mosaic Virus",
+            "https://pnwhandbooks.org/plantdisease/host-disease/squash-cucurbita-spp-virus-diseases",
+            ["yellow_mosaic_virus", "yellow_mosaic", "zymv", "zucchini_yellow_mosaic", "zucchini_yellow_mosaic_virus"],
+            ["virus", "mosaic"],
+        ),
+    ]
+
+    for idx, (c_name, d_slug, d_display, expected_url, aliases, keywords) in enumerate(batch2_cases, 1):
+        # 1. Direct registry lookup
+        srcs = get_sources_for_disease(d_slug, crop=c_name, disease=d_display)
+        assert_check(f"21.{idx}a [{d_slug}] registered with disease-specific sources", len(srcs) >= 1)
+        has_expected = any(s.url_or_doi == expected_url for s in srcs)
+        assert_check(f"21.{idx}b [{d_slug}] contains exact primary URL: {expected_url}", has_expected)
+        assert_check(f"21.{idx}c [{d_slug}] sources are specific (is_general=False)", all(not s.is_general for s in srcs))
+        assert_check(
+            f"21.{idx}d [{d_slug}] URLs are valid and non-generic",
+            all(is_valid_url(s.url_or_doi) and not is_generic_portal_url(s.url_or_doi) for s in srcs)
+        )
+
+        # 2. Article relevance
+        primary_src = next((s for s in srcs if s.url_or_doi == expected_url), srcs[0])
+        text_to_check = f"{primary_src.title} {primary_src.notes}".lower()
+        keyword_match = any(kw.lower() in text_to_check for kw in keywords)
+        assert_check(
+            f"21.{idx}e [{d_slug}] article relevance matches pathology keywords",
+            keyword_match,
+            f"Keywords {keywords} not in title/notes: {primary_src.title} - {primary_src.notes}"
+        )
+
+        # 3. Alias testing
+        for al in aliases:
+            al_srcs = get_sources_for_disease(crop=c_name, disease=al)
+            assert_check(
+                f"21.{idx}f [{d_slug}] alias '{al}' resolves to specific source",
+                any(s.url_or_doi == expected_url for s in al_srcs),
+                f"Alias '{al}' resolved to: {[s.url_or_doi for s in al_srcs]}"
+            )
+
+        # 4. Prevention of cross-crop/unrelated matches
+        unrelated_crop = "apple" if c_name != "apple" else "wheat"
+        unrelated_srcs = get_sources_for_disease(crop=unrelated_crop, disease=d_display)
+        unrelated_match = any(s.url_or_doi == expected_url for s in unrelated_srcs)
+        assert_check(
+            f"21.{idx}g [{d_slug}] cross-crop prevention ({unrelated_crop} != {c_name})",
+            not unrelated_match,
+            f"Unrelated crop {unrelated_crop} incorrectly matched {expected_url}"
+        )
+
+        # 5. Runtime Assistant resolution
+        vis = {
+            "crop": c_name,
+            "crop_confidence": 0.99,
+            "disease": d_slug,
+            "disease_name": d_display,
+            "disease_confidence": 0.99,
+            "status": "diseased",
+        }
+        res = assistant.answer_query(query=f"How do I treat {d_display} on {c_name}?", visual_result=vis)
+        assert_check(
+            f"21.{idx}h [{d_slug}] runtime assistant returns expected citation URL",
+            any(s.get("url") == expected_url for s in res.sources),
+            f"Got: {[s.get('url') for s in res.sources]}"
+        )
+        assert_check(
+            f"21.{idx}i [{d_slug}] runtime assistant marks citation as specific",
+            any(s.get("url") == expected_url and not s.get("is_general") for s in res.sources)
+        )
+
+    # =========================================================================
+    # TEST 22: Complete 151 Crop-Disease Combinations Exhaustive Verification
+    # =========================================================================
+    print("\n--- Case 22: Complete 151 Crop-Disease Combinations Exhaustive Verification ---")
+    import json
+    class_map_file = PROJECT_ROOT / "models" / "model2_retrained_v3" / "class_mapping.json"
+    with open(class_map_file, "r", encoding="utf-8") as f:
+        class_mapping = json.load(f)
+    canonical_diseases = sorted([c for c in class_mapping.keys() if c != "healthy"])
+
+    assert_check("22.0 Canonical class mapping has exactly 151 disease classes", len(canonical_diseases) == 151, f"Found: {len(canonical_diseases)}")
+
+    crop_alias_tests = {
+        "bellpepper": "bell_pepper",
+        "capsicum": "bell_pepper",
+        "french_bean": "bean",
+        "cherry_tomato": "tomato",
+        "maize": "corn",
+    }
+
+    for i, slug in enumerate(canonical_diseases, 1):
+        crop_name, dis_name = slug.split("__", 1)
+        sources = get_sources_for_disease(slug, crop=crop_name, disease=dis_name)
+        assert_check(f"22.{i}a [{slug}] resolves to at least 1 source", len(sources) >= 1)
+        if sources:
+            primary = sources[0]
+            assert_check(f"22.{i}b [{slug}] primary source is disease-specific (is_general=False)", getattr(primary, "is_general", True) is False)
+            assert_check(f"22.{i}c [{slug}] primary URL is valid", is_valid_url(primary.url_or_doi or ""))
+            assert_check(f"22.{i}d [{slug}] primary title is non-empty", bool(primary.title and len(primary.title.strip()) > 3))
+
+            # Cross-crop protection: using a mismatched crop should not return this slug's specific source
+            dummy_crop = "strawberry" if crop_name != "strawberry" else "corn"
+            mismatched = get_sources_for_disease(f"{dummy_crop}__{dis_name}", crop=dummy_crop, disease=dis_name)
+            # Ensure primary URL is not leaked if the dummy crop has a different pathology
+            if mismatched and dummy_crop not in slug:
+                has_leakage = any(s.url_or_doi == primary.url_or_doi for s in mismatched if s.url_or_doi)
+                # Some universal pathogens (like powdery mildew) might legitimately exist, but crop part in URL should differ
+                if f"/{crop_name}/" in (primary.url_or_doi or "").lower():
+                    assert_check(f"22.{i}e [{slug}] no cross-crop leakage to {dummy_crop}", not has_leakage)
+
+    # Test crop alias resolution
+    for alias_crop, canon_crop in crop_alias_tests.items():
+        sample_slug = f"{canon_crop}__bacterial_spot" if f"{canon_crop}__bacterial_spot" in canonical_diseases else f"{canon_crop}__rust"
+        if sample_slug in canonical_diseases:
+            _, sample_dis = sample_slug.split("__", 1)
+            alias_sources = get_sources_for_disease(f"{alias_crop}__{sample_dis}", crop=alias_crop, disease=sample_dis)
+            assert_check(f"22.alias [{alias_crop}] resolves correctly to canonical {canon_crop} sources", len(alias_sources) >= 1 and not getattr(alias_sources[0], "is_general", True))
+
+    # Representative runtime assistant checks across all 7 batches
+    representative_batch_checks = [
+        ("Batch 3", "blueberry", "blueberry__mummy_berry", "Mummy Berry", "https://ipm.ucanr.edu/agriculture/blueberry/mummy-berry/"),
+        ("Batch 3", "strawberry", "strawberry__anthracnose", "Anthracnose", "https://content.ces.ncsu.edu/anthracnose-fruit-rot-of-strawberry"),
+        ("Batch 4", "apple", "apple__black_rot", "Black Rot", "https://ipm.ucanr.edu/agriculture/apple/black-rot/"),
+        ("Batch 4", "plum", "plum__shot_hole", "Shot Hole", "https://ipm.ucanr.edu/agriculture/plum/shot-hole/"),
+        ("Batch 5", "wheat", "wheat__bacterial_leaf_streak_(black_chaff)", "Bacterial Leaf Streak", "https://ipm.ucanr.edu/agriculture/small-grains/bacterial-stripe/"),
+        ("Batch 5", "soybean", "soybean__bacterial_blight", "Bacterial Blight", "https://cropprotectionnetwork.org/encyclopedia/bacterial-blight-of-soybean"),
+        ("Batch 6", "cauliflower", "cauliflower__bacterial_soft_rot", "Bacterial Soft Rot", "https://hort.extension.wisc.edu/articles/bacterial-soft-rot/"),
+        ("Batch 6", "carrot", "carrot__cavity_spot", "Cavity Spot", "https://ipm.ucanr.edu/agriculture/carrot/cavity-spot/"),
+        ("Batch 7", "basil", "basil__downy_mildew", "Downy Mildew", "https://www.vegetables.cornell.edu/pest-management/disease-factsheets/basil-downy-mildew/"),
+        ("Batch 7", "coffee", "coffee__leaf_rust", "Leaf Rust", "https://apps.lucidcentral.org/pppw_v10/text/web_full/entities/coffee_rust_141.htm"),
+        ("Batch 7", "maple", "maple__tar_spot", "Tar Spot", "https://hort.extension.wisc.edu/articles/tar-spot/"),
+        ("Batch 7", "spinach", "spinach__downy_mildew", "Downy Mildew", "https://ipm.ucanr.edu/agriculture/spinach/downy-mildew/"),
+    ]
+
+    for batch_label, c_name, d_slug, d_display, exp_url in representative_batch_checks:
+        vis = {
+            "crop": c_name,
+            "crop_confidence": 0.99,
+            "disease": d_slug,
+            "disease_name": d_display,
+            "disease_confidence": 0.99,
+            "status": "diseased",
+        }
+        res = assistant.answer_query(query=f"How do I manage {d_display} on {c_name}?", visual_result=vis)
+        assert_check(f"22.rt [{batch_label}: {d_slug}] runtime assistant returns verified URL", any(s.get("url") == exp_url for s in res.sources))
+        assert_check(f"22.rt [{batch_label}: {d_slug}] runtime assistant citation is marked specific", any(s.get("url") == exp_url and not s.get("is_general") for s in res.sources))
+
     print("\n" + "=" * 80)
     print(f"RESULTS: {passed_tests}/{total_tests} TESTS PASSED ({(passed_tests/total_tests)*100:.1f}%)")
     print("=" * 80)
@@ -621,3 +902,4 @@ def test_disease_source_pipeline():
 
 if __name__ == "__main__":
     sys.exit(test_disease_source_pipeline())
+

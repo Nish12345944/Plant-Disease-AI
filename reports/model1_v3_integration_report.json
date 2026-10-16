@@ -1,0 +1,121 @@
+{
+  "integration_metadata": {
+    "title": "Model 1 Checkpoint Fix — Controlled Integration Report",
+    "timestamp": "2026-10-16",
+    "status": "SUCCESSFUL_INTEGRATION_VERIFIED",
+    "summary": "Switched default Model 1 checkpoint in app/backend/config.py from legacy models/model1_expanded/best_model.pth to retrained models/model1_retrained_v3/best_model.pth. Generated and verified isolated V3 crop prototypes. Validated end-to-end regression suites and tested the live running backend API with 95.0% accuracy on audited failure cases."
+  },
+  "configuration": {
+    "original": {
+      "MODEL1_CHECKPOINT": "models/model1_expanded/best_model.pth",
+      "MODEL1_CLASS_MAPPING": "models/model1_expanded/class_mapping.json",
+      "MODEL1_CONFIG": "models/model1_expanded/config.json",
+      "MODEL1_PROTOTYPES": "models/model1_expanded/crop_prototypes.npz"
+    },
+    "new": {
+      "MODEL1_CHECKPOINT": "models/model1_retrained_v3/best_model.pth",
+      "MODEL1_CLASS_MAPPING": "models/model1_retrained_v3/class_mapping.json",
+      "MODEL1_CONFIG": "models/model1_retrained_v3/config.json",
+      "MODEL1_PROTOTYPES": "models/model1_retrained_v3/crop_prototypes.npz"
+    },
+    "env_variable_overrides_supported": [
+      "MODEL1_CHECKPOINT",
+      "MODEL1_CLASS_MAPPING",
+      "MODEL1_CONFIG",
+      "MODEL1_PROTOTYPES"
+    ]
+  },
+  "file_hashes_and_preservation": {
+    "legacy_model1_expanded_checkpoint": {
+      "path": "models/model1_expanded/best_model.pth",
+      "sha256": "73f3171d0893ee950acc301cc089bd0d989143816a3837fb78e81ab76bf7975b",
+      "size_bytes": 31520077,
+      "status": "PRESERVED_BYTE_FOR_BYTE"
+    },
+    "legacy_crop_prototypes": {
+      "path": "models/model1_expanded/crop_prototypes.npz",
+      "sha256": "ad723236a8e099063e1d7318121ba00dbe21ffdd50ef2b330d0badfe1711991a",
+      "size_bytes": 239235,
+      "status": "PRESERVED_BYTE_FOR_BYTE"
+    },
+    "active_v3_checkpoint": {
+      "path": "models/model1_retrained_v3/best_model.pth",
+      "sha256": "5fe0ec09fdb271c0dfda40be201f8400b360aebb70ca0b55e4e0e8a1042c1969",
+      "size_bytes": 93909596,
+      "architecture": "efficientnet_b2",
+      "classifier_out_features": 46
+    },
+    "active_v3_prototypes": {
+      "path": "models/model1_retrained_v3/crop_prototypes.npz",
+      "sha256": "9b64c05b1c5520a232753d09a58399589d84c67ad3a8d9bf1ef6948ef53fe542",
+      "size_bytes": 260343,
+      "active_prototype_classes": 44,
+      "empty_classes_handled_safely": ["cherry_tomato", "gypsophila"]
+    }
+  },
+  "evaluation_metrics": {
+    "held_out_validation_set": {
+      "sample_count": 1592,
+      "accuracy": 0.917713567839196,
+      "macro_f1": 0.8877844373646913,
+      "weighted_f1": 0.9158632617688225
+    },
+    "held_out_test_set": {
+      "sample_count": 1586,
+      "accuracy": 0.9211853720050441,
+      "macro_f1": 0.8929276967101116,
+      "weighted_f1": 0.9200237722749912
+    }
+  },
+  "regression_testing_summary": {
+    "safeguards_regression_suite": {
+      "script": "scripts/test_safeguards.py",
+      "passed": 10,
+      "total": 10,
+      "result": "ALL_PASSED"
+    },
+    "crop_aware_inference_suite": {
+      "script": "scripts/test_crop_aware_inference_regression.py",
+      "passed": 8,
+      "total": 8,
+      "result": "ALL_PASSED"
+    },
+    "video_and_multimodal_suite": {
+      "script": "scripts/test_video_pipeline_regression.py",
+      "passed": 19,
+      "total": 19,
+      "result": "ALL_PASSED"
+    },
+    "pipeline_audited_and_representative_crops": {
+      "tested_count": 30,
+      "correct_count": 29,
+      "accuracy": 0.9667,
+      "tomato": "9/10 accepted and correctly predicted as tomato (97.7% - 100.0% conf); 1 flagged as uncertain_crop (no apple misclassification)",
+      "strawberry": "10/10 accepted and correctly predicted as strawberry (99.1% - 100.0% conf) and diagnosed by Model 2",
+      "bellpepper": "5/5 accepted and correctly predicted as bellpepper (99.6% - 100.0% conf) and diagnosed by Model 2",
+      "apple": "5/5 accepted and correctly predicted as apple (94.7% - 100.0% conf) and diagnosed by Model 2"
+    }
+  },
+  "live_api_verification": {
+    "endpoint": "http://127.0.0.1:8000/api/inference/image",
+    "tested_images_count": 20,
+    "correct_crop_predictions": 19,
+    "accuracy": 0.95,
+    "live_diagnostics": {
+      "health_check_status": 200,
+      "model1_reported_checkpoint": "C:\\Users\\vyasn\\OneDrive\\Desktop\\Disease_prediction\\models\\model1_retrained_v3\\best_model.pth",
+      "model1_loaded_status": true,
+      "apple_misclassifications_on_tomato": 0,
+      "raspberry_or_peach_misclassifications_on_strawberry": 0
+    }
+  },
+  "remaining_limitations": [
+    "cherry_tomato (idx 13) and gypsophila (idx 26) remain empty classes in data/processed/model1_expanded/ with zero training samples; safely represented as NaN in prototypes.",
+    "Isolated heavy lesion spots on tomato leaves (such as Google bacterial leaf spot sample 0040) have low prototype similarity and trigger uncertain_crop rejection rather than false classification."
+  ],
+  "rollback_instructions": {
+    "step_1": "In app/backend/config.py, set MODEL1_CHECKPOINT back to PROJECT_ROOT / 'models' / 'model1_expanded' / 'best_model.pth'.",
+    "step_2": "In app/backend/config.py, set MODEL1_PROTOTYPES back to PROJECT_ROOT / 'models' / 'model1_expanded' / 'crop_prototypes.npz'.",
+    "step_3": "Restart uvicorn server. The preserved byte-for-byte legacy checkpoints and prototypes will immediately reactivate."
+  }
+}

@@ -92,14 +92,27 @@ def run_regression_tests():
     assert spin_res["disease"] != "spinach__pest_damage", "Zero-support spinach__pest_damage falsely declared on healthy foliage!"
     print("  [PASS] Test 5: Healthy foliage preserved; zero-support classes barred from false disease declaration.")
 
-    # --- Test 6: Zero-Support Disease Non-Certification ---
-    print("\n--- Test 6: Zero-Support Class Rejection ---")
-    # All 28 zero support classes verified
+    # --- Test 6: Zero-Support Disease Non-Certification & 8 V3 Classes ---
+    print("\n--- Test 6: Zero-Support Class Rejection & V3 Registration ---")
     assert "spinach__pest_damage" in ZERO_TEST_SUPPORT_CLASSES
     assert "bell_pepper__leaf_curl" in ZERO_TEST_SUPPORT_CLASSES
     assert "tomato__anthracnose" in ZERO_TEST_SUPPORT_CLASSES
-    assert len(ZERO_TEST_SUPPORT_CLASSES) == 28, f"Expected 28 zero-support classes, found {len(ZERO_TEST_SUPPORT_CLASSES)}"
-    print("  [PASS] Test 6: Exactly 28 zero-test-support classes registered and guarded.")
+
+    # 8 newly added V3 zero-test-support classes
+    v3_new_classes = [
+        "cauliflower__alternaria_brassicae",
+        "cauliflower__black_spot",
+        "cucumber__anthracnose",
+        "cucumber__belly_rot",
+        "cucumber__downy_mildew",
+        "cucumber__gummy_stem_blight",
+        "cucumber__pythium_fruit_rot",
+        "tomato__fruit_fusarium",
+    ]
+    for c in v3_new_classes:
+        assert c in ZERO_TEST_SUPPORT_CLASSES, f"Missing {c} in ZERO_TEST_SUPPORT_CLASSES"
+    assert len(ZERO_TEST_SUPPORT_CLASSES) == 36, f"Expected 36 zero-support classes, found {len(ZERO_TEST_SUPPORT_CLASSES)}"
+    print("  [PASS] Test 6: Exactly 36 zero-test-support classes registered and guarded.")
 
     # --- Test 7: User-Facing Bell Pepper Naming ---
     print("\n--- Test 7: User-Facing Bell Pepper Naming ---")
@@ -120,8 +133,29 @@ def run_regression_tests():
     assert unc_res["disease"] is None, f"Expected None disease, got {unc_res['disease']}"
     print("  [PASS] Test 8: Outcomes strictly separated (healthy, diseased, uncertain).")
 
+    # --- Test 9: Model 2 V3 Output Dimension & Crop Compatibility ---
+    print("\n--- Test 9: Model 2 V3 Output Dimension & Compatibility Mapping ---")
+    assert classifier.num_classes == 152, f"Expected 152 classes in Model 2 V3, found {classifier.num_classes}"
+    for c in v3_new_classes:
+        crop_part = c.split("__")[0]
+        assert classifier.is_compatible(crop_part, c) is True, f"Expected {c} to be compatible with {crop_part}"
+        assert classifier.is_compatible("apple", c) is False, f"Expected {c} to be incompatible with apple"
+    print("  [PASS] Test 9: Model 2 V3 152-class dimension and 8-new-class compatibility verified.")
+
+    # --- Test 10: Rollback Preservation to Model 2 V2 ---
+    print("\n--- Test 10: Model 2 V2 Rollback Preservation ---")
+    v2_classifier = Model2DiseaseClassifierV4(
+        checkpoint_path=PROJECT_ROOT / "models" / "model2_retraining_v2" / "best_model.pth",
+        class_mapping_path=PROJECT_ROOT / "models" / "model2_retraining_v2" / "class_mapping.json",
+        crop_disease_map_path=PROJECT_ROOT / "models" / "model2_retraining_v2" / "crop_disease_mapping.json",
+    )
+    assert v2_classifier.num_classes == 144, f"Expected 144 classes in rollback V2, found {v2_classifier.num_classes}"
+    v2_res = v2_classifier.predict_crop_aware(bp_healthy_path, crop_name="bell_pepper", crop_confidence=0.99)
+    assert v2_res["status"] == "healthy"
+    print("  [PASS] Test 10: Model 2 V2 rollback operational with 144 classes and intact behavior.")
+
     print("\n" + "=" * 80)
-    print("ALL 8/8 CROP-AWARE INFERENCE REGRESSION TESTS PASSED SUCCESSFULLY!")
+    print("ALL 10/10 CROP-AWARE INFERENCE REGRESSION TESTS PASSED SUCCESSFULLY!")
     print("=" * 80)
 
 if __name__ == "__main__":

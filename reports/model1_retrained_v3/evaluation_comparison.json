@@ -1,0 +1,72 @@
+{
+  "retrained_v3": {
+    "test_accuracy": 0.9211853720050441,
+    "test_macro_f1": 0.8929276967101116,
+    "test_weighted_f1": 0.9200031119046768,
+    "test_top3_acc": 0.969735182849937,
+    "total_test_samples": 1586
+  },
+  "baseline_expanded": {
+    "test_accuracy": 0.9003783102143758,
+    "test_macro_f1": 0.8359318495011856,
+    "test_weighted_f1": 0.8977274469081634,
+    "test_top3_acc": 0.9709962168978562
+  },
+  "delta": {
+    "accuracy_improvement": 0.02080706179066838,
+    "macro_f1_improvement": 0.05699584720892603,
+    "weighted_f1_improvement": 0.022275664996513345
+  },
+  "top_misclassifications": [
+    {
+      "gt": "cabbage",
+      "pred": "broccoli",
+      "count": 6
+    },
+    {
+      "gt": "apple",
+      "pred": "plum",
+      "count": 3
+    },
+    {
+      "gt": "cauliflower",
+      "pred": "broccoli",
+      "count": 3
+    },
+    {
+      "gt": "french_bean",
+      "pred": "soybean",
+      "count": 3
+    },
+    {
+      "gt": "garlic",
+      "pred": "wheat",
+      "count": 3
+    },
+    {
+      "gt": "rice",
+      "pred": "wheat",
+      "count": 3
+    },
+    {
+      "gt": "wheat",
+      "pred": "corn",
+      "count": 3
+    },
+    {
+      "gt": "wheat",
+      "pred": "garlic",
+      "count": 3
+    },
+    {
+      "gt": "apple",
+      "pred": "citrus",
+      "count": 2
+    },
+    {
+      "gt": "apple",
+      "pred": "cherry",
+      "count": 2
+    }
+  ]
+}

@@ -20,6 +20,7 @@ from knowledge.schema import (
     SourcedFact,
 )
 from knowledge.sources import format_source_citation
+from knowledge.treatment import get_disease_treatment
 from router.taxonomy import ExtractedEntities, Intent
 
 logger = logging.getLogger(__name__)
@@ -49,7 +50,7 @@ def retrieve_relevant_knowledge(
         "citations": [],
     }
 
-    d_rec: Optional[DiseaseRecord] = kb.get_disease(disease)
+    d_rec: Optional[DiseaseRecord] = kb.get_disease(disease, crop=crop)
     c_rec: Optional[CropRecord] = kb.get_crop(crop)
 
     if d_rec:
@@ -60,6 +61,16 @@ def retrieve_relevant_knowledge(
         result["found"] = True
 
     if not result["found"]:
+        if crop or disease:
+            result["citations"] = format_source_citation(
+                [],
+                disease_slug=disease or "",
+                crop=crop or "",
+                disease=disease or "",
+                d_rec=None,
+            )
+            if result["citations"]:
+                result["found"] = True
         return result
 
     collected_sources: list[str] = []
@@ -177,13 +188,23 @@ def retrieve_relevant_knowledge(
             for f in c_rec.watering_guidelines:
                 collected_sources.extend(f.source_ids)
 
+    # Populate structured treatment details
+    treatment_data = get_disease_treatment(
+        crop=crop or (d_rec.crop if d_rec else None),
+        disease=disease or (d_rec.disease_slug if d_rec else None),
+        d_rec=d_rec,
+        kb=kb,
+    )
+    result["treatment"] = treatment_data
+    facts["treatment"] = treatment_data
+
     # Clean and deduplicate source citations
     result["facts"] = facts
     result["source_ids"] = list(dict.fromkeys(collected_sources))
     result["citations"] = format_source_citation(
         result["source_ids"],
         disease_slug=d_rec.disease_slug if d_rec else (disease or ""),
-        crop=d_rec.crop if d_rec else (crop or ""),
+        crop=crop or (d_rec.crop if d_rec else ""),
         disease=d_rec.common_name if d_rec else (disease or ""),
         d_rec=d_rec,
     )

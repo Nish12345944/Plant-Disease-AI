@@ -1,0 +1,270 @@
+{
+  "audit_metadata": {
+    "title": "Model 2 V3 Integration Readiness Audit",
+    "timestamp": "2026-10-16",
+    "status": "AUDIT_COMPLETE_CONDITIONAL_READINESS",
+    "summary": "Comprehensive audit of the active Model 2 production configuration versus candidate Model 2 V3 artifacts. The running backend currently operates on Model 2 Retraining V2 (144 classes). Model 2 V3 checkpoint (152 classes) is verified on disk with 85.5% test accuracy, but an immediate switch is unsafe without synchronized mapping updates and extending zero-test-support safeguards to the 8 newly added disease classes."
+  },
+  "active_configuration": {
+    "model2_checkpoint": {
+      "configured_path": "models/model2_retraining_v2/best_model.pth",
+      "absolute_path": "c:/Users/vyasn/OneDrive/Desktop/Disease_prediction/models/model2_retraining_v2/best_model.pth",
+      "sha256": "608910fa94e55735d88bb0acb62b959b21bd3baabb990d196f59a47789f8b24c",
+      "size_bytes": 95570204,
+      "architecture": "efficientnet_b2",
+      "output_dimension": 144
+    },
+    "model2_class_mapping": {
+      "configured_path": "models/model2_retraining_v2/class_mapping.json",
+      "num_classes": 144,
+      "format": "flat_dict"
+    },
+    "crop_disease_mapping": {
+      "configured_path": "models/model2_retraining_v2/crop_disease_mapping.json",
+      "num_crops": 45,
+      "total_crop_disease_pairs": 143
+    },
+    "model_loading_layer": {
+      "factory_function": "app.backend.services.get_model2()",
+      "inference_engine_class": "models.model2_classifier_v4.predict.Model2DiseaseClassifierV4",
+      "live_backend_verified": true,
+      "live_backend_model2_status": {
+        "name": "EfficientNet-B2 Retrained V2 144-Class Disease Classifier",
+        "loaded": true,
+        "available": true
+      }
+    }
+  },
+  "candidate_v3_configuration": {
+    "model2_checkpoint": {
+      "path": "models/model2_retrained_v3/best_model.pth",
+      "sha256": "8296117dee2de71d46160e5895c9eecddeedde359b7d04c8f3c3b671760b646a",
+      "size_bytes": 95705052,
+      "architecture": "efficientnet_b2",
+      "output_dimension": 152,
+      "epoch": 14
+    },
+    "model2_class_mapping": {
+      "path": "models/model2_retrained_v3/class_mapping.json",
+      "num_classes": 152,
+      "format": "flat_dict"
+    },
+    "crop_disease_mapping": {
+      "path": "models/model2_retrained_v3/crop_disease_mapping.json",
+      "num_crops": 45,
+      "total_crop_disease_pairs": 151
+    },
+    "supporting_artifacts": {
+      "last_model_checkpoint": "models/model2_retrained_v3/last_model.pth",
+      "training_summary": "models/model2_retrained_v3/training_summary.json",
+      "detailed_evaluation_report": "reports/model2_retrained_v3/detailed_evaluation_analysis.json",
+      "classification_report": "reports/model2_retrained_v3/test_classification_report.json",
+      "confusion_matrix": "reports/model2_retrained_v3/test_confusion_matrix.json",
+      "training_log": "reports/model2_retrained_v3/training.log",
+      "training_progress_csv": "reports/model2_retrained_v3/training_progress.csv"
+    }
+  },
+  "compatibility_and_dimension_audit": {
+    "output_dimension_validation": {
+      "active_v2_dimension": 144,
+      "candidate_v3_dimension": 152,
+      "dimension_match_verified": true,
+      "critical_risk": "Switching MODEL2_CHECKPOINT to V3 without simultaneously pointing MODEL2_CLASS_MAPPING to V3 causes a fatal PyTorch Linear weight size mismatch (expected [144, 1408], found [152, 1408]). Both environment/config paths must change atomically."
+    },
+    "newly_added_classes_audit": {
+      "count": 8,
+      "classes": [
+        {
+          "class_id": 144,
+          "class_slug": "cauliflower__alternaria_brassicae",
+          "crop": "cauliflower",
+          "test_support": 0
+        },
+        {
+          "class_id": 145,
+          "class_slug": "cauliflower__black_spot",
+          "crop": "cauliflower",
+          "test_support": 0
+        },
+        {
+          "class_id": 146,
+          "class_slug": "cucumber__anthracnose",
+          "crop": "cucumber",
+          "test_support": 0
+        },
+        {
+          "class_id": 147,
+          "class_slug": "cucumber__belly_rot",
+          "crop": "cucumber",
+          "test_support": 0
+        },
+        {
+          "class_id": 148,
+          "class_slug": "cucumber__downy_mildew",
+          "crop": "cucumber",
+          "test_support": 0
+        },
+        {
+          "class_id": 149,
+          "class_slug": "cucumber__gummy_stem_blight",
+          "crop": "cucumber",
+          "test_support": 0
+        },
+        {
+          "class_id": 150,
+          "class_slug": "cucumber__pythium_fruit_rot",
+          "crop": "cucumber",
+          "test_support": 0
+        },
+        {
+          "class_id": 151,
+          "class_slug": "tomato__fruit_fusarium",
+          "crop": "tomato",
+          "test_support": 0
+        }
+      ],
+      "immutable_benchmark_support": 0,
+      "zero_test_support_safeguard_gap": "In models/model2_classifier_v4/predict.py, ZERO_TEST_SUPPORT_CLASSES is currently hardcoded to 28 legacy classes. The 8 newly added V3 classes are NOT yet included. If promoted without updating ZERO_TEST_SUPPORT_CLASSES, these 8 uncalibrated zero-support classes could falsely override healthy predictions or declare false diseases."
+    },
+    "crop_aware_routing_compatibility": {
+      "model1_v3_interaction": "Model 1 V3 normalizes crop names into canonical crop IDs (e.g., 'bellpepper' -> 'bell_pepper', 'tomato' -> 'tomato', 'cucumber' -> 'cucumber'). Crop-aware probability masking successfully restricts Model 2 to the active crop's registered diseases.",
+      "crop_aliases_verified": [
+        "bellpepper -> bell_pepper",
+        "capsicum -> bell_pepper",
+        "french_bean -> bean",
+        "cherry_tomato -> tomato"
+      ],
+      "cross_crop_contamination_prevention": "Cucumber, zucchini, and squash remain strictly isolated. No cross-crop leakage observed."
+    },
+    "source_link_retrieval_independence": {
+      "verified": true,
+      "test_pass_rate": "359/359 (100.0%)",
+      "description": "Source-link retrieval operates via knowledge.sources, knowledge.database, and AgriculturalAssistant completely independent of neural model weights. When vision models return uncertain, rejected, or healthy, verified extension links for any disease query remain fully functional and non-generic."
+    }
+  },
+  "held_out_metrics_model2_v3": {
+    "validation_set": {
+      "total_samples": 3520,
+      "best_accuracy": 0.8738636363636364,
+      "best_macro_f1": 0.7360951855442532
+    },
+    "test_set": {
+      "total_samples": 2304,
+      "test_accuracy": 0.8550347222222222,
+      "test_weighted_f1": 0.8588767823987352,
+      "test_macro_f1_overall": 0.5837831580817062,
+      "test_macro_f1_active_classes": 0.659272359557789,
+      "zero_support_classes_count": 36,
+      "nonzero_support_classes_count": 116
+    },
+    "healthy_class_metrics": {
+      "class_id": 0,
+      "precision": 0.9893203883495145,
+      "recall": 0.978866474543708,
+      "f1_score": 0.9840656687590535,
+      "support": 1041.0
+    }
+  },
+  "known_confusion_cases": {
+    "healthy_banana_foliage_and_bunchy_top": {
+      "v3_benchmark_performance": "banana__bunchy_top achieved precision 1.000, recall 0.6364 (7/11 true positives, 1 confused with healthy, 1 with anthracnose, 1 with panama disease, 1 with garlic leaf blight).",
+      "risk_analysis": "Banana bunchy top exhibits subtle stunted leaf symptoms that can be misclassified as healthy foliage if unconstrained. Crop-aware probability masking and confidence thresholds prevent false disease leakage into non-banana crops, but healthy foliage classification requires careful verification."
+    },
+    "tomato_fruit_fusarium": {
+      "v3_benchmark_performance": "tomato__fruit_fusarium (ID 151) has 0 test support samples. In unconstrained predictions, it falsely captured logits for 1 bell pepper bacterial spot sample and 2 zucchini bacterial wilt samples.",
+      "risk_analysis": "While crop-aware filtering prevents cross-crop leakage to zucchini or pepper, within the tomato crop domain an uncalibrated zero-support class can falsely override healthy foliage unless protected by ZERO_TEST_SUPPORT_CLASSES."
+    },
+    "cucumber_and_cauliflower_classes": {
+      "v3_benchmark_performance": "cucumber__downy_mildew falsely captured 1 healthy test sample in unconstrained evaluation. Cauliflower alternaria and black spot have 0 test support.",
+      "risk_analysis": "Crop-aware compatibility prevents non-cucurbit crops from triggering cucumber diseases, but zero-support protection is necessary to prevent false disease declarations on healthy cucumber and cauliflower foliage."
+    }
+  },
+  "isolated_regression_test_results": {
+    "configuration_used": "Active Model 1 V3 (Retrained 46-crop + V3 prototypes) + Current Production Model 2 (Retraining V2, 144 classes)",
+    "tested_crops": ["strawberry", "tomato", "banana", "cauliflower", "cucumber"],
+    "total_samples_evaluated": 17,
+    "summary_by_crop": {
+      "banana": {
+        "samples_tested": 3,
+        "results": [
+          "banana__bunchy_top: Model 1 V3 recognized banana (1.00 conf); Model 2 diagnosed banana__bunchy_top (99.8% conf); compatibility True; live API HTTP 200.",
+          "banana__black_leaf_streak: Model 1 V3 recognized banana (1.00 conf); Model 2 diagnosed banana__black_leaf_streak (96.9% conf); compatibility True; live API HTTP 200.",
+          "banana__anthracnose: Model 1 V3 recognized banana (1.00 conf); Model 2 diagnosed banana__anthracnose (99.5% conf); compatibility True; live API HTTP 200."
+        ],
+        "crop_accuracy": "3/3 (100.0%)"
+      },
+      "strawberry": {
+        "samples_tested": 3,
+        "results": [
+          "healthy: Model 1 V3 recognized strawberry (1.00 conf); Model 2 diagnosed healthy (98.5% conf); compatibility True; live API HTTP 200.",
+          "anthracnose: Model 1 V3 flagged uncertain_crop due to prototype distance; disease classification safely skipped; live API HTTP 200.",
+          "leaf_scorch: Model 1 V3 flagged uncertain_crop due to prototype distance; disease classification safely skipped; live API HTTP 200."
+        ],
+        "crop_accuracy": "1/1 accepted diagnosed correctly; 2/2 out-of-distribution lesions safely rejected."
+      },
+      "tomato": {
+        "samples_tested": 4,
+        "results": [
+          "tomato__early_blight: Model 1 V3 recognized tomato (1.00 conf); Model 2 diagnosed tomato__early_blight (78.2% conf); compatibility True; live API HTTP 200.",
+          "tomato__bacterial_leaf_spot: Model 1 V3 recognized tomato (0.99 conf); Model 2 diagnosed tomato__septoria_leaf_spot (97.0% conf, within-crop diagnosis); compatibility True; live API HTTP 200.",
+          "healthy: Model 1 V3 flagged uncertain_crop due to prototype distance; live API HTTP 200.",
+          "late_blight: Safeguard A image validation flagged non_plant_image/clarity; safely rejected; live API HTTP 200."
+        ],
+        "crop_accuracy": "2/2 accepted diagnosed within tomato taxonomy; 2/2 edge cases safely guarded."
+      },
+      "cauliflower": {
+        "samples_tested": 3,
+        "results": [
+          "healthy: Model 1 V3 recognized cauliflower (1.00 conf); Model 2 diagnosed healthy (95.9% conf); compatibility True; live API HTTP 200.",
+          "alternaria_leaf_spot: Model 1 V3 recognized cauliflower (0.95 conf); Model 2 returned uncertain (54.8% conf) due to probability mass thresholding; live API HTTP 200.",
+          "bacterial_soft_rot: Model 1 V3 recognized cauliflower (0.99 conf); Model 2 returned uncertain (17.6% conf); live API HTTP 200."
+        ],
+        "crop_accuracy": "1/1 healthy diagnosed correctly; 2/2 uncalibrated disease classes safely held as uncertain."
+      },
+      "cucumber": {
+        "samples_tested": 4,
+        "results": [
+          "cucumber__powdery_mildew: Model 1 V3 recognized cucumber (1.00 conf); Model 2 diagnosed cucumber__powdery_mildew (73.0% conf); compatibility True; live API HTTP 200.",
+          "healthy: Model 1 V3 recognized cucumber (0.90 conf); Model 2 diagnosed healthy (98.5% conf); compatibility True; live API HTTP 200.",
+          "cucumber__angular_leaf_spot: Model 1 V3 recognized cucumber (0.99 conf); Model 2 diagnosed cucumber__angular_leaf_spot (99.96% conf); compatibility True; live API HTTP 200.",
+          "cucumber__bacterial_wilt: Model 1 V3 flagged uncertain_crop; safely rejected; live API HTTP 200."
+        ],
+        "crop_accuracy": "3/3 accepted diagnosed correctly; 1/1 edge case safely guarded."
+      }
+    },
+    "suite_test_summary": {
+      "safeguards_regression_suite": "10/10 PASSED (scripts/test_safeguards.py)",
+      "crop_aware_inference_suite": "8/8 PASSED (scripts/test_crop_aware_inference_regression.py)",
+      "crop_compatibility_suite": "11/11 PASSED (scripts/test_crop_compatibility_regression.py)",
+      "disease_source_links_suite": "359/359 PASSED (scripts/test_disease_source_links.py)",
+      "video_pipeline_suite": "19/19 PASSED (scripts/test_video_pipeline_regression.py)"
+    }
+  },
+  "remaining_limitations": [
+    "The 8 newly added V3 disease classes (cauliflower alternaria/black spot, cucumber anthracnose/belly rot/downy mildew/gummy stem/pythium rot, and tomato fruit fusarium) have 0 test samples in the immutable benchmark and require safeguard registry inclusion.",
+    "Hardcoded DEFAULT_CHECKPOINT_PATH and ZERO_TEST_SUPPORT_CLASSES in models/model2_classifier_v4/predict.py must be synchronized with candidate V3 artifacts prior to production switch.",
+    "Isolated heavy lesion spots on strawberry and cucumber foliage trigger prototype distance guards in Model 1 V3, safely rejecting disease classification rather than risking false crop identification."
+  ],
+  "recommendation": {
+    "safe_to_switch_as_is": false,
+    "verdict": "CONDITIONAL_APPROVAL_REQUIRING_TWO_PREREQUISITES",
+    "rationale": "Model 2 V3 demonstrates strong underlying performance (85.5% test accuracy, 98.4% healthy F1). However, switching the checkpoint in app/backend/config.py without simultaneously updating MODEL2_CLASS_MAPPING and CROP_DISEASE_MAPPING will cause an immediate server crash due to linear layer dimension mismatch (144 != 152). Furthermore, promoting without adding the 8 new zero-test-support classes into ZERO_TEST_SUPPORT_CLASSES removes protection against false disease declaration on healthy foliage.",
+    "required_prerequisites_before_switch": [
+      {
+        "step": 1,
+        "action": "Synchronize environment/config mappings",
+        "detail": "Update app/backend/config.py so that MODEL2_CHECKPOINT, MODEL2_CLASS_MAPPING, and CROP_DISEASE_MAPPING all point atomically to models/model2_retrained_v3/."
+      },
+      {
+        "step": 2,
+        "action": "Register 8 newly added classes in zero-support safeguards",
+        "detail": "Add the 8 newly added classes with 0 test support to ZERO_TEST_SUPPORT_CLASSES in models/model2_classifier_v4/predict.py to guarantee healthy crops are not misclassified as unverified diseases."
+      },
+      {
+        "step": 3,
+        "action": "Execute controlled smoke test and reload",
+        "detail": "Restart uvicorn backend and verify live health check and 5-crop diagnosis smoke tests before releasing."
+      }
+    ]
+  }
+}

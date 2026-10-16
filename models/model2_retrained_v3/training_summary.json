@@ -1,0 +1,12 @@
+{
+  "best_epoch": 14,
+  "best_val_macro_f1": 0.7360951855442532,
+  "best_val_accuracy": 0.8738636363636364,
+  "test_macro_f1": 0.5837831580817062,
+  "test_weighted_f1": 0.8588767823987352,
+  "test_accuracy": 0.8550347222222222,
+  "num_classes": 152,
+  "total_train_samples": 35663,
+  "total_val_samples": 3520,
+  "total_test_samples": 2304
+}

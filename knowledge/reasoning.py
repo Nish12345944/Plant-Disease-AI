@@ -162,7 +162,7 @@ def reason_agricultural_query(
     # -----------------------------------------------------------------------
     has_kb = False
     if effective_disease:
-        d_rec = kb.get_disease(effective_disease)
+        d_rec = kb.get_disease(effective_disease, crop=effective_crop)
         if d_rec is not None:
             has_kb = True
             effective_disease = d_rec.disease_slug

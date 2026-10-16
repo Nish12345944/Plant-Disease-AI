@@ -30,6 +30,7 @@ from knowledge.data.crops_brassica_root import BRASSICA_ROOT_DISEASES
 from knowledge.data.crops_cereals import CEREAL_DISEASES
 from knowledge.data.crops_legumes import LEGUME_DISEASES
 from knowledge.data.crops_greens_herbs import GREENS_HERBS_DISEASES
+from knowledge.data.v3_extended_knowledge import V3_EXTENDED_DISEASES, V3_EXTENDED_CROPS
 
 V4_DISEASE_KNOWLEDGE: Dict[str, DiseaseRecord] = {}
 
@@ -42,6 +43,7 @@ V4_DISEASE_KNOWLEDGE.update(BRASSICA_ROOT_DISEASES)
 V4_DISEASE_KNOWLEDGE.update(CEREAL_DISEASES)
 V4_DISEASE_KNOWLEDGE.update(LEGUME_DISEASES)
 V4_DISEASE_KNOWLEDGE.update(GREENS_HERBS_DISEASES)
+V4_DISEASE_KNOWLEDGE.update(V3_EXTENDED_DISEASES)
 
 V4_CROP_KNOWLEDGE: Dict[str, CropRecord] = {
     "apple": CropRecord(
@@ -419,3 +421,5 @@ V4_CROP_KNOWLEDGE: Dict[str, CropRecord] = {
         sources=[SOURCE_CORNELL, SOURCE_UC_IPM],
     ),
 }
+
+V4_CROP_KNOWLEDGE.update(V3_EXTENDED_CROPS)

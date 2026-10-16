@@ -64,6 +64,7 @@ def plan_answer(
                 "crop": reasoning.resolved_crop,
                 "disease": reasoning.resolved_disease,
             },
+            sources_cited=sources,
             uncertainty_banner="Verified Agricultural Record Not Found",
         )
 

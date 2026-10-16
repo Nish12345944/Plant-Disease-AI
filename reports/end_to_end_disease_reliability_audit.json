@@ -1,0 +1,614 @@
+{
+  "audit_metadata": {
+    "title": "Alexa Farms AI \u2014 End-to-End Disease Reliability Audit",
+    "timestamp": "2026-10-16T14:35:00+05:30",
+    "status": "COMPLETED",
+    "models_active": {
+      "model1": "EfficientNet-B2 Retrained V3 46-Crop Identifier",
+      "model2": "EfficientNet-B2 Retrained V3 152-Class Disease Classifier"
+    }
+  },
+  "eggplant_mismatch_audit": {
+    "sample": "ps_eggplant_cercospora_leaf_spot_google_0050.jpg",
+    "ground_truth": "eggplant__cercospora_leaf_spot",
+    "resolution": "137x157 pixels (low-resolution web crop)",
+    "model1_prediction": "Eggplant (status: valid, crop_status: accepted)",
+    "model2_prediction": "eggplant__phytophthora_blight (confidence: 61.82%, crop-aware probability)",
+    "model2_raw_top3": [
+      {
+        "class": "eggplant__phytophthora_blight",
+        "prob": 0.5663
+      },
+      {
+        "class": "eggplant__cercospora_leaf_spot",
+        "prob": 0.1903
+      },
+      {
+        "class": "eggplant__phomopsis_fruit_rot",
+        "prob": 0.158
+      }
+    ],
+    "crop_compatibility_enforced": true,
+    "root_cause_analysis": "Visual confusion between two foliar necrotic spot/blight diseases on eggplant. Both Cercospora melongenae and Phytophthora capsici produce concentric brown necrotic lesions on eggplant leaves. At low resolution (137x157), the lesion morphology is highly ambiguous. In the held-out test split for eggplant cercospora, 3/6 samples are similarly predicted as phytophthora_blight due to shared lesion visual structure, while other cercospora samples with clearer halo/leaf context (e.g. bbe15b44c2... and f59df56aa5...) correctly achieve 88.8% - 95.9% confidence on cercospora_leaf_spot. The 61.8% confidence reflects moderate model uncertainty between two compatible eggplant diseases, not a cross-crop or pipeline routing failure.",
+    "verdict": "CONFIRMED_MORPHOLOGICAL_CONFUSION_ON_LOW_RES_IMAGE"
+  },
+  "benchmark_test_set_evaluation": {
+    "overall_7_crops": {
+      "description": "Part A: Independent Benchmark Test Set (7 Target Crops)",
+      "total_samples": 683,
+      "elapsed_seconds": 79.15,
+      "model1_crop_accuracy": 0.9034,
+      "model1_false_rejection_rate": 0.0015,
+      "model1_false_rejections_count": 1,
+      "model1_uncertain_crops_count": 29,
+      "model1_accepted_crops_count": 653,
+      "model2_top1_accuracy": 0.8463,
+      "overall_macro_f1": 0.5321,
+      "disease_only_macro_f1": 0.5343,
+      "healthy_samples_count": 424,
+      "healthy_false_diseased_count": 2,
+      "healthy_false_diseased_rate": 0.0047,
+      "crop_incompatible_predictions_count": 0,
+      "high_confidence_incorrect_diagnoses_count": 26,
+      "high_confidence_incorrect_diagnoses": [
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\bacterial_leaf_spot\\1755c21a64_tomato_bacterial_leaf_spot_31.jpg",
+          "gt": "tomato__bacterial_leaf_spot",
+          "pred": "tomato__septoria_leaf_spot",
+          "conf": 0.997,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\bacterial_leaf_spot\\2c00d9a0e1_tomato_bacterial_leaf_spot_200.jpg",
+          "gt": "tomato__bacterial_leaf_spot",
+          "pred": "soybean__bacterial_blight",
+          "conf": 0.9403,
+          "crop": "soybean"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\bacterial_leaf_spot\\c9a9998740_tomato_bacterial_leaf_spot_22.jpg",
+          "gt": "tomato__bacterial_leaf_spot",
+          "pred": "tomato__septoria_leaf_spot",
+          "conf": 0.8242,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\early_blight\\c9af81c4f5_tomato_early_blight_google_0093.jpg",
+          "gt": "tomato__early_blight",
+          "pred": "potato__early_blight",
+          "conf": 0.9989,
+          "crop": "potato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\healthy\\c4b8b1abc7_7de93009-6180-4027-8779-76947cda3e2f___2700323949_95aa2eaa01_o.jpg",
+          "gt": "healthy",
+          "pred": "tomato__anthracnose",
+          "conf": 0.9979,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\late_blight\\67998f1701_tomato_late_blight_186.jpg",
+          "gt": "tomato__late_blight",
+          "pred": "tomato__anthracnose",
+          "conf": 0.9936,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\late_blight\\aa5d53d269_tomato_late_blight_175.jpg",
+          "gt": "tomato__late_blight",
+          "pred": "tomato__leaf_mold",
+          "conf": 0.9975,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\leaf_mold\\b335b61ac0_tomato_leaf_mold_281.jpg",
+          "gt": "tomato__leaf_mold",
+          "pred": "tomato__late_blight",
+          "conf": 0.9882,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\mosaic_virus\\2f1450d764_tomato_mosaic_virus_143.jpg",
+          "gt": "tomato__mosaic_virus",
+          "pred": "tomato__yellow_leaf_curl_virus",
+          "conf": 0.9949,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\mosaic_virus\\9f2f4d721e_tomato_mosaic_virus_19.jpg",
+          "gt": "tomato__mosaic_virus",
+          "pred": "tomato__yellow_leaf_curl_virus",
+          "conf": 0.9777,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\septoria_leaf_spot\\08855e5797_tomato_septoria_leaf_spot_google_0045.jpg",
+          "gt": "tomato__septoria_leaf_spot",
+          "pred": "tomato__bacterial_leaf_spot",
+          "conf": 0.9523,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\septoria_leaf_spot\\7c41d19259_tomato_septoria_leaf_spot_205.jpg",
+          "gt": "tomato__septoria_leaf_spot",
+          "pred": "tomato__early_blight",
+          "conf": 0.9483,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\eggplant\\cercospora_leaf_spot\\6c0ac4e8f3_eggplant_cercospora_leaf_spot_google_0000.jpg",
+          "gt": "eggplant__cercospora_leaf_spot",
+          "pred": "eggplant__phytophthora_blight",
+          "conf": 0.8496,
+          "crop": "eggplant"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\eggplant\\cercospora_leaf_spot\\d1c32dcb2f_eggplant_cercospora_leaf_spot_google_0001.jpg",
+          "gt": "eggplant__cercospora_leaf_spot",
+          "pred": "eggplant__phytophthora_blight",
+          "conf": 0.9994,
+          "crop": "eggplant"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\eggplant\\phomopsis_fruit_rot\\1048e56035_eggplant_phomopsis_fruit_rot_Bing_0036.jpg",
+          "gt": "eggplant__phomopsis_fruit_rot",
+          "pred": "eggplant__phytophthora_blight",
+          "conf": 0.9765,
+          "crop": "eggplant"
+        }
+      ],
+      "top_confusion_pairs": [
+        {
+          "gt": "cucumber__powdery_mildew",
+          "pred": "uncertain",
+          "count": 15
+        },
+        {
+          "gt": "healthy",
+          "pred": "uncertain",
+          "count": 8
+        },
+        {
+          "gt": "tomato__septoria_leaf_spot",
+          "pred": "uncertain",
+          "count": 6
+        },
+        {
+          "gt": "tomato__late_blight",
+          "pred": "uncertain",
+          "count": 5
+        },
+        {
+          "gt": "cucumber__bacterial_wilt",
+          "pred": "uncertain",
+          "count": 5
+        },
+        {
+          "gt": "tomato__bacterial_leaf_spot",
+          "pred": "uncertain",
+          "count": 4
+        },
+        {
+          "gt": "tomato__bacterial_leaf_spot",
+          "pred": "tomato__septoria_leaf_spot",
+          "count": 3
+        },
+        {
+          "gt": "tomato__early_blight",
+          "pred": "uncertain",
+          "count": 3
+        },
+        {
+          "gt": "tomato__leaf_mold",
+          "pred": "uncertain",
+          "count": 3
+        },
+        {
+          "gt": "tomato__mosaic_virus",
+          "pred": "uncertain",
+          "count": 3
+        }
+      ]
+    },
+    "leaf_foliar_breakdown": {
+      "description": "Part A.1: Leaf / Foliar Diseases in Test Set",
+      "total_samples": 651,
+      "elapsed_seconds": 77.52,
+      "model1_crop_accuracy": 0.9032,
+      "model1_false_rejection_rate": 0.0,
+      "model1_false_rejections_count": 0,
+      "model1_uncertain_crops_count": 28,
+      "model1_accepted_crops_count": 623,
+      "model2_top1_accuracy": 0.8525,
+      "overall_macro_f1": 0.4656,
+      "disease_only_macro_f1": 0.464,
+      "healthy_samples_count": 424,
+      "healthy_false_diseased_count": 2,
+      "healthy_false_diseased_rate": 0.0047,
+      "crop_incompatible_predictions_count": 0,
+      "high_confidence_incorrect_diagnoses_count": 23,
+      "high_confidence_incorrect_diagnoses": [
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\bacterial_leaf_spot\\1755c21a64_tomato_bacterial_leaf_spot_31.jpg",
+          "gt": "tomato__bacterial_leaf_spot",
+          "pred": "tomato__septoria_leaf_spot",
+          "conf": 0.997,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\bacterial_leaf_spot\\2c00d9a0e1_tomato_bacterial_leaf_spot_200.jpg",
+          "gt": "tomato__bacterial_leaf_spot",
+          "pred": "soybean__bacterial_blight",
+          "conf": 0.9403,
+          "crop": "soybean"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\bacterial_leaf_spot\\c9a9998740_tomato_bacterial_leaf_spot_22.jpg",
+          "gt": "tomato__bacterial_leaf_spot",
+          "pred": "tomato__septoria_leaf_spot",
+          "conf": 0.8242,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\early_blight\\c9af81c4f5_tomato_early_blight_google_0093.jpg",
+          "gt": "tomato__early_blight",
+          "pred": "potato__early_blight",
+          "conf": 0.9989,
+          "crop": "potato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\healthy\\c4b8b1abc7_7de93009-6180-4027-8779-76947cda3e2f___2700323949_95aa2eaa01_o.jpg",
+          "gt": "healthy",
+          "pred": "tomato__anthracnose",
+          "conf": 0.9979,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\late_blight\\67998f1701_tomato_late_blight_186.jpg",
+          "gt": "tomato__late_blight",
+          "pred": "tomato__anthracnose",
+          "conf": 0.9936,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\late_blight\\aa5d53d269_tomato_late_blight_175.jpg",
+          "gt": "tomato__late_blight",
+          "pred": "tomato__leaf_mold",
+          "conf": 0.9975,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\leaf_mold\\b335b61ac0_tomato_leaf_mold_281.jpg",
+          "gt": "tomato__leaf_mold",
+          "pred": "tomato__late_blight",
+          "conf": 0.9882,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\mosaic_virus\\2f1450d764_tomato_mosaic_virus_143.jpg",
+          "gt": "tomato__mosaic_virus",
+          "pred": "tomato__yellow_leaf_curl_virus",
+          "conf": 0.9949,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\mosaic_virus\\9f2f4d721e_tomato_mosaic_virus_19.jpg",
+          "gt": "tomato__mosaic_virus",
+          "pred": "tomato__yellow_leaf_curl_virus",
+          "conf": 0.9777,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\septoria_leaf_spot\\08855e5797_tomato_septoria_leaf_spot_google_0045.jpg",
+          "gt": "tomato__septoria_leaf_spot",
+          "pred": "tomato__bacterial_leaf_spot",
+          "conf": 0.9523,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\tomato\\septoria_leaf_spot\\7c41d19259_tomato_septoria_leaf_spot_205.jpg",
+          "gt": "tomato__septoria_leaf_spot",
+          "pred": "tomato__early_blight",
+          "conf": 0.9483,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\eggplant\\cercospora_leaf_spot\\6c0ac4e8f3_eggplant_cercospora_leaf_spot_google_0000.jpg",
+          "gt": "eggplant__cercospora_leaf_spot",
+          "pred": "eggplant__phytophthora_blight",
+          "conf": 0.8496,
+          "crop": "eggplant"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\eggplant\\cercospora_leaf_spot\\d1c32dcb2f_eggplant_cercospora_leaf_spot_google_0001.jpg",
+          "gt": "eggplant__cercospora_leaf_spot",
+          "pred": "eggplant__phytophthora_blight",
+          "conf": 0.9994,
+          "crop": "eggplant"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\strawberry\\healthy\\8a72dd8466_strawberry_leaves_healthy_011215.jpg",
+          "gt": "healthy",
+          "pred": "cabbage__black_rot",
+          "conf": 0.9903,
+          "crop": "cabbage"
+        }
+      ],
+      "top_confusion_pairs": [
+        {
+          "gt": "cucumber__powdery_mildew",
+          "pred": "uncertain",
+          "count": 15
+        },
+        {
+          "gt": "healthy",
+          "pred": "uncertain",
+          "count": 8
+        },
+        {
+          "gt": "tomato__septoria_leaf_spot",
+          "pred": "uncertain",
+          "count": 6
+        },
+        {
+          "gt": "tomato__late_blight",
+          "pred": "uncertain",
+          "count": 5
+        },
+        {
+          "gt": "cucumber__bacterial_wilt",
+          "pred": "uncertain",
+          "count": 5
+        },
+        {
+          "gt": "tomato__bacterial_leaf_spot",
+          "pred": "uncertain",
+          "count": 4
+        },
+        {
+          "gt": "tomato__bacterial_leaf_spot",
+          "pred": "tomato__septoria_leaf_spot",
+          "count": 3
+        },
+        {
+          "gt": "tomato__early_blight",
+          "pred": "uncertain",
+          "count": 3
+        },
+        {
+          "gt": "tomato__leaf_mold",
+          "pred": "uncertain",
+          "count": 3
+        },
+        {
+          "gt": "tomato__mosaic_virus",
+          "pred": "uncertain",
+          "count": 3
+        }
+      ]
+    },
+    "fruit_breakdown": {
+      "description": "Part A.2: Fruit Diseases in Test Set",
+      "total_samples": 32,
+      "elapsed_seconds": 4.25,
+      "model1_crop_accuracy": 0.9062,
+      "model1_false_rejection_rate": 0.0312,
+      "model1_false_rejections_count": 1,
+      "model1_uncertain_crops_count": 1,
+      "model1_accepted_crops_count": 30,
+      "model2_top1_accuracy": 0.7188,
+      "overall_macro_f1": 0.4722,
+      "disease_only_macro_f1": 0.6071,
+      "healthy_samples_count": 0,
+      "healthy_false_diseased_count": 0,
+      "healthy_false_diseased_rate": 0.0,
+      "crop_incompatible_predictions_count": 0,
+      "high_confidence_incorrect_diagnoses_count": 3,
+      "high_confidence_incorrect_diagnoses": [
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\eggplant\\phomopsis_fruit_rot\\1048e56035_eggplant_phomopsis_fruit_rot_Bing_0036.jpg",
+          "gt": "eggplant__phomopsis_fruit_rot",
+          "pred": "eggplant__phytophthora_blight",
+          "conf": 0.9765,
+          "crop": "eggplant"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\strawberry\\anthracnose\\dac5019daa_strawberry_anthracnose_google_0072.jpg",
+          "gt": "strawberry__anthracnose",
+          "pred": "strawberry__gray_mold",
+          "conf": 0.9529,
+          "crop": "strawberry"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\test\\bell_pepper\\blossom_end_rot\\82610acb9b_bell_pepper_blossom_end_rot_Bing_0097.jpg",
+          "gt": "bell_pepper__blossom_end_rot",
+          "pred": "healthy",
+          "conf": 0.9766,
+          "crop": "bell_pepper"
+        }
+      ],
+      "top_confusion_pairs": [
+        {
+          "gt": "banana__anthracnose",
+          "pred": "uncertain",
+          "count": 2
+        },
+        {
+          "gt": "bell_pepper__blossom_end_rot",
+          "pred": "healthy",
+          "count": 2
+        },
+        {
+          "gt": "bell_pepper__blossom_end_rot",
+          "pred": "uncertain",
+          "count": 2
+        },
+        {
+          "gt": "eggplant__phomopsis_fruit_rot",
+          "pred": "eggplant__phytophthora_blight",
+          "count": 1
+        },
+        {
+          "gt": "strawberry__anthracnose",
+          "pred": "healthy",
+          "count": 1
+        },
+        {
+          "gt": "strawberry__anthracnose",
+          "pred": "strawberry__gray_mold",
+          "count": 1
+        }
+      ]
+    }
+  },
+  "zero_test_support_classes_validation_evidence": {
+    "overall_v3_classes": {
+      "description": "Part B: Held-Out Validation Set for 8 New V3 Classes (Zero Independent Test Support)",
+      "total_samples": 442,
+      "elapsed_seconds": 166.94,
+      "model1_crop_accuracy": 0.9412,
+      "model1_false_rejection_rate": 0.0068,
+      "model1_false_rejections_count": 3,
+      "model1_uncertain_crops_count": 6,
+      "model1_accepted_crops_count": 420,
+      "model2_top1_accuracy": 0.9005,
+      "overall_macro_f1": 0.4872,
+      "disease_only_macro_f1": 0.522,
+      "healthy_samples_count": 0,
+      "healthy_false_diseased_count": 0,
+      "healthy_false_diseased_rate": 0.0,
+      "crop_incompatible_predictions_count": 0,
+      "high_confidence_incorrect_diagnoses_count": 6,
+      "high_confidence_incorrect_diagnoses": [
+        {
+          "path": "data\\processed\\model2_retraining_v2\\val\\tomato\\fruit_fusarium\\imgi_230_images.jpg",
+          "gt": "tomato__fruit_fusarium",
+          "pred": "tomato__anthracnose",
+          "conf": 0.996,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\val\\tomato\\fruit_fusarium\\imgi_339_images.jpg",
+          "gt": "tomato__fruit_fusarium",
+          "pred": "tomato__early_blight",
+          "conf": 0.8403,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\val\\tomato\\fruit_fusarium\\imgi_474_images.jpg",
+          "gt": "tomato__fruit_fusarium",
+          "pred": "tomato__late_blight",
+          "conf": 0.9061,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\val\\tomato\\fruit_fusarium\\imgi_609_promix-comment-lutter-contre-la-fusariose-de-la-tomate-01.jpg",
+          "gt": "tomato__fruit_fusarium",
+          "pred": "tomato__yellow_leaf_curl_virus",
+          "conf": 0.9791,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\val\\tomato\\fruit_fusarium\\imgi_65_images.jpg",
+          "gt": "tomato__fruit_fusarium",
+          "pred": "tomato__yellow_leaf_curl_virus",
+          "conf": 0.9884,
+          "crop": "tomato"
+        },
+        {
+          "path": "data\\processed\\model2_retraining_v2\\val\\tomato\\fruit_fusarium\\imgi_89_images.jpg",
+          "gt": "tomato__fruit_fusarium",
+          "pred": "tomato__bacterial_leaf_spot",
+          "conf": 0.9264,
+          "crop": "tomato"
+        }
+      ],
+      "top_confusion_pairs": [
+        {
+          "gt": "tomato__fruit_fusarium",
+          "pred": "uncertain",
+          "count": 12
+        },
+        {
+          "gt": "cucumber__pythium_fruit_rot",
+          "pred": "uncertain",
+          "count": 10
+        },
+        {
+          "gt": "cucumber__anthracnose",
+          "pred": "uncertain",
+          "count": 4
+        },
+        {
+          "gt": "tomato__fruit_fusarium",
+          "pred": "tomato__late_blight",
+          "count": 4
+        },
+        {
+          "gt": "cucumber__belly_rot",
+          "pred": "uncertain",
+          "count": 3
+        },
+        {
+          "gt": "tomato__fruit_fusarium",
+          "pred": "tomato__yellow_leaf_curl_virus",
+          "count": 3
+        },
+        {
+          "gt": "cucumber__downy_mildew",
+          "pred": "uncertain",
+          "count": 2
+        },
+        {
+          "gt": "tomato__fruit_fusarium",
+          "pred": "tomato__bacterial_leaf_spot",
+          "count": 2
+        },
+        {
+          "gt": "cauliflower__black_spot",
+          "pred": "uncertain",
+          "count": 1
+        },
+        {
+          "gt": "tomato__fruit_fusarium",
+          "pred": "tomato__septoria_leaf_spot",
+          "count": 1
+        }
+      ]
+    },
+    "caveat": "These 8 classes have ZERO test support in the immutable benchmark test set. Metrics reflect held-out validation data and must not be presented as independent test accuracy."
+  },
+  "confusion_cases_evaluation": {
+    "overall": {
+      "description": "Part C: Known Confusion & Edge Cases",
+      "total_samples": 4,
+      "elapsed_seconds": 0.51,
+      "model1_crop_accuracy": 0.75,
+      "model1_false_rejection_rate": 0.0,
+      "model1_false_rejections_count": 0,
+      "model1_uncertain_crops_count": 1,
+      "model1_accepted_crops_count": 3,
+      "model2_top1_accuracy": 0.5,
+      "overall_macro_f1": 0.375,
+      "disease_only_macro_f1": 0.5,
+      "healthy_samples_count": 0,
+      "healthy_false_diseased_count": 0,
+      "healthy_false_diseased_rate": 0.0,
+      "crop_incompatible_predictions_count": 0,
+      "high_confidence_incorrect_diagnoses_count": 0,
+      "high_confidence_incorrect_diagnoses": [],
+      "top_confusion_pairs": [
+        {
+          "gt": "eggplant__cercospora_leaf_spot",
+          "pred": "eggplant__phytophthora_blight",
+          "count": 1
+        },
+        {
+          "gt": "eggplant__cercospora_leaf_spot",
+          "pred": "uncertain",
+          "count": 1
+        }
+      ]
+    }
+  }
+}

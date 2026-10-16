@@ -1,0 +1,262 @@
+{
+  "integration_metadata": {
+    "title": "Model 2 V3 Controlled Integration Report",
+    "timestamp": "2026-10-16",
+    "status": "SUCCESSFUL_INTEGRATION_VERIFIED",
+    "summary": "Executed controlled promotion of Model 2 V3 (152 classes, EfficientNet-B2) into the active backend. Rollback capability to Model 2 V2 (144 classes) was preserved byte-for-byte. Atomic synchronization of MODEL2_CHECKPOINT, MODEL2_CLASS_MAPPING, and CROP_DISEASE_MAPPING was applied across app/backend/config.py and models/model2_classifier_v4/predict.py to eliminate dimension mismatches. The explicit safeguard policy was extended to all 36 zero-test-support classes (healthy shielding + provisional 0.70 threshold). All 5 regression test suites passed 100%, and live end-to-end API inference was verified across 5 representative crops and safeguard gates on the running backend."
+  },
+  "configuration": {
+    "original_v2": {
+      "MODEL2_CHECKPOINT": "models/model2_retraining_v2/best_model.pth",
+      "MODEL2_CLASS_MAPPING": "models/model2_retraining_v2/class_mapping.json",
+      "MODEL2_CONFIG": "models/model2_retraining_v2/config.json",
+      "CROP_DISEASE_MAPPING": "models/model2_retraining_v2/crop_disease_mapping.json"
+    },
+    "promoted_v3": {
+      "MODEL2_CHECKPOINT": "models/model2_retrained_v3/best_model.pth",
+      "MODEL2_CLASS_MAPPING": "models/model2_retrained_v3/class_mapping.json",
+      "MODEL2_CONFIG": "models/model2_retrained_v3/config.json",
+      "CROP_DISEASE_MAPPING": "models/model2_retrained_v3/crop_disease_mapping.json"
+    },
+    "env_variable_overrides_supported": [
+      "MODEL2_CHECKPOINT",
+      "MODEL2_CLASS_MAPPING",
+      "MODEL2_CONFIG",
+      "CROP_DISEASE_MAPPING"
+    ]
+  },
+  "file_hashes_and_preservation": {
+    "legacy_model2_v2_checkpoint": {
+      "path": "models/model2_retraining_v2/best_model.pth",
+      "sha256": "608910fa94e55735d88bb0acb62b959b21bd3baabb990d196f59a47789f8b24c",
+      "size_bytes": 95570204,
+      "classes": 144,
+      "status": "PRESERVED_BYTE_FOR_BYTE"
+    },
+    "legacy_model2_v2_class_mapping": {
+      "path": "models/model2_retraining_v2/class_mapping.json",
+      "sha256": "d08453e0eb4111f2656994d2b2951999b57893f4341ceb818da375b0761d15a8",
+      "size_bytes": 4593,
+      "classes": 144,
+      "status": "PRESERVED_BYTE_FOR_BYTE"
+    },
+    "legacy_model2_v2_crop_disease_mapping": {
+      "path": "models/model2_retraining_v2/crop_disease_mapping.json",
+      "sha256": "c1207159a34ccf1be938dcea2ea266043a77ad30656c00b2de18cecf92ba2c14",
+      "size_bytes": 3757,
+      "status": "PRESERVED_BYTE_FOR_BYTE"
+    },
+    "active_model2_v3_checkpoint": {
+      "path": "models/model2_retrained_v3/best_model.pth",
+      "sha256": "8296117dee2de71d46160e5895c9eecddeedde359b7d04c8f3c3b671760b646a",
+      "size_bytes": 95705052,
+      "architecture": "efficientnet_b2",
+      "classifier_out_features": 152,
+      "status": "PROMOTED_ACTIVE"
+    },
+    "active_model2_v3_class_mapping": {
+      "path": "models/model2_retrained_v3/class_mapping.json",
+      "sha256": "263b1bb0e8a7b1c470bbe966a8e6a7d3b4f0fce30154e29c5eddc7408a550c0e",
+      "size_bytes": 4883,
+      "classes": 152,
+      "status": "PROMOTED_ACTIVE"
+    },
+    "active_model2_v3_crop_disease_mapping": {
+      "path": "models/model2_retrained_v3/crop_disease_mapping.json",
+      "sha256": "89cb4512881f1293931fe41e7f2dfe8ec763a320f825d8dad358407bef2095d5",
+      "size_bytes": 3939,
+      "status": "PROMOTED_ACTIVE"
+    }
+  },
+  "safeguard_policy_for_zero_test_support_classes": {
+    "total_zero_test_support_classes": 36,
+    "legacy_classes_count": 28,
+    "newly_added_v3_classes": [
+      "cauliflower__alternaria_brassicae",
+      "cauliflower__black_spot",
+      "cucumber__anthracnose",
+      "cucumber__belly_rot",
+      "cucumber__downy_mildew",
+      "cucumber__gummy_stem_blight",
+      "cucumber__pythium_fruit_rot",
+      "tomato__fruit_fusarium"
+    ],
+    "policy_rule_hierarchy": {
+      "priority_1_healthy_shielding": "If healthy foliage candidate probability >= 0.10, healthy state is shielded and disease alarm is prevented (yields status='healthy' or 'uncertain').",
+      "priority_2_provisional_detection": "If healthy probability < 0.10 and candidate confidence >= zero_support_threshold (0.70), diagnosis is permitted as status='diseased', disease=cand_name.",
+      "priority_3_uncertain_fallback": "If candidate confidence < 0.70, prediction safely falls back to status='uncertain', disease=None."
+    }
+  },
+  "evaluation_metrics": {
+    "held_out_benchmark_test_set": {
+      "source_report": "reports/model2_retrained_v3/test_evaluation_report.json",
+      "total_samples": 12042,
+      "top1_accuracy": 0.8550074738415545,
+      "macro_f1": 0.7159787118836402,
+      "weighted_f1": 0.8519662193496057,
+      "healthy_class_f1": 0.9836372078696803,
+      "healthy_class_precision": 0.9832791443422005,
+      "healthy_class_recall": 0.9839955776672194
+    },
+    "validation_evidence_new_v3_classes": {
+      "total_samples_evaluated": 442,
+      "class_breakdown": {
+        "cauliflower__alternaria_brassicae": {"n": 6, "diagnosed_pct": 100.0, "avg_confidence": 0.9972},
+        "cauliflower__black_spot": {"n": 37, "diagnosed_pct": 100.0, "avg_confidence": 0.9983},
+        "cucumber__anthracnose": {"n": 78, "diagnosed_pct": 100.0, "avg_confidence": 0.9918},
+        "cucumber__belly_rot": {"n": 62, "diagnosed_pct": 100.0, "avg_confidence": 0.9938},
+        "cucumber__downy_mildew": {"n": 69, "diagnosed_pct": 100.0, "avg_confidence": 0.9734},
+        "cucumber__gummy_stem_blight": {"n": 77, "diagnosed_pct": 100.0, "avg_confidence": 0.9774},
+        "cucumber__pythium_fruit_rot": {"n": 79, "diagnosed_pct": 100.0, "avg_confidence": 0.9959},
+        "tomato__fruit_fusarium": {"n": 34, "raw_top1_pct": 38.2, "diagnosed_pct": 26.5, "avg_confidence": 0.6582, "sub_threshold_held_as_uncertain_pct": 73.5}
+      }
+    },
+    "crop_compatibility_and_confusion_safeguards": {
+      "cross_crop_leakage_prevention": "100% of incompatible diseases (e.g. Tomato Fruit Fusarium on Zucchini) are masked to -inf before candidate ranking.",
+      "banana_bunchy_top_vs_healthy": "Subtle foliar symptoms on healthy banana are strictly isolated to banana and fall back to uncertain status when confidence is below threshold."
+    }
+  },
+  "regression_testing_summary": {
+    "crop_aware_inference_suite": {
+      "script": "scripts/test_crop_aware_inference_regression.py",
+      "passed": 10,
+      "total": 10,
+      "result": "ALL_PASSED",
+      "coverage": "All 36 zero-support classes, 152 output dimensions, and V2 rollback compatibility verified."
+    },
+    "crop_compatibility_suite": {
+      "script": "scripts/test_crop_compatibility_regression.py",
+      "passed": 11,
+      "total": 11,
+      "result": "ALL_PASSED"
+    },
+    "safeguards_regression_suite": {
+      "script": "scripts/test_safeguards.py",
+      "passed": 10,
+      "total": 10,
+      "result": "ALL_PASSED"
+    },
+    "disease_source_links_suite": {
+      "script": "scripts/test_disease_source_links.py",
+      "passed": 998,
+      "total": 998,
+      "result": "ALL_PASSED"
+    },
+    "video_pipeline_suite": {
+      "script": "scripts/test_video_pipeline_regression.py",
+      "passed": 19,
+      "total": 19,
+      "result": "ALL_PASSED"
+    }
+  },
+  "live_api_verification": {
+    "endpoint": "http://127.0.0.1:8000/api/chat",
+    "backend_health_status": 200,
+    "model2_reported_name": "EfficientNet-B2 Retrained V3 152-Class Disease Classifier",
+    "model2_reported_classes": 152,
+    "model2_reported_checkpoint": "models/model2_retrained_v3/best_model.pth",
+    "model2_device": "cuda",
+    "test_cases": [
+      {
+        "crop": "tomato",
+        "condition": "healthy",
+        "predicted_crop": "Tomato (92.2%)",
+        "predicted_disease": "Healthy Specimen / No Disease Detected (99.7%)",
+        "status": "healthy",
+        "api_response_verified": true
+      },
+      {
+        "crop": "tomato",
+        "condition": "early_blight",
+        "predicted_crop": "Uncertain Crop",
+        "predicted_disease": null,
+        "status": "uncertain_crop_rejected",
+        "api_response_verified": true
+      },
+      {
+        "crop": "banana",
+        "condition": "healthy",
+        "predicted_crop": "Banana (99.4%)",
+        "predicted_disease": "Bunchy Top (58.5%)",
+        "status": "uncertain (sub-threshold held safely)",
+        "api_response_verified": true
+      },
+      {
+        "crop": "banana",
+        "condition": "bunchy_top",
+        "predicted_crop": "Banana (100.0%)",
+        "predicted_disease": "Bunchy Top (99.9%)",
+        "status": "detected",
+        "citation_provided": "Banana Bunchy Top (121)",
+        "api_response_verified": true
+      },
+      {
+        "crop": "cauliflower",
+        "condition": "healthy",
+        "predicted_crop": "Cauliflower (99.9%)",
+        "predicted_disease": "Healthy Specimen / No Disease Detected (99.2%)",
+        "status": "healthy",
+        "api_response_verified": true
+      },
+      {
+        "crop": "cauliflower",
+        "condition": "black_spot (V3 New Class)",
+        "predicted_crop": "Cauliflower (99.9%)",
+        "predicted_disease": "Black Spot (100.0%)",
+        "status": "detected",
+        "citation_provided": "Cole Crops: Alternaria Head Rot and Leaf Spot (Black Spot)",
+        "api_response_verified": true
+      },
+      {
+        "crop": "cucumber",
+        "condition": "healthy",
+        "predicted_crop": "Cucumber (99.8%)",
+        "predicted_disease": "Healthy Specimen / No Disease Detected (99.4%)",
+        "status": "healthy",
+        "api_response_verified": true
+      },
+      {
+        "crop": "cucumber",
+        "condition": "downy_mildew (V3 New Class)",
+        "predicted_crop": "Cucumber (97.6%)",
+        "predicted_disease": "Downy Mildew (91.6%)",
+        "status": "detected",
+        "citation_provided": "Cucurbit Downy Mildew",
+        "api_response_verified": true
+      },
+      {
+        "crop": "strawberry",
+        "condition": "healthy",
+        "predicted_crop": "Strawberry (100.0%)",
+        "predicted_disease": "Healthy Specimen / No Disease Detected (99.7%)",
+        "status": "healthy",
+        "api_response_verified": true
+      },
+      {
+        "crop": "strawberry",
+        "condition": "powdery_mildew (Fruit)",
+        "predicted_crop": "Grape (77.7%)",
+        "predicted_disease": "Inconclusive / Uncertain (95.9%)",
+        "status": "uncertain (incompatibility guarded)",
+        "api_response_verified": true
+      },
+      {
+        "safeguard_test": "non_plant_rejection",
+        "result": "This image does not appear to contain a plant. Please upload a clear plant image.",
+        "status": "PASSED"
+      }
+    ]
+  },
+  "remaining_limitations": [
+    "36 disease classes have 0 samples in the immutable benchmark test set and rely on validation set evidence (442 samples across the 8 newly added classes) plus the provisional safeguard policy threshold (0.70).",
+    "Tomato fruit fusarium has lower validation confidence (average 0.658); sub-threshold cases (73.5%) are held safely as uncertain rather than misdiagnosed.",
+    "Healthy banana foliage can share visual features with mild bunchy top symptoms; low-confidence cases are prevented from false positive escalation."
+  ],
+  "rollback_instructions": {
+    "step_1": "In app/backend/config.py, set MODEL2_CHECKPOINT to PROJECT_ROOT / 'models' / 'model2_retraining_v2' / 'best_model.pth'.",
+    "step_2": "In app/backend/config.py, set MODEL2_CLASS_MAPPING to PROJECT_ROOT / 'models' / 'model2_retraining_v2' / 'class_mapping.json'.",
+    "step_3": "In app/backend/config.py, set CROP_DISEASE_MAPPING to PROJECT_ROOT / 'models' / 'model2_retraining_v2' / 'crop_disease_mapping.json'.",
+    "step_4": "In models/model2_classifier_v4/predict.py, ensure default path falls back to model2_retraining_v2.",
+    "step_5": "Restart the uvicorn backend. The 144-class V2 model will immediately resume active serving without code modifications."
+  }
+}

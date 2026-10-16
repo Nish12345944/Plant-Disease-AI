@@ -1,0 +1,242 @@
+{
+  "overall": {
+    "best_epoch": 14,
+    "best_val_macro_f1": 0.7360951855442532,
+    "best_val_accuracy": 0.8738636363636364,
+    "test_macro_f1": 0.5837831580817062,
+    "test_weighted_f1": 0.8588767823987352,
+    "test_accuracy": 0.8550347222222222,
+    "num_classes": 152,
+    "total_train_samples": 35663,
+    "total_val_samples": 3520,
+    "total_test_samples": 2304
+  },
+  "healthy_class_0": {
+    "precision": 0.9893203883495145,
+    "recall": 0.978866474543708,
+    "f1-score": 0.9840656687590535,
+    "support": 1041.0
+  },
+  "new_8_classes": {
+    "macro_f1": 0.0,
+    "weighted_f1": 0.0,
+    "classes": [
+      {
+        "class": "cauliflower__alternaria_brassicae",
+        "id": 144,
+        "prec": 0.0,
+        "rec": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      {
+        "class": "cauliflower__black_spot",
+        "id": 145,
+        "prec": 0.0,
+        "rec": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      {
+        "class": "cucumber__anthracnose",
+        "id": 146,
+        "prec": 0.0,
+        "rec": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      {
+        "class": "cucumber__belly_rot",
+        "id": 147,
+        "prec": 0.0,
+        "rec": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      {
+        "class": "cucumber__downy_mildew",
+        "id": 148,
+        "prec": 0.0,
+        "rec": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      {
+        "class": "cucumber__gummy_stem_blight",
+        "id": 149,
+        "prec": 0.0,
+        "rec": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      {
+        "class": "cucumber__pythium_fruit_rot",
+        "id": 150,
+        "prec": 0.0,
+        "rec": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      {
+        "class": "tomato__fruit_fusarium",
+        "id": 151,
+        "prec": 0.0,
+        "rec": 0.0,
+        "f1": 0.0,
+        "support": 0
+      }
+    ]
+  },
+  "original_144_classes": {
+    "macro_f1": 0.5310805118659966,
+    "weighted_f1": 0.8588767823987352,
+    "total_support": 2304
+  },
+  "active_classes_macro_f1": 0.659272359557789,
+  "zero_support_count": 36,
+  "nonzero_support_count": 116,
+  "worst_10": [
+    {
+      "class": "cherry__powdery_mildew",
+      "prec": 0.0,
+      "rec": 0.0,
+      "f1": 0.0,
+      "support": 3
+    },
+    {
+      "class": "coffee__brown_eye_spot",
+      "prec": 0.0,
+      "rec": 0.0,
+      "f1": 0.0,
+      "support": 1
+    },
+    {
+      "class": "peach__anthracnose",
+      "prec": 0.0,
+      "rec": 0.0,
+      "f1": 0.0,
+      "support": 1
+    },
+    {
+      "class": "peach__rust",
+      "prec": 0.0,
+      "rec": 0.0,
+      "f1": 0.0,
+      "support": 1
+    },
+    {
+      "class": "plum__bacterial_spot",
+      "prec": 0.0,
+      "rec": 0.0,
+      "f1": 0.0,
+      "support": 1
+    },
+    {
+      "class": "plum__rust",
+      "prec": 0.0,
+      "rec": 0.0,
+      "f1": 0.0,
+      "support": 2
+    },
+    {
+      "class": "raspberry__leaf_spot",
+      "prec": 0.0,
+      "rec": 0.0,
+      "f1": 0.0,
+      "support": 1
+    },
+    {
+      "class": "bell_pepper__frogeye_leaf_spot",
+      "prec": 0.08333333333333333,
+      "rec": 0.25,
+      "f1": 0.125,
+      "support": 4
+    },
+    {
+      "class": "bean__mosaic_virus",
+      "prec": 0.14285714285714285,
+      "rec": 0.2,
+      "f1": 0.16666666666666666,
+      "support": 5
+    },
+    {
+      "class": "celery__anthracnose",
+      "prec": 0.1,
+      "rec": 1.0,
+      "f1": 0.18181818181818182,
+      "support": 1
+    }
+  ],
+  "best_10": [
+    {
+      "class": "cucumber__angular_leaf_spot",
+      "prec": 0.88,
+      "rec": 1.0,
+      "f1": 0.9361702127659575,
+      "support": 22
+    },
+    {
+      "class": "bean__angular_leaf_spot",
+      "prec": 0.9393939393939394,
+      "rec": 0.9538461538461539,
+      "f1": 0.9465648854961832,
+      "support": 65
+    },
+    {
+      "class": "citrus__canker",
+      "prec": 1.0,
+      "rec": 0.9166666666666666,
+      "f1": 0.9565217391304348,
+      "support": 48
+    },
+    {
+      "class": "cabbage__black_rot",
+      "prec": 0.9285714285714286,
+      "rec": 1.0,
+      "f1": 0.9629629629629629,
+      "support": 13
+    },
+    {
+      "class": "coffee__leaf_rust",
+      "prec": 1.0,
+      "rec": 0.9375,
+      "f1": 0.967741935483871,
+      "support": 16
+    },
+    {
+      "class": "peach__leaf_curl",
+      "prec": 1.0,
+      "rec": 0.9444444444444444,
+      "f1": 0.9714285714285714,
+      "support": 18
+    },
+    {
+      "class": "corn__smut",
+      "prec": 1.0,
+      "rec": 0.9473684210526315,
+      "f1": 0.972972972972973,
+      "support": 19
+    },
+    {
+      "class": "wheat__loose_smut",
+      "prec": 1.0,
+      "rec": 0.9473684210526315,
+      "f1": 0.972972972972973,
+      "support": 19
+    },
+    {
+      "class": "wheat__head_scab",
+      "prec": 0.967741935483871,
+      "rec": 1.0,
+      "f1": 0.9836065573770492,
+      "support": 30
+    },
+    {
+      "class": "healthy",
+      "prec": 0.9893203883495145,
+      "rec": 0.978866474543708,
+      "f1": 0.9840656687590535,
+      "support": 1041
+    }
+  ]
+}

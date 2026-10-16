@@ -37,30 +37,31 @@ logger = logging.getLogger(__name__)
 # Base paths
 PROJECT_ROOT = Path(os.environ.get("PROJECT_ROOT", str(Path(__file__).resolve().parent.parent.parent))).resolve()
 MODEL_DIR_V4 = Path(__file__).resolve().parent
+MODEL2_RETRAINED_V3_DIR = PROJECT_ROOT / "models" / "model2_retrained_v3"
 MODEL2_RETRAINING_V2_DIR = PROJECT_ROOT / "models" / "model2_retraining_v2"
 
 DEFAULT_CHECKPOINT_PATH = Path(
     os.environ.get(
         "MODEL2_CHECKPOINT",
-        str(MODEL2_RETRAINING_V2_DIR / "best_model.pth" if (MODEL2_RETRAINING_V2_DIR / "best_model.pth").exists() else MODEL_DIR_V4 / "best_model.pth"),
+        str(MODEL2_RETRAINED_V3_DIR / "best_model.pth" if (MODEL2_RETRAINED_V3_DIR / "best_model.pth").exists() else (MODEL2_RETRAINING_V2_DIR / "best_model.pth" if (MODEL2_RETRAINING_V2_DIR / "best_model.pth").exists() else MODEL_DIR_V4 / "best_model.pth")),
     )
 )
 DEFAULT_MAPPING_PATH = Path(
     os.environ.get(
         "MODEL2_CLASS_MAPPING",
-        str(MODEL2_RETRAINING_V2_DIR / "class_mapping.json" if (MODEL2_RETRAINING_V2_DIR / "class_mapping.json").exists() else MODEL_DIR_V4 / "class_mapping.json"),
+        str(MODEL2_RETRAINED_V3_DIR / "class_mapping.json" if (MODEL2_RETRAINED_V3_DIR / "class_mapping.json").exists() else (MODEL2_RETRAINING_V2_DIR / "class_mapping.json" if (MODEL2_RETRAINING_V2_DIR / "class_mapping.json").exists() else MODEL_DIR_V4 / "class_mapping.json")),
     )
 )
 DEFAULT_CONFIG_PATH = Path(
     os.environ.get(
         "MODEL2_CONFIG",
-        str(MODEL2_RETRAINING_V2_DIR / "config.json" if (MODEL2_RETRAINING_V2_DIR / "config.json").exists() else MODEL_DIR_V4 / "config.json"),
+        str(MODEL2_RETRAINED_V3_DIR / "config.json" if (MODEL2_RETRAINED_V3_DIR / "config.json").exists() else (MODEL2_RETRAINING_V2_DIR / "config.json" if (MODEL2_RETRAINING_V2_DIR / "config.json").exists() else MODEL_DIR_V4 / "config.json")),
     )
 )
 CROP_DISEASE_MAP_PATH = Path(
     os.environ.get(
         "CROP_DISEASE_MAPPING",
-        str(MODEL2_RETRAINING_V2_DIR / "crop_disease_mapping.json" if (MODEL2_RETRAINING_V2_DIR / "crop_disease_mapping.json").exists() else PROJECT_ROOT / "data" / "processed" / "model2_organized_crop_disease_mapping.json"),
+        str(MODEL2_RETRAINED_V3_DIR / "crop_disease_mapping.json" if (MODEL2_RETRAINED_V3_DIR / "crop_disease_mapping.json").exists() else (MODEL2_RETRAINING_V2_DIR / "crop_disease_mapping.json" if (MODEL2_RETRAINING_V2_DIR / "crop_disease_mapping.json").exists() else PROJECT_ROOT / "data" / "processed" / "model2_organized_crop_disease_mapping.json")),
     )
 )
 
@@ -68,11 +69,13 @@ IMAGENET_MEAN = [0.485, 0.456, 0.406]
 IMAGENET_STD = [0.229, 0.224, 0.225]
 DEFAULT_IMAGE_SIZE = (260, 260)
 
-# 28 disease classes with zero test support in the immutable evaluation benchmark
-# (reports/model2_retraining_v2/final_test_evaluation/test_classification_report.csv).
-# These classes have no demonstrated test reliability and cannot declare an image diseased
-# nor falsely override healthy foliage predictions.
+# 36 disease classes with zero test support in the immutable evaluation benchmark
+# (28 legacy classes from V2 plus 8 newly added V3 classes).
+# Safeguards ensure these classes cannot falsely override healthy foliage predictions,
+# cannot trigger on incompatible crops, and require high calibrated confidence (>= 0.70)
+# for provisional detection.
 ZERO_TEST_SUPPORT_CLASSES: set[str] = {
+    # 28 legacy zero-test-support classes
     "bell_pepper__leaf_curl",
     "blueberry__exobasidium",
     "blueberry__septoria_leaf_spot",
@@ -101,6 +104,15 @@ ZERO_TEST_SUPPORT_CLASSES: set[str] = {
     "strawberry__leaf_spot",
     "strawberry__powdery_mildew",
     "tomato__anthracnose",
+    # 8 newly added V3 zero-test-support classes
+    "cauliflower__alternaria_brassicae",
+    "cauliflower__black_spot",
+    "cucumber__anthracnose",
+    "cucumber__belly_rot",
+    "cucumber__downy_mildew",
+    "cucumber__gummy_stem_blight",
+    "cucumber__pythium_fruit_rot",
+    "tomato__fruit_fusarium",
 }
 
 
@@ -150,12 +162,15 @@ class Model2DiseaseClassifierV4:
         device: Optional[str] = None,
         uncertainty_threshold: float = 0.40,
         margin_threshold: float = 0.05,
+        temperature: Optional[float] = None,
     ):
         self.checkpoint_path = Path(checkpoint_path or DEFAULT_CHECKPOINT_PATH)
         self.class_mapping_path = Path(class_mapping_path or DEFAULT_MAPPING_PATH)
         self.crop_disease_map_path = Path(crop_disease_map_path or CROP_DISEASE_MAP_PATH)
-        self.uncertainty_threshold = uncertainty_threshold
-        self.margin_threshold = margin_threshold
+        self.uncertainty_threshold = float(os.environ.get("MODEL2_UNCERTAINTY_THRESHOLD", str(uncertainty_threshold)))
+        self.margin_threshold = float(os.environ.get("MODEL2_MARGIN_THRESHOLD", str(margin_threshold)))
+        self.temperature = float(os.environ.get("MODEL2_TEMPERATURE", str(temperature if temperature is not None else 0.9188)))
+        self.zero_support_threshold = float(os.environ.get("ZERO_SUPPORT_THRESHOLD", "0.70"))
 
         if device:
             self.device = torch.device(device)
@@ -307,11 +322,15 @@ class Model2DiseaseClassifierV4:
         return (slug_clean in permitted) or (disease_short in permitted)
 
     def predict_raw(self, pil_img: Image.Image) -> tuple[np.ndarray, list[dict[str, Any]]]:
-        """Compute unconstrained 144-class probability distribution."""
+        """Compute unconstrained probability distribution with calibrated temperature."""
         tensor = self.transform(pil_img).unsqueeze(0).to(self.device)
         with torch.inference_mode():
             logits = self.model(tensor)
-            probs = torch.softmax(logits, dim=1).squeeze(0).cpu().numpy()
+            if hasattr(self, "temperature") and self.temperature and self.temperature > 0:
+                scaled_logits = logits / self.temperature
+            else:
+                scaled_logits = logits
+            probs = torch.softmax(scaled_logits, dim=1).squeeze(0).cpu().numpy()
 
         sorted_indices = np.argsort(probs)[::-1]
         top_classes = [
@@ -420,34 +439,53 @@ class Model2DiseaseClassifierV4:
                 c["crop_aware_probability"] = c["probability"]
                 c["crop_aware_percentage"] = c["percentage"]
 
-        # Evaluation of compatible candidates
+        # Evaluation of compatible candidates with general prediction-reliability policy
         if compatible_ranked and compat_mass >= 0.20:
             best_compat = compatible_ranked[0]
             cand_name = best_compat["class_name"]
             cand_conf = float(best_compat.get("crop_aware_probability", best_compat["probability"]))
 
-            # Safeguard against unverified zero-test-support disease classes:
-            # 1. Zero-support disease classes cannot claim demonstrated reliability.
-            # 2. Healthy images cannot be incorrectly declared diseased because of uncalibrated zero-support classes.
+            second_compat = compatible_ranked[1] if len(compatible_ranked) > 1 else None
+            second_cand_name = second_compat["class_name"] if second_compat else None
+            second_cand_conf = float(second_compat.get("crop_aware_probability", second_compat["probability"])) if second_compat else 0.0
+            margin = cand_conf - second_cand_conf
+
+            # Retrieve compatible healthy candidate probability if available
+            healthy_cands = [c for c in compatible_ranked if c["class_name"] == "healthy"]
+            healthy_prob = float(healthy_cands[0].get("crop_aware_probability", healthy_cands[0]["probability"])) if healthy_cands else 0.0
+
+            # General Reliability Policy:
+            # 1. Competing prediction ambiguity: if margin between top-2 candidates < margin_threshold
+            is_narrow_margin = (second_compat is not None) and (margin < self.margin_threshold)
+
+            # 2. Decision confidence threshold
+            is_sub_threshold = (cand_conf < self.uncertainty_threshold)
+
             if cand_name in self.zero_support_classes:
-                healthy_candidates = [c for c in compatible_ranked if c["class_name"] == "healthy"]
-                if healthy_candidates and healthy_candidates[0]["probability"] >= 0.10:
-                    h_conf = float(healthy_candidates[0].get("crop_aware_probability", healthy_candidates[0]["probability"]))
-                    if h_conf >= self.uncertainty_threshold:
+                # Safeguard against unverified zero-test-support disease classes:
+                # 1. Healthy foliage protection: if healthy probability is >= 0.10, healthy takes precedence or forces uncertain.
+                # 2. Documented explicit policy: if healthy probability is < 0.10 and cand_conf >= zero_support_threshold (0.70),
+                #    and prediction is decisive (not narrow margin), the disease is provisionally diagnosed.
+                # 3. Otherwise, safely hold as uncertain.
+                if healthy_prob >= 0.10:
+                    if healthy_prob >= self.uncertainty_threshold and not is_narrow_margin:
                         final_status = "healthy"
                         final_disease = None
-                        final_disease_conf = h_conf
+                        final_disease_conf = healthy_prob
                     else:
                         final_status = "uncertain"
                         final_disease = None
-                        final_disease_conf = h_conf
+                        final_disease_conf = healthy_prob
+                elif cand_conf >= self.zero_support_threshold and not is_narrow_margin:
+                    final_status = "diseased"
+                    final_disease = cand_name
+                    final_disease_conf = cand_conf
                 else:
-                    # Cannot claim demonstrated reliability for zero-support disease class
                     final_status = "uncertain"
                     final_disease = None
                     final_disease_conf = cand_conf
             elif cand_name == "healthy":
-                if cand_conf >= self.uncertainty_threshold:
+                if not is_sub_threshold and not is_narrow_margin:
                     final_status = "healthy"
                     final_disease = None
                     final_disease_conf = cand_conf
@@ -458,17 +496,22 @@ class Model2DiseaseClassifierV4:
                     if raw_top1 and raw_top1["probability"] > cand_conf:
                         final_disease_conf = float(raw_top1["probability"])
             else:
-                # Valid disease candidate with test support
-                if cand_conf >= self.uncertainty_threshold:
-                    final_status = "diseased"
-                    final_disease = cand_name
-                    final_disease_conf = cand_conf
-                else:
+                # Standard disease candidate with test support:
+                # Universal healthy shielding: if healthy probability closely competes with disease
+                # candidate (healthy_prob >= 0.35 and cand_conf - healthy_prob < self.margin_threshold),
+                # do not trigger a false disease alarm; hold as uncertain.
+                is_healthy_competing = (healthy_prob >= 0.35) and ((cand_conf - healthy_prob) < self.margin_threshold)
+
+                if is_sub_threshold or is_narrow_margin or is_healthy_competing:
                     final_status = "uncertain"
                     final_disease = None
                     final_disease_conf = cand_conf
                     if raw_top1 and raw_top1["probability"] > cand_conf:
                         final_disease_conf = float(raw_top1["probability"])
+                else:
+                    final_status = "diseased"
+                    final_disease = cand_name
+                    final_disease_conf = cand_conf
         else:
             final_status = "uncertain"
             final_disease = None

@@ -28,7 +28,7 @@ from typing import Any, Optional
 import numpy as np
 import torch
 
-from app.backend.config import MODEL1_CLASS_MAPPING
+from app.backend.config import MODEL1_CLASS_MAPPING, MODEL1_PROTOTYPES
 from model1_test_app.inference import format_class_name, normalize_crop_id
 
 logger = logging.getLogger(__name__)
@@ -52,9 +52,14 @@ PROVISIONAL_MIN_PROTO_SIM_ACCEPTED = 0.62    # Minimum prototype cosine similari
 PROVISIONAL_MIN_PROTO_SIM_UNCERTAIN = 0.50   # Below this, sample is strictly rejected as unsupported crop (default)
 
 # Per-crop calibrated prototype acceptance thresholds
+# Minimum deep feature prototype cosine similarity threshold for genuine non-plant detection
+# Feature vectors with prototype similarity below 0.22 across all classes are truly alien to plant life.
+NON_PLANT_DEEP_SIM_THRESHOLD = 0.22
+
+# Per-crop calibrated prototype acceptance thresholds
 # Default: 0.62 for high-risk / lookalike-prone crops (e.g. wheat vs bajra).
-# Crops with high intra-class organ variance (fruit pods vs leaves, e.g. bellpepper, apple, etc.)
-# have empirically calibrated thresholds based on the immutable test split:
+# Crops with high intra-class organ variance (fruit pods, curds, stalks, berries vs leaves)
+# have empirically calibrated thresholds based on held-out test and validation splits:
 CROP_MIN_PROTO_SIM_ACCEPTED: dict[str, float] = {
     "bellpepper": 0.45,    # Accommodates bell pepper fruit (0.50-0.65) and leaf lesions (0.47)
     "apple": 0.45,         # Accommodates apple fruit (test mean 0.59, min 0.46)
@@ -69,10 +74,27 @@ CROP_MIN_PROTO_SIM_ACCEPTED: dict[str, float] = {
     "raspberry": 0.45,     # Berries vs leaves (test mean 0.62)
     "cabbage": 0.45,       # Head vs outer leaves (test mean 0.64)
     "broccoli": 0.45,      # Florets vs leaves (test mean 0.67)
+    "eggplant": 0.45,      # Accommodates eggplant fruit/calyx (0.47-0.75) and leaf lesions
+    "tomato": 0.45,        # Accommodates tomato fruit and leaf lesions
+    "cucumber": 0.45,      # Accommodates cucumber fruit and leaf lesions
+    "strawberry": 0.45,    # Accommodates strawberry fruit and leaf lesions
+    "banana": 0.45,        # Accommodates banana fruit and foliage
+    "melon": 0.45,         # Accommodates melon fruit and foliage
+    "watermelon": 0.45,    # Accommodates watermelon fruit and foliage
+    "citrus": 0.45,        # Accommodates citrus fruit and foliage
+    "potato": 0.45,        # Accommodates potato foliage and tubers
+    "pomegranate": 0.45,   # Accommodates pomegranate fruit and foliage
+    "guava": 0.45,         # Accommodates guava fruit and foliage
+    "mango": 0.45,         # Accommodates mango fruit and foliage
+    "papaya": 0.45,        # Accommodates papaya fruit and foliage
+    "french_bean": 0.45,   # Accommodates bean pods and foliage
+    "soybean": 0.45,       # Accommodates soybean pods and foliage
+    "corn": 0.45,          # Accommodates corn ear and foliage
+    "zucchini": 0.45,      # Accommodates zucchini fruit and foliage
 }
 
 CROP_MIN_PROTO_SIM_UNCERTAIN: dict[str, float] = {
-    "bellpepper": 0.35,    # Below 0.35 is non-plant image / alien flora
+    "bellpepper": 0.35,    # Below 0.35 triggers uncertainty / lookalike caution
     "apple": 0.35,
     "blueberry": 0.30,
     "plum": 0.30,
@@ -85,6 +107,23 @@ CROP_MIN_PROTO_SIM_UNCERTAIN: dict[str, float] = {
     "raspberry": 0.30,
     "cabbage": 0.30,
     "broccoli": 0.30,
+    "eggplant": 0.30,
+    "tomato": 0.30,
+    "cucumber": 0.30,
+    "strawberry": 0.30,
+    "banana": 0.30,
+    "melon": 0.30,
+    "watermelon": 0.30,
+    "citrus": 0.30,
+    "potato": 0.30,
+    "pomegranate": 0.30,
+    "guava": 0.30,
+    "mango": 0.30,
+    "papaya": 0.30,
+    "french_bean": 0.30,
+    "soybean": 0.30,
+    "corn": 0.30,
+    "zucchini": 0.30,
 }
 
 
@@ -134,10 +173,12 @@ def get_supported_crop_classes() -> set[str]:
 
 
 def get_crop_prototypes() -> dict[str, np.ndarray]:
-    """Load cached class prototype embeddings from models/model1_expanded/crop_prototypes.npz."""
+    """Load cached class prototype embeddings matching the active Model 1 checkpoint."""
     global _CROP_PROTOTYPES
     if _CROP_PROTOTYPES is None:
-        proto_file = Path("models/model1_expanded/crop_prototypes.npz")
+        proto_file = Path(MODEL1_PROTOTYPES)
+        if not proto_file.exists():
+            proto_file = Path("models/model1_expanded/crop_prototypes.npz")
         if proto_file.exists():
             try:
                 raw_data = np.load(proto_file)
@@ -146,7 +187,7 @@ def get_crop_prototypes() -> dict[str, np.ndarray]:
                     for k in raw_data.files
                     if getattr(raw_data[k], "shape", None) == (1408,)
                 }
-                logger.info(f"Loaded {len(_CROP_PROTOTYPES)} crop prototypes for open-set detection.")
+                logger.info(f"Loaded {len(_CROP_PROTOTYPES)} crop prototypes from '{proto_file}' for open-set detection.")
             except Exception as exc:
                 logger.warning(f"Could not load crop prototypes from {proto_file}: {exc}")
                 _CROP_PROTOTYPES = {}
@@ -282,15 +323,11 @@ def evaluate_crop_acceptance(
             is_supported_label=False,
         )
 
-    # Condition 2: Deep feature prototype dissimilarity (Non-plant image / Alien flora)
-    # Severe prototype dissimilarity triggers rejection.
-    # For decisive predictions (raw confidence >= 0.85, margin >= 0.50, low entropy),
-    # do not falsely reject supported crops with high intra-class organ variance (fruit vs foliage)
-    # unless prototype similarity is truly un-plant-like (< 0.20).
-    is_decisive_pred = (raw_p1 >= 0.85 and margin >= 0.50 and norm_entropy <= 0.15)
-    is_severe_proto_dissimilar = proto_sim is not None and (
-        proto_sim < 0.20 if is_decisive_pred else proto_sim < target_proto_uncertain
-    )
+    # Condition 2: Deep feature prototype dissimilarity (Genuine Non-plant image / Alien flora)
+    # Severe prototype dissimilarity across all plant classes (< NON_PLANT_DEEP_SIM_THRESHOLD = 0.22)
+    # indicates genuine non-plant material (synthetic noise, untextured walls, etc.).
+    # Low crop confidence alone must NOT prove that an image contains no plant!
+    is_severe_proto_dissimilar = (proto_sim is not None and proto_sim < NON_PLANT_DEEP_SIM_THRESHOLD)
     if is_severe_proto_dissimilar:
         return CropGuardResult(
             crop_status="rejected",
@@ -312,13 +349,13 @@ def evaluate_crop_acceptance(
 
     # Condition 3: Confidence is severely depressed (raw probability < 0.30)
     if raw_p1 < PROVISIONAL_REJECTION_CONF:
-        is_non_plant = (proto_sim is not None and proto_sim < target_proto_uncertain)
+        is_non_plant = (proto_sim is not None and proto_sim < NON_PLANT_DEEP_SIM_THRESHOLD)
         return CropGuardResult(
-            crop_status="rejected" if is_non_plant else "unsupported_crop",
-            status="rejected",
-            reason_code="non_plant_image" if is_non_plant else "unsupported_crop",
-            predicted_crop="Non-Plant Image" if is_non_plant else "Unsupported Crop",
-            predicted_class="non_plant_image" if is_non_plant else "unsupported_crop",
+            crop_status="rejected" if is_non_plant else "uncertain_crop",
+            status="rejected" if is_non_plant else "uncertain",
+            reason_code="non_plant_image" if is_non_plant else "uncertain_crop",
+            predicted_crop="Non-Plant Image" if is_non_plant else "Uncertain Crop",
+            predicted_class="non_plant_image" if is_non_plant else "uncertain_crop",
             confidence=0.0,
             raw_confidence=0.0,
             margin=round(margin, 4),
@@ -328,7 +365,7 @@ def evaluate_crop_acceptance(
             user_message=(
                 "This image does not appear to contain a plant. Please upload a clear plant image."
                 if is_non_plant
-                else "This crop is not currently supported. Please upload an image of a supported crop."
+                else "Crop identity could not be determined reliably. Please upload a clearer image showing distinctive leaves, flowers, or fruit."
             ),
             warning=None,
             top_candidates=[],

@@ -1,0 +1,261 @@
+{
+  "batch_name": "Batch 2 \u2014 Cucurbits",
+  "total_scope": 8,
+  "total_verified": 8,
+  "unresolved_gaps_count": 0,
+  "unresolved_gaps": [],
+  "results": [
+    {
+      "canonical_slug": "cucumber__angular_leaf_spot",
+      "crop": "cucumber",
+      "disease": "angular_leaf_spot",
+      "verified": true,
+      "sources_count": 3,
+      "sources": [
+        {
+          "source_id": "SRC_UC_IPM_CUCURBIT_ANGULAR_LEAF_SPOT",
+          "title": "Angular Leaf Spot / Cucurbits",
+          "url": "https://ipm.ucanr.edu/agriculture/cucurbits/angular-leaf-spot/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_PNW_CUCUMBER_ANGULAR_LEAF_SPOT",
+          "title": "Cucumber (Cucumis sativus)-Angular Leaf Spot",
+          "url": "https://pnwhandbooks.org/plantdisease/host-disease/cucumber-cucumis-sativus-angular-leaf-spot",
+          "publisher_organization": "Pacific Northwest Plant Disease Management Handbook (OSU / WSU / UI)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_UKY_CUCURBIT_ANGULAR_LEAF_SPOT",
+          "title": "Angular Leaf Spot of Cucurbit Crops",
+          "url": "https://veggiescout.mgcafe.uky.edu/angular-leaf-spot-cucurbit-crops",
+          "publisher_organization": "University of Kentucky Extension (VeggieScout)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "cucumber__anthracnose",
+      "crop": "cucumber",
+      "disease": "anthracnose",
+      "verified": true,
+      "sources_count": 3,
+      "sources": [
+        {
+          "source_id": "SRC_NCSTATE_CUCURBIT_ANTHRACNOSE",
+          "title": "Anthracnose of Cucurbits",
+          "url": "https://content.ces.ncsu.edu/anthracnose-of-cucurbits",
+          "publisher_organization": "North Carolina State University Extension",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_UC_IPM_CUCURBIT_ANTHRACNOSE",
+          "title": "Anthracnose / Cucurbits",
+          "url": "https://ipm.ucanr.edu/agriculture/cucurbits/anthracnose/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_UKY_CUCURBIT_ANTHRACNOSE",
+          "title": "Anthracnose of Cucurbit Crops",
+          "url": "https://veggiescout.mgcafe.uky.edu/anthracnose-cucurbit-crops",
+          "publisher_organization": "University of Kentucky Extension (VeggieScout)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "cucumber__bacterial_wilt",
+      "crop": "cucumber",
+      "disease": "bacterial_wilt",
+      "verified": true,
+      "sources_count": 3,
+      "sources": [
+        {
+          "source_id": "SRC_UW_MADISON_CUCURBIT_BACTERIAL_WILT",
+          "title": "Bacterial Wilt of Cucurbits",
+          "url": "https://hort.extension.wisc.edu/articles/bacterial-wilt/",
+          "publisher_organization": "University of Wisconsin-Madison Extension",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_PNW_CUCUMBER_BACTERIAL_WILT",
+          "title": "Cucumber (Cucumis sativus)-Bacterial Wilt",
+          "url": "https://pnwhandbooks.org/plantdisease/host-disease/cucumber-cucumis-sativus-bacterial-wilt",
+          "publisher_organization": "Pacific Northwest Plant Disease Management Handbook (OSU / WSU / UI)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_UKY_CUCURBIT_BACTERIAL_WILT",
+          "title": "Bacterial Wilt of Cucurbit Crops",
+          "url": "https://veggiescout.mgcafe.uky.edu/bacterial-wilt-cucurbit-crops",
+          "publisher_organization": "University of Kentucky Extension (VeggieScout)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "cucumber__belly_rot",
+      "crop": "cucumber",
+      "disease": "belly_rot",
+      "verified": true,
+      "sources_count": 1,
+      "sources": [
+        {
+          "source_id": "SRC_UKY_CUCURBIT_BELLY_ROT",
+          "title": "Belly Rot of Cucurbit Crops",
+          "url": "https://veggiescout.mgcafe.uky.edu/belly-rot-cucurbit-crops",
+          "publisher_organization": "University of Kentucky Extension (VeggieScout)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "cucumber__gummy_stem_blight",
+      "crop": "cucumber",
+      "disease": "gummy_stem_blight",
+      "verified": true,
+      "sources_count": 1,
+      "sources": [
+        {
+          "source_id": "SRC_UF_IFAS_CUCURBIT_GUMMY_STEM_BLIGHT",
+          "title": "Management of Gummy Stem Blight (Black Rot) on Cucurbits in Florida",
+          "url": "https://edis.ifas.ufl.edu/publication/PP280",
+          "publisher_organization": "University of Florida IFAS Extension",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "cucumber__pythium_fruit_rot",
+      "crop": "cucumber",
+      "disease": "pythium_fruit_rot",
+      "verified": true,
+      "sources_count": 2,
+      "sources": [
+        {
+          "source_id": "SRC_MSSTATE_CUCURBIT_COTTONY_LEAK",
+          "title": "Cottony Leak in Cucurbits",
+          "url": "https://extension.msstate.edu/publications/cottony-leak-cucurbits",
+          "publisher_organization": "Mississippi State University Extension Service",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_UKY_CUCURBIT_COTTONY_LEAK",
+          "title": "Cottony Leak of Cucurbit Crops",
+          "url": "https://veggiescout.mgcafe.uky.edu/cottony-leak-cucurbit-crops",
+          "publisher_organization": "University of Kentucky Extension (VeggieScout)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "zucchini__bacterial_wilt",
+      "crop": "zucchini",
+      "disease": "bacterial_wilt",
+      "verified": true,
+      "sources_count": 3,
+      "sources": [
+        {
+          "source_id": "SRC_UW_MADISON_CUCURBIT_BACTERIAL_WILT",
+          "title": "Bacterial Wilt of Cucurbits",
+          "url": "https://hort.extension.wisc.edu/articles/bacterial-wilt/",
+          "publisher_organization": "University of Wisconsin-Madison Extension",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_PNW_CUCUMBER_BACTERIAL_WILT",
+          "title": "Cucumber (Cucumis sativus)-Bacterial Wilt",
+          "url": "https://pnwhandbooks.org/plantdisease/host-disease/cucumber-cucumis-sativus-bacterial-wilt",
+          "publisher_organization": "Pacific Northwest Plant Disease Management Handbook (OSU / WSU / UI)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_UKY_CUCURBIT_BACTERIAL_WILT",
+          "title": "Bacterial Wilt of Cucurbit Crops",
+          "url": "https://veggiescout.mgcafe.uky.edu/bacterial-wilt-cucurbit-crops",
+          "publisher_organization": "University of Kentucky Extension (VeggieScout)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "zucchini__yellow_mosaic_virus",
+      "crop": "zucchini",
+      "disease": "yellow_mosaic_virus",
+      "verified": true,
+      "sources_count": 2,
+      "sources": [
+        {
+          "source_id": "SRC_PNW_SQUASH_VIRUS_DISEASES",
+          "title": "Squash (Cucurbita spp.)-Virus Diseases",
+          "url": "https://pnwhandbooks.org/plantdisease/host-disease/squash-cucurbita-spp-virus-diseases",
+          "publisher_organization": "Pacific Northwest Plant Disease Management Handbook (OSU / WSU / UI)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_UC_IPM_CUCURBIT_POTYVIRUSES",
+          "title": "Potyviruses / Cucurbits",
+          "url": "https://ipm.ucanr.edu/agriculture/cucurbits/potyviruses/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    }
+  ]
+}

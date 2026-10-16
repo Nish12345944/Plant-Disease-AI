@@ -19,6 +19,15 @@ from knowledge.sources import (
     SOURCE_NC_STATE_TOMATO_LATE_BLIGHT, SOURCE_NC_STATE_TOMATO_SEPTORIA_LEAF_SPOT,
     SOURCE_NC_STATE_PEPPER_TOMATO_BACTERIAL_SPOT, SOURCE_UC_IPM_POTATO_EARLY_BLIGHT,
     SOURCE_UC_IPM_POTATO_LATE_BLIGHT, SOURCE_RUTGERS_EGGPLANT_PHOMOPSIS,
+    SOURCE_NC_STATE_PEPPER_FROGEYE_LEAF_SPOT, SOURCE_UF_IFAS_PEPPER_DISEASES,
+    SOURCE_UC_IPM_PEPPER_LEAF_CURL, SOURCE_UC_IPM_PEPPER_POWDERY_MILDEW,
+    SOURCE_UC_IPM_TOMATO_ANTHRACNOSE, SOURCE_UC_IPM_TOMATO_FUSARIUM_ROT,
+    SOURCE_UC_IPM_TOMATO_LEAF_MOLD, SOURCE_UC_IPM_TOMATO_MOSAIC_VIRUS,
+    SOURCE_UC_IPM_TOMATO_YELLOW_LEAF_CURL, SOURCE_PNW_EGGPLANT_CERCOSPORA,
+    SOURCE_UC_IPM_EGGPLANT_MOSAIC, SOURCE_PNW_EGGPLANT_FLEA_BEETLE,
+    SOURCE_UC_IPM_EGGPLANT_FLEA_BEETLES, SOURCE_CORNELL_PHYTOPHTHORA_BLIGHT,
+    SOURCE_NC_STATE_PHYTOPHTHORA_BLIGHT, SOURCE_PNW_EGGPLANT_VERTICILLIUM,
+    SOURCE_UC_IPM_EGGPLANT_VERTICILLIUM,
 )
 
 SOLANACEOUS_DISEASES = {
@@ -216,7 +225,65 @@ SOLANACEOUS_DISEASES = {
         ),
         similar_diseases=["bell_pepper__bacterial_spot", "tobacco__frogeye_leaf_spot"],
         severity_indicators="Extensive 'frogeye' lesions across canopy, defoliation >25%, sunscald on exposed pepper fruit.",
-        sources=[SOURCE_UF_IFAS, SOURCE_NC_STATE, SOURCE_PURDUE],
+        sources=[SOURCE_NC_STATE_PEPPER_FROGEYE_LEAF_SPOT, SOURCE_UF_IFAS_PEPPER_DISEASES],
+        quality_level="HIGH"
+    ),
+
+    "bell_pepper__leaf_curl": DiseaseRecord(
+        id="bell_pepper__leaf_curl",
+        canonical_name="Bell Pepper Leaf Curl (Beet Curly Top)",
+        crop="bell_pepper",
+        pathogen_type=PathogenType.VIRAL,
+        pathogen_name="Beet curly top virus (BCTV / Curtovirus) / Pepper leaf curl virus (PepLCV / Begomovirus)",
+        affected_parts=[PlantPart.LEAF, PlantPart.STEM, PlantPart.FRUIT, PlantPart.WHOLE_PLANT],
+        symptoms=[
+            "Severe upward and inward rolling, twisting, and puckering of leaf margins",
+            "Leaves become thick, rigid, leathery, and brittle with prominent vein purpling or chlorosis",
+            "Extreme internode shortening causing severe plant stunting and compact, bunchy habit",
+            "Infected young plants produce no marketable fruit; fruits formed remain small, wrinkled, dull, and unmarketable"
+        ],
+        symptom_progression="Upward leaf curling and stiffening -> vein swelling/purpling -> severe terminal stunting -> bushy compact dwarf habit with flower abortion.",
+        development_conditions="High temperatures (28-35°C), arid or semi-arid conditions, migratory activity of beet leafhoppers (Circulifer tenellus) or whiteflies (Bemisia tabaci) moving from rangelands into fields.",
+        spread_transmission="Persistently vectored by beet leafhoppers (Circulifer tenellus) and whiteflies; not seed-transmitted or mechanically transmitted by contact.",
+        infection_sources="Migratory viruliferous leafhoppers moving from wild rangeland weeds (Russian thistle, mustards, filaree) or neighboring crops.",
+        immediate_actions=[
+            "Rogue out and destroy severely stunted and curled plants immediately",
+            "Apply targeted systemic or contact insecticides for leafhopper/whitefly vector suppression along field margins",
+            "Install floating row covers over seedbeds or young pepper plantings"
+        ],
+        treatment=TreatmentPlan(
+            curative=[],
+            management=[
+                CulturalControl(
+                    description="Use floating row covers during seedling establishment, manage vector populations, and eliminate alternative weed hosts.",
+                    source_id=SOURCE_UC_IPM_PEPPER_LEAF_CURL.id
+                )
+            ],
+            chemical=[
+                ChemicalControl(
+                    active_ingredient="Imidacloprid / Thiamethoxam",
+                    application_purpose="Systemic neonicotinoid applied at transplanting to suppress leafhopper vector transmission.",
+                    limitations="Observe pollinator protection restrictions and pre-harvest intervals.",
+                    source_id=SOURCE_UC_IPM_PEPPER_LEAF_CURL.id
+                )
+            ],
+            biological=[]
+        ),
+        prevention=PreventionProtocol(
+            cultural_practices=[
+                "Use reflective silver mulches to deter insect vectors",
+                "Plant at higher densities to compensate for early losses",
+                "Install row covers on early plantings"
+            ],
+            sanitation_measures=[
+                "Eradicate winter weed hosts (mustards, Russian thistle) along ditch banks and field borders",
+                "Destroy crop debris immediately after harvest"
+            ],
+            resistant_varieties="Tolerance varies among commercial hybrids; dense vigorous canopies reduce vector landing rates."
+        ),
+        similar_diseases=["tomato__yellow_leaf_curl_virus", "bell_pepper__powdery_mildew"],
+        severity_indicators="Severe terminal curling, leaf thickening, stunted dwarf plant growth, and total fruit drop across >10% of field.",
+        sources=[SOURCE_UC_IPM_PEPPER_LEAF_CURL],
         quality_level="HIGH"
     ),
 
@@ -293,7 +360,7 @@ SOLANACEOUS_DISEASES = {
         ),
         similar_diseases=["tomato__leaf_mold", "bell_pepper__bacterial_spot"],
         severity_indicators="Severe foliar curling and defoliation >30%, exposed sunscalded pepper fruit.",
-        sources=[SOURCE_UC_IPM, SOURCE_UF_IFAS, SOURCE_PURDUE],
+        sources=[SOURCE_UC_IPM_PEPPER_POWDERY_MILDEW],
         quality_level="HIGH"
     ),
 
@@ -357,7 +424,7 @@ SOLANACEOUS_DISEASES = {
         ),
         similar_diseases=["eggplant__phomopsis_fruit_rot", "eggplant__phytophthora_blight"],
         severity_indicators="Defoliation >25%, extensive concentric leaf spots, exposed sun-damaged eggplant fruit.",
-        sources=[SOURCE_UF_IFAS, SOURCE_PURDUE, SOURCE_NC_STATE, SOURCE_CORNELL],
+        sources=[SOURCE_PNW_EGGPLANT_CERCOSPORA],
         quality_level="HIGH"
     ),
 
@@ -496,7 +563,191 @@ SOLANACEOUS_DISEASES = {
         ),
         similar_diseases=["eggplant__phomopsis_fruit_rot", "eggplant__verticillium_wilt"],
         severity_indicators="Sudden permanent plant wilt, black crown girdling, white powdered-sugar sporangial coating on rotten fruit.",
-        sources=[SOURCE_CORNELL, SOURCE_NC_STATE, SOURCE_UF_IFAS, SOURCE_PURDUE],
+        sources=[SOURCE_CORNELL_PHYTOPHTHORA_BLIGHT, SOURCE_NC_STATE_PHYTOPHTHORA_BLIGHT],
+        quality_level="HIGH"
+    ),
+
+    "eggplant__mosaic_virus": DiseaseRecord(
+        id="eggplant__mosaic_virus",
+        canonical_name="Eggplant Mosaic Virus (TMV)",
+        crop="eggplant",
+        pathogen_type=PathogenType.VIRAL,
+        pathogen_name="Tobacco mosaic virus (TMV) / Eggplant mosaic virus (EMV)",
+        affected_parts=[PlantPart.LEAF, PlantPart.STEM, PlantPart.FRUIT, PlantPart.WHOLE_PLANT],
+        symptoms=[
+            "Irregular light and dark green mottled mosaic patterns on leaves",
+            "Leaf distortion, crinkling, puckering, and blistering of young foliage",
+            "Stunted plant growth, bushy habit, and reduced flower development",
+            "Fruit may exhibit blotchy ripening, surface bumps, internal necrosis, and reduced size"
+        ],
+        symptom_progression="Mottled mosaic on young leaves -> blistering and leaf puckering -> general plant stunting -> fruit deformation.",
+        development_conditions="Warm temperatures, frequent mechanical handling during pruning, weeding, trellising, or harvesting.",
+        spread_transmission="Readily transmitted mechanically by sap on hands, tools, equipment, clothing, and plant-to-plant contact; seedborne in some hosts.",
+        infection_sources="Infected seeds, contaminated tools/hands, solanaceous crop residues, volunteer solanaceous weeds, tobacco products.",
+        immediate_actions=[
+            "Rogue and discard infected symptomatic plants in closed bags",
+            "Disinfect worker hands and pruning tools in 20% non-fat dry milk solution or 10% trisodium phosphate (TSP)",
+            "Enforce strict no-smoking policies around eggplant production"
+        ],
+        treatment=TreatmentPlan(
+            curative=[],
+            management=[
+                CulturalControl(
+                    description="Strict greenhouse and field sanitation, hand and tool dipping in milk solution, and roguing diseased plants.",
+                    source_id=SOURCE_UC_IPM_EGGPLANT_MOSAIC.id
+                )
+            ],
+            chemical=[
+                ChemicalControl(
+                    active_ingredient="Trisodium Phosphate (TSP)",
+                    application_purpose="Sanitizing tool dip to inactivate viral particles during operations.",
+                    limitations="Disinfectant only; do not apply to crops.",
+                    source_id=SOURCE_UC_IPM_EGGPLANT_MOSAIC.id
+                )
+            ],
+            biological=[]
+        ),
+        prevention=PreventionProtocol(
+            cultural_practices=[
+                "Plant certified disease-free seed and transplants",
+                "Wash hands thoroughly with soap or milk before touching plants"
+            ],
+            sanitation_measures=[
+                "Sterilize seedling trays, trellises, and tools",
+                "Incorporate or destroy plant residues post-harvest"
+            ],
+            resistant_varieties="Select cultivars with documented resistance or tolerance where available."
+        ),
+        similar_diseases=["tomato__mosaic_virus", "tobacco__mosaic_virus"],
+        severity_indicators="Severe foliar distortion, mottling across >25% of canopy, stunted unmarketable fruit.",
+        sources=[SOURCE_UC_IPM_EGGPLANT_MOSAIC],
+        quality_level="HIGH"
+    ),
+
+    "eggplant__pest_damage": DiseaseRecord(
+        id="eggplant__pest_damage",
+        canonical_name="Eggplant Pest Damage (Flea Beetle Damage)",
+        crop="eggplant",
+        pathogen_type=PathogenType.PHYSIOLOGICAL,
+        pathogen_name="Epitrix fuscula / Epitrix hirtipennis (Flea Beetles) / Insect Pest Feeding",
+        affected_parts=[PlantPart.LEAF, PlantPart.STEM],
+        symptoms=[
+            "Numerous small, circular to irregular 'shot-hole' perforations (1-3 mm) eaten through leaves",
+            "Foliage takes on a sieve-like, skeletonized appearance from heavy feeding",
+            "Seedlings and young transplants suffer stunted growth, wilting, or death under heavy feeding pressure",
+            "Older leaves turn brown around puncture wounds, dry up, and drop prematurely"
+        ],
+        symptom_progression="Scattered shot-holes on leaf blades -> extensive skeletonization -> seedling wilt/death or delayed fruit set.",
+        development_conditions="Warm, dry, sunny weather in spring and early summer; weedy field perimeters harboring overwintering adult beetles.",
+        spread_transmission="Adult beetles jump rapidly when disturbed and migrate into plantings from field edges and weed hosts.",
+        infection_sources="Overwintering adult beetles in leaf litter, hedgerows, and cruciferous/solanaceous weeds.",
+        immediate_actions=[
+            "Install floating row covers immediately over young transplants before beetles arrive",
+            "Apply contact or systemic insecticides (spinosad, pyrethrins, or neonicotinoids) if feeding exceeds thresholds",
+            "Scout undersides of leaves and soil surface around plant crowns for jumpy small black beetles"
+        ],
+        treatment=TreatmentPlan(
+            curative=[],
+            management=[
+                CulturalControl(
+                    description="Use floating row covers until flowering, deploy white sticky traps, and cultivate perimeter trap crops.",
+                    source_id=SOURCE_PNW_EGGPLANT_FLEA_BEETLE.id
+                )
+            ],
+            chemical=[
+                ChemicalControl(
+                    active_ingredient="Spinosad",
+                    application_purpose="Effective organic-compliant bio-insecticide spray for foliage-feeding beetles.",
+                    limitations="Apply during early morning or evening to protect bees; observe harvest intervals.",
+                    source_id=SOURCE_UC_IPM_EGGPLANT_FLEA_BEETLES.id
+                ),
+                ChemicalControl(
+                    active_ingredient="Kaolin Clay",
+                    application_purpose="Particle barrier film to deter flea beetle feeding and oviposition.",
+                    limitations="Reapply after rain; leaves white residue on foliage.",
+                    source_id=SOURCE_PNW_EGGPLANT_FLEA_BEETLE.id
+                )
+            ],
+            biological=[
+                BiologicalControl(
+                    agent_name="Heterorhabditis bacteriophora (Entomopathogenic Nematodes)",
+                    application_method="Soil application to target overwintering beetle larvae in the root zone.",
+                    source_id=SOURCE_PNW_EGGPLANT_FLEA_BEETLE.id
+                )
+            ]
+        ),
+        prevention=PreventionProtocol(
+            cultural_practices=[
+                "Cover seedbeds and young crops with floating row covers until bloom",
+                "Plant larger, vigorous transplants that tolerate feeding damage",
+                "Use radish trap crops around field borders"
+            ],
+            sanitation_measures=[
+                "Destroy crop residues and till soil in autumn to expose overwintering adults",
+                "Eradicate solanaceous weeds"
+            ],
+            resistant_varieties="Eggplant varieties with denser hairiness (pubescent leaves) suffer significantly less flea beetle damage."
+        ),
+        similar_diseases=["eggplant__cercospora_leaf_spot", "eggplant__phomopsis_fruit_rot"],
+        severity_indicators="Severe shot-hole skeletonization covering >30% of leaf area on young plants, seedling mortality.",
+        sources=[SOURCE_PNW_EGGPLANT_FLEA_BEETLE, SOURCE_UC_IPM_EGGPLANT_FLEA_BEETLES],
+        quality_level="HIGH"
+    ),
+
+    "eggplant__wilt_disease": DiseaseRecord(
+        id="eggplant__wilt_disease",
+        canonical_name="Eggplant Verticillium Wilt",
+        crop="eggplant",
+        pathogen_type=PathogenType.FUNGAL,
+        pathogen_name="Verticillium dahliae / Verticillium albo-atrum",
+        affected_parts=[PlantPart.ROOT, PlantPart.STEM, PlantPart.LEAF, PlantPart.WHOLE_PLANT],
+        symptoms=[
+            "Yellowing (chlorosis) of lower leaves, typically beginning between veins and often affecting only one side of the leaf or plant (unilateral wilting)",
+            "Yellow areas become necrotic, turning brown with characteristic V-shaped lesions expanding inward from leaf margins",
+            "Plants wilt during the warm part of the day, temporarily recovering overnight, before becoming permanently wilted",
+            "Vascular discoloration: cutting the lower stem longitudinally reveals prominent light-brown to dark-brown vascular ring discoloration"
+        ],
+        symptom_progression="Interveinal yellowing on lower leaves -> V-shaped marginal necrosis -> daytime wilting -> permanent wilt and plant stunting -> vascular browning inside stem.",
+        development_conditions="Moderate soil temperatures (20-25°C), cool spring soil followed by warm weather, alkaline or neutral soils.",
+        spread_transmission="Soilborne microsclerotia surviving in soil for 10-15+ years; movement of infested soil on farm machinery, root grafts.",
+        infection_sources="Infested field soil, contaminated nursery containers, previous solanaceous or composite crops (potatoes, tomatoes, peppers, strawberries).",
+        immediate_actions=[
+            "Avoid excessive nitrogen fertilization which aggravates vascular wilt symptoms",
+            "Maintain consistent, adequate drip irrigation to reduce water stress in compromised vascular systems",
+            "Mark infected areas to avoid replanting susceptible crops in future seasons"
+        ],
+        treatment=TreatmentPlan(
+            curative=[],
+            management=[
+                CulturalControl(
+                    description="Soil solarization with clear plastic for 6-8 weeks during summer, grafting onto resistant wild Solanum rootstocks, and extended crop rotations.",
+                    source_id=SOURCE_UC_IPM_EGGPLANT_VERTICILLIUM.id
+                )
+            ],
+            chemical=[],
+            biological=[
+                BiologicalControl(
+                    agent_name="Trichoderma harzianum",
+                    application_method="Root dip or soil inoculation at planting to colonize rhizosphere and suppress microsclerotia.",
+                    source_id=SOURCE_PNW_EGGPLANT_VERTICILLIUM.id
+                )
+            ]
+        ),
+        prevention=PreventionProtocol(
+            cultural_practices=[
+                "Rotate out of susceptible crops (solanaceous, strawberry, cotton) for 4-6+ years with monocot cover crops (corn, sorghum, sudangrass)",
+                "Use grafted plants on resistant rootstocks (Solanum torvum)",
+                "Employ soil solarization in warm climates"
+            ],
+            sanitation_measures=[
+                "Clean soil from tillage equipment before moving into clean fields",
+                "Remove and destroy infected plant debris"
+            ],
+            resistant_varieties="Eggplant cultivars possess limited resistance; grafting onto Solanum torvum or resistant hybrid rootstocks offers effective protection."
+        ),
+        similar_diseases=["eggplant__phytophthora_blight", "tomato__fusarium_rot"],
+        severity_indicators="Unilateral daytime wilting, brown vascular discoloration in lower stem, severe V-shaped leaf necrosis on >30% of canopy.",
+        sources=[SOURCE_PNW_EGGPLANT_VERTICILLIUM, SOURCE_UC_IPM_EGGPLANT_VERTICILLIUM],
         quality_level="HIGH"
     ),
 
@@ -1227,7 +1478,7 @@ SOLANACEOUS_DISEASES = {
         ),
         similar_diseases=["tomato__powdery_mildew", "tomato__early_blight"],
         severity_indicators="Olive-brown velvety sporulation covering leaf undersides across >40% of canopy, extensive defoliation.",
-        sources=[SOURCE_CORNELL, SOURCE_PURDUE, SOURCE_NC_STATE, SOURCE_UC_IPM],
+        sources=[SOURCE_UC_IPM_TOMATO_LEAF_MOLD],
         quality_level="HIGH"
     ),
 
@@ -1286,7 +1537,7 @@ SOLANACEOUS_DISEASES = {
         ),
         similar_diseases=["tobacco__mosaic_virus", "cucumber_mosaic_virus", "tomato__spotted_wilt_virus"],
         severity_indicators="Severe mosaic distortion, fern-leaf deformation, internal brown fruit wall necrosis, stunted unproductive plants.",
-        sources=[SOURCE_CORNELL, SOURCE_UC_IPM, SOURCE_PURDUE, SOURCE_NC_STATE],
+        sources=[SOURCE_UC_IPM_TOMATO_MOSAIC_VIRUS],
         quality_level="HIGH"
     ),
 
@@ -1444,7 +1695,130 @@ SOLANACEOUS_DISEASES = {
         ),
         similar_diseases=["tomato__mosaic_virus", "tomato__yellow_leaf_curl_virus"],
         severity_indicators="Severe upward leaf cupping, margin yellowing, complete stunting, total flower drop with zero fruit set.",
-        sources=[SOURCE_UF_IFAS, SOURCE_UC_IPM, SOURCE_PURDUE, SOURCE_NC_STATE],
+        sources=[SOURCE_UC_IPM_TOMATO_YELLOW_LEAF_CURL],
+        quality_level="HIGH"
+    ),
+
+    "tomato__anthracnose": DiseaseRecord(
+        id="tomato__anthracnose",
+        canonical_name="Tomato Anthracnose (Fruit Rot)",
+        crop="tomato",
+        pathogen_type=PathogenType.FUNGAL,
+        pathogen_name="Colletotrichum coccodes (syn. C. phomoides) / Colletotrichum gloeosporioides",
+        affected_parts=[PlantPart.FRUIT, PlantPart.ROOT, PlantPart.LEAF],
+        symptoms=[
+            "Small, circular, shallow, water-soaked sunken lesions on ripe and ripening tomato fruit",
+            "Lesions enlarge up to 1-2 cm, become deeply depressed with dark concentric rings of tiny black microsclerotia",
+            "Under moist or humid conditions, lesion centers produce slimy masses of salmon-pink or orange-tinted spores",
+            "Secondary soft rot bacteria often invade sunken spots, causing rapid fruit collapse"
+        ],
+        symptom_progression="Small circular sunken spots on ripening fruit -> concentric sunken rings with black specks -> salmon-pink spore ooze -> rapid secondary soft rot.",
+        development_conditions="Warm temperatures (25-30°C), frequent overhead watering or splashing rain, wet fruit surfaces for >8 hours, fruit in direct contact with wet soil.",
+        spread_transmission="Conidia dispersed by rain splash, overhead irrigation, and soil contact; microsclerotia survive on root debris and in soil.",
+        infection_sources="Soilborne microsclerotia, infected crop debris, solanaceous weeds (black nightshade), latent infections established during green fruit stages.",
+        immediate_actions=[
+            "Harvest ripe tomatoes promptly and avoid letting fruit become overripe on the vine",
+            "Apply protective fungicides (e.g. chlorothalonil, azoxystrobin, or copper) starting at first fruit cluster set",
+            "Mulch soil and stake plants to keep fruit completely off the ground"
+        ],
+        treatment=TreatmentPlan(
+            curative=[],
+            management=[
+                CulturalControl(
+                    description="Stake and mulch tomatoes to prevent fruit-soil contact, use drip irrigation, and harvest fruit promptly as it turns color.",
+                    source_id=SOURCE_UC_IPM_TOMATO_ANTHRACNOSE.id
+                )
+            ],
+            chemical=[
+                ChemicalControl(
+                    active_ingredient="Chlorothalonil",
+                    application_purpose="Standard protectant contact fungicide applied at 7-14 day intervals from fruit set through harvest.",
+                    limitations="Observe pre-harvest intervals and maximum seasonal limits.",
+                    source_id=SOURCE_UC_IPM_TOMATO_ANTHRACNOSE.id
+                ),
+                ChemicalControl(
+                    active_ingredient="Azoxystrobin",
+                    application_purpose="Systemic strobilurin fungicide for foliar and fruit anthracnose control.",
+                    limitations="Rotate FRAC 11 with multi-site fungicides to prevent resistance.",
+                    source_id=SOURCE_UC_IPM_TOMATO_ANTHRACNOSE.id
+                )
+            ],
+            biological=[]
+        ),
+        prevention=PreventionProtocol(
+            cultural_practices=[
+                "Stake or cage plants and use plastic or straw mulch to eliminate soil splash",
+                "Use drip irrigation under mulch",
+                "Practice a 3-year crop rotation with non-solanaceous crops"
+            ],
+            sanitation_measures=[
+                "Cull and bury infected fruit away from the field",
+                "Till crop residues under deeply immediately after harvest"
+            ],
+            resistant_varieties="Commercial varieties have varied tolerance; firm-skinned cultivars show lower lesion development."
+        ),
+        similar_diseases=["tomato__fruit_fusarium", "tomato__early_blight", "bell_pepper__blossom_end_rot"],
+        severity_indicators="Depressed circular fruit lesions with salmon-pink spore masses affecting >10% of harvested fruit.",
+        sources=[SOURCE_UC_IPM_TOMATO_ANTHRACNOSE],
+        quality_level="HIGH"
+    ),
+
+    "tomato__fruit_fusarium": DiseaseRecord(
+        id="tomato__fruit_fusarium",
+        canonical_name="Tomato Fusarium Rot (Fruit Rot)",
+        crop="tomato",
+        pathogen_type=PathogenType.FUNGAL,
+        pathogen_name="Fusarium oxysporum / Fusarium solani / Fusarium incarnatum-equiseti complex",
+        affected_parts=[PlantPart.FRUIT, PlantPart.STEM],
+        symptoms=[
+            "Water-soaked, depressed, brown lesions on green or ripe tomato fruit, often initiating near the stem scar or growth cracks",
+            "Lesions enlarge with firm to spongy texture and develop dense white to pinkish-purple cottony fungal mycelium",
+            "Infected fruit develops internal dry rot or soft decay, especially after harvest during storage and transport",
+            "Fruit touching wet soil or damaged by insects/sunscald develops rapid rot covered by white fungal fuzz"
+        ],
+        symptom_progression="Stem scar water-soaking -> firm expanding brown rot -> white or pinkish-purple cottony mold -> internal fruit decay and postharvest loss.",
+        development_conditions="Warm humid weather (24-30°C), fruit contact with damp soil, high humidity, micro-cracks or insect feeding wounds.",
+        spread_transmission="Soilborne conidia splashed by rain/irrigation, wound contamination, postharvest handling.",
+        infection_sources="Soil, decomposing organic matter, infected crop residues, contaminated harvest bins.",
+        immediate_actions=[
+            "Carefully cull wounded, cracked, or symptomatic fruit during harvest",
+            "Avoid washing fruit in unchlorinated water; maintain proper postharvest sanitation",
+            "Stake vines to keep all fruit elevated off moist soil"
+        ],
+        treatment=TreatmentPlan(
+            curative=[],
+            management=[
+                CulturalControl(
+                    description="Elevate vines with stakes/trellises, mulch beds to isolate fruit from soil, and handle fruit gently to prevent skin punctures.",
+                    source_id=SOURCE_UC_IPM_TOMATO_FUSARIUM_ROT.id
+                )
+            ],
+            chemical=[
+                ChemicalControl(
+                    active_ingredient="Fludioxonil (Postharvest) / Chlorothalonil (Field)",
+                    application_purpose="Field protectant and postharvest treatment to prevent wound infection.",
+                    limitations="Strictly observe label pre-harvest intervals.",
+                    source_id=SOURCE_UC_IPM_TOMATO_FUSARIUM_ROT.id
+                )
+            ],
+            biological=[]
+        ),
+        prevention=PreventionProtocol(
+            cultural_practices=[
+                "Stake, trellis, and mulch plants to isolate fruit from soil",
+                "Manage irrigation uniformly to prevent fruit growth cracks",
+                "Sanitize harvest containers and packing sheds daily"
+            ],
+            sanitation_measures=[
+                "Promptly remove and destroy rotten fruit from production rows",
+                "Rotate fields with non-solanaceous crops for 3 years"
+            ],
+            resistant_varieties="Cultivars resistant to fruit cracking and cuticle tearing have significantly lower incidence."
+        ),
+        similar_diseases=["tomato__anthracnose", "tomato__late_blight"],
+        severity_indicators="Firm depressed fruit lesions with white-pink mycelium on >10% of fruit, severe postharvest packout loss.",
+        sources=[SOURCE_UC_IPM_TOMATO_FUSARIUM_ROT],
         quality_level="HIGH"
     ),
 }
+

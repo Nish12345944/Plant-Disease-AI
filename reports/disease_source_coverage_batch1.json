@@ -1,0 +1,296 @@
+{
+  "batch_name": "Batch 1 \u2014 Solanaceous",
+  "total_scope": 13,
+  "total_verified": 13,
+  "unresolved_gaps_count": 0,
+  "unresolved_gaps": [],
+  "results": [
+    {
+      "canonical_slug": "bell_pepper__frogeye_leaf_spot",
+      "crop": "bell_pepper",
+      "disease": "frogeye_leaf_spot",
+      "verified": true,
+      "sources_count": 2,
+      "sources": [
+        {
+          "source_id": "SRC_NCSTATE_PEPPER_FROGEYE_LEAF_SPOT",
+          "title": "Cercospora Leaf Spot (Frogeye Leaf Spot) on Pepper",
+          "url": "https://content.ces.ncsu.edu/cercospora-leaf-spot-frogeye-leaf-spot-on-pepper",
+          "publisher_organization": "North Carolina State University Extension",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_UF_IFAS_PEPPER_DISEASES",
+          "title": "Some Common Diseases of Pepper in Florida",
+          "url": "https://ask.ifas.ufl.edu/publication/VH054",
+          "publisher_organization": "University of Florida IFAS Extension",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "bell_pepper__leaf_curl",
+      "crop": "bell_pepper",
+      "disease": "leaf_curl",
+      "verified": true,
+      "sources_count": 1,
+      "sources": [
+        {
+          "source_id": "SRC_UC_IPM_PEPPER_LEAF_CURL",
+          "title": "Peppers: Beet Curly Top",
+          "url": "https://ipm.ucanr.edu/agriculture/peppers/curly-top/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "bell_pepper__powdery_mildew",
+      "crop": "bell_pepper",
+      "disease": "powdery_mildew",
+      "verified": true,
+      "sources_count": 1,
+      "sources": [
+        {
+          "source_id": "SRC_UC_IPM_PEPPER_POWDERY_MILDEW",
+          "title": "Peppers: Powdery Mildew",
+          "url": "https://ipm.ucanr.edu/agriculture/peppers/powdery-mildew/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "tomato__anthracnose",
+      "crop": "tomato",
+      "disease": "anthracnose",
+      "verified": true,
+      "sources_count": 1,
+      "sources": [
+        {
+          "source_id": "SRC_UC_IPM_TOMATO_ANTHRACNOSE",
+          "title": "Tomato: Anthracnose",
+          "url": "https://ipm.ucanr.edu/agriculture/tomato/anthracnose/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "tomato__fruit_fusarium",
+      "crop": "tomato",
+      "disease": "fruit_fusarium",
+      "verified": true,
+      "sources_count": 1,
+      "sources": [
+        {
+          "source_id": "SRC_UC_IPM_TOMATO_FUSARIUM_ROT",
+          "title": "Tomato: Fusarium Rot",
+          "url": "https://ipm.ucanr.edu/agriculture/tomato/fusarium-rot/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "tomato__leaf_mold",
+      "crop": "tomato",
+      "disease": "leaf_mold",
+      "verified": true,
+      "sources_count": 1,
+      "sources": [
+        {
+          "source_id": "SRC_UC_IPM_TOMATO_LEAF_MOLD",
+          "title": "Tomato: Leaf Mold",
+          "url": "https://ipm.ucanr.edu/agriculture/tomato/leaf-mold/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "tomato__mosaic_virus",
+      "crop": "tomato",
+      "disease": "mosaic_virus",
+      "verified": true,
+      "sources_count": 1,
+      "sources": [
+        {
+          "source_id": "SRC_UC_IPM_TOMATO_MOSAIC_VIRUS",
+          "title": "Tomato: Tobacco and Tomato Mosaic",
+          "url": "https://ipm.ucanr.edu/agriculture/tomato/tobacco-mosaic/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "tomato__yellow_leaf_curl_virus",
+      "crop": "tomato",
+      "disease": "yellow_leaf_curl_virus",
+      "verified": true,
+      "sources_count": 1,
+      "sources": [
+        {
+          "source_id": "SRC_UC_IPM_TOMATO_YELLOW_LEAF_CURL",
+          "title": "Tomato: Tomato Yellow Leaf Curl",
+          "url": "https://ipm.ucanr.edu/agriculture/tomato/tomato-yellow-leaf-curl/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "eggplant__cercospora_leaf_spot",
+      "crop": "eggplant",
+      "disease": "cercospora_leaf_spot",
+      "verified": true,
+      "sources_count": 1,
+      "sources": [
+        {
+          "source_id": "SRC_PNW_EGGPLANT_CERCOSPORA",
+          "title": "Eggplant (Solanum melongena)-Cercospora Leaf Spot",
+          "url": "https://pnwhandbooks.org/plantdisease/host-disease/eggplant-solanum-melongena-cercospora-leaf-spot",
+          "publisher_organization": "Pacific Northwest Plant Disease Management Handbook (OSU / WSU / UI)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "eggplant__mosaic_virus",
+      "crop": "eggplant",
+      "disease": "mosaic_virus",
+      "verified": true,
+      "sources_count": 1,
+      "sources": [
+        {
+          "source_id": "SRC_UC_IPM_EGGPLANT_MOSAIC",
+          "title": "Eggplant: Tobacco Mosaic",
+          "url": "https://ipm.ucanr.edu/agriculture/eggplant/tobacco-mosaic/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "eggplant__pest_damage",
+      "crop": "eggplant",
+      "disease": "pest_damage",
+      "verified": true,
+      "sources_count": 2,
+      "sources": [
+        {
+          "source_id": "SRC_PNW_EGGPLANT_FLEA_BEETLE",
+          "title": "Eggplant-Flea Beetle",
+          "url": "https://pnwhandbooks.org/insect/vegetable/vegetable-pests/hosts-pests/eggplant-flea-beetle",
+          "publisher_organization": "Pacific Northwest Insect Management Handbook",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_UC_IPM_EGGPLANT_FLEA_BEETLES",
+          "title": "Eggplant: Flea Beetles",
+          "url": "https://ipm.ucanr.edu/agriculture/eggplant/flea-beetles/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "eggplant__phytophthora_blight",
+      "crop": "eggplant",
+      "disease": "phytophthora_blight",
+      "verified": true,
+      "sources_count": 2,
+      "sources": [
+        {
+          "source_id": "SRC_CORNELL_PHYTOPHTHORA_BLIGHT",
+          "title": "Phytophthora Blight of Solanaceous and Cucurbit Crops",
+          "url": "https://www.vegetables.cornell.edu/pest-management/disease-factsheets/phytophthora-blight/",
+          "publisher_organization": "Cornell University College of Agriculture and Life Sciences",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_NCSTATE_PHYTOPHTHORA_BLIGHT",
+          "title": "Phytophthora Blight of Peppers and Solanaceous Vegetables",
+          "url": "https://content.ces.ncsu.edu/phytophthora-blight-of-peppers",
+          "publisher_organization": "North Carolina State University Extension",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    },
+    {
+      "canonical_slug": "eggplant__wilt_disease",
+      "crop": "eggplant",
+      "disease": "wilt_disease",
+      "verified": true,
+      "sources_count": 2,
+      "sources": [
+        {
+          "source_id": "SRC_PNW_EGGPLANT_VERTICILLIUM",
+          "title": "Eggplant (Solanum melongena)-Verticillium Wilt",
+          "url": "https://pnwhandbooks.org/plantdisease/host-disease/eggplant-solanum-melongena-verticillium-wilt",
+          "publisher_organization": "Pacific Northwest Plant Disease Management Handbook (OSU / WSU / UI)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        },
+        {
+          "source_id": "SRC_UC_IPM_EGGPLANT_VERTICILLIUM",
+          "title": "Eggplant: Verticillium Wilt",
+          "url": "https://ipm.ucanr.edu/agriculture/eggplant/verticillium-wilt/",
+          "publisher_organization": "University of California Statewide Integrated Pest Management Program (UC IPM)",
+          "tier": "TIER_2",
+          "publication_year": 2024,
+          "is_general": false,
+          "verification_result": "HTTP 200 Verified - Specific Extension Article"
+        }
+      ]
+    }
+  ]
+}

@@ -14,6 +14,16 @@ from knowledge.sources import (
     SOURCE_CORNELL, SOURCE_UC_IPM, SOURCE_PURDUE, SOURCE_NC_STATE,
     SOURCE_UF_IFAS, SOURCE_USDA_ARS, SOURCE_FAO,
     SOURCE_NC_STATE_CUCURBIT_DOWNY_MILDEW, SOURCE_UC_IPM_CUCURBIT_POWDERY_MILDEW,
+    SOURCE_UC_IPM_CUCURBIT_ANGULAR_LEAF_SPOT, SOURCE_PNW_CUCUMBER_ANGULAR_LEAF_SPOT,
+    SOURCE_UKY_CUCURBIT_ANGULAR_LEAF_SPOT,
+    SOURCE_NC_STATE_CUCURBIT_ANTHRACNOSE, SOURCE_UC_IPM_CUCURBIT_ANTHRACNOSE,
+    SOURCE_UKY_CUCURBIT_ANTHRACNOSE,
+    SOURCE_UW_MADISON_CUCURBIT_BACTERIAL_WILT, SOURCE_PNW_CUCUMBER_BACTERIAL_WILT,
+    SOURCE_UKY_CUCURBIT_BACTERIAL_WILT,
+    SOURCE_UKY_CUCURBIT_BELLY_ROT,
+    SOURCE_UF_IFAS_CUCURBIT_GUMMY_STEM_BLIGHT,
+    SOURCE_MS_STATE_CUCURBIT_COTTONY_LEAK, SOURCE_UKY_CUCURBIT_COTTONY_LEAK,
+    SOURCE_PNW_SQUASH_VIRUS_DISEASES, SOURCE_UC_IPM_CUCURBIT_POTYVIRUSES,
 )
 
 CUCURBIT_DISEASES = {
@@ -77,7 +87,90 @@ CUCURBIT_DISEASES = {
         ),
         similar_diseases=["cucumber__downy_mildew", "cucumber__anthracnose"],
         severity_indicators="More than 30% leaf area with ragged shot-holes, water-soaked fruit cracking, secondary soft rot.",
-        sources=[SOURCE_CORNELL, SOURCE_NC_STATE, SOURCE_UC_IPM, SOURCE_PURDUE],
+        sources=[
+            SOURCE_UC_IPM_CUCURBIT_ANGULAR_LEAF_SPOT,
+            SOURCE_PNW_CUCUMBER_ANGULAR_LEAF_SPOT,
+            SOURCE_UKY_CUCURBIT_ANGULAR_LEAF_SPOT,
+            SOURCE_CORNELL,
+            SOURCE_NC_STATE,
+            SOURCE_PURDUE,
+        ],
+        quality_level="HIGH"
+    ),
+
+    "cucumber__anthracnose": DiseaseRecord(
+        id="cucumber__anthracnose",
+        canonical_name="Cucumber Anthracnose",
+        crop="cucumber",
+        pathogen_type=PathogenType.FUNGAL,
+        pathogen_name="Colletotrichum orbiculare",
+        affected_parts=[PlantPart.LEAF, PlantPart.STEM, PlantPart.FRUIT],
+        symptoms=[
+            "Small, circular, water-soaked foliar spots that enlarge rapidly into circular brown-tan lesions up to 1-2 cm wide",
+            "Lesions frequently develop shot-holes as brittle dead centers fall out",
+            "Elongated, sunken water-soaked cankers on stems and petioles",
+            "Circular, sunken, crater-like lesions on fruit that exude salmon-pink or orange gelatinous spore masses under humid conditions"
+        ],
+        symptom_progression="Water-soaked leaf flecks -> circular brown lesions with shot-holes -> sunken stem cankers -> sunken circular fruit rot with salmon-colored spore droplets.",
+        development_conditions="Warm, humid weather (22-27°C) with frequent rain, morning dew, overhead sprinkler irrigation, and splash dispersal.",
+        spread_transmission="Splashing rain, overhead irrigation, farm equipment, workers in wet fields, and infected seed.",
+        infection_sources="Infected crop residue (survives 1-2 years in soil), volunteer cucurbits, and contaminated seed.",
+        immediate_actions=[
+            "Do not cultivate, spray, or harvest in cucumber fields when vines are wet",
+            "Apply preventative broad-spectrum protectant fungicides (chlorothalonil or mancozeb)",
+            "Cull and destroy visibly infected fruit immediately to prevent field spread"
+        ],
+        treatment=TreatmentPlan(
+            curative=[],
+            management=[
+                CulturalControl(
+                    description="Never work in wet fields; switch to drip irrigation under plastic mulch to prevent splash dispersal.",
+                    source_id=SOURCE_NC_STATE_CUCURBIT_ANTHRACNOSE.id
+                )
+            ],
+            chemical=[
+                ChemicalControl(
+                    active_ingredient="Chlorothalonil (Bravo) / Mancozeb",
+                    application_purpose="Broad-spectrum protectant foliar spray applied prior to infection events.",
+                    limitations="Apply preventively before rain; adhere to pre-harvest intervals.",
+                    source_id=SOURCE_NC_STATE_CUCURBIT_ANTHRACNOSE.id
+                ),
+                ChemicalControl(
+                    active_ingredient="Azoxystrobin (Quadris) / Difenoconazole (Inspire Super)",
+                    application_purpose="Translaminar and systemic fungicide for foliar and fruit anthracnose control.",
+                    limitations="Rotate FRAC mode of action groups (FRAC 11 and FRAC 3) to prevent resistance.",
+                    source_id=SOURCE_UC_IPM_CUCURBIT_ANTHRACNOSE.id
+                )
+            ],
+            biological=[
+                BiologicalControl(
+                    agent_name="Bacillus subtilis / amyloliquefaciens",
+                    application_method="Foliar bio-fungicide protectant spray to reduce fungal spore germination.",
+                    source_id=SOURCE_PURDUE.id
+                )
+            ]
+        ),
+        prevention=PreventionProtocol(
+            cultural_practices=[
+                "Practice a minimum 2 to 3-year crop rotation out of all cucurbit crops",
+                "Use certified disease-free, fungicide-treated seed",
+                "Ensure drip irrigation and trellising to keep foliage and fruit dry"
+            ],
+            sanitation_measures=[
+                "Plow down or destroy infected vines immediately after harvest",
+                "Disinfect harvesting crates and knives"
+            ],
+            resistant_varieties="Many commercial slicing and pickling cucumber hybrids carry genetic resistance to Colletotrichum orbiculare races 1 and 2."
+        ),
+        similar_diseases=["cucumber__angular_leaf_spot", "cucumber__belly_rot", "cucumber__gummy_stem_blight"],
+        severity_indicators="Sunken crater fruit rot with pink gelatinous spore masses, extensive defoliation, stem girdling.",
+        sources=[
+            SOURCE_NC_STATE_CUCURBIT_ANTHRACNOSE,
+            SOURCE_UC_IPM_CUCURBIT_ANTHRACNOSE,
+            SOURCE_UKY_CUCURBIT_ANTHRACNOSE,
+            SOURCE_NC_STATE,
+            SOURCE_UC_IPM,
+        ],
         quality_level="HIGH"
     ),
 
@@ -108,7 +201,7 @@ CUCURBIT_DISEASES = {
             management=[
                 CulturalControl(
                     description="Immediate roguing of wilted plants and intense beetle vector suppression.",
-                    source_id=SOURCE_PURDUE.id
+                    source_id=SOURCE_UW_MADISON_CUCURBIT_BACTERIAL_WILT.id
                 )
             ],
             chemical=[
@@ -122,7 +215,7 @@ CUCURBIT_DISEASES = {
                     active_ingredient="Kaolin Clay",
                     application_purpose="Particle film barrier applied to foliage to deter beetle feeding and oviposition.",
                     limitations="Must be reapplied after heavy rains to maintain full white protective coat.",
-                    source_id=SOURCE_UC_IPM.id
+                    source_id=SOURCE_UW_MADISON_CUCURBIT_BACTERIAL_WILT.id
                 )
             ],
             biological=[
@@ -147,7 +240,232 @@ CUCURBIT_DISEASES = {
         ),
         similar_diseases=["zucchini__bacterial_wilt", "cucumber__fusarium_wilt"],
         severity_indicators="Diagnostic bacterial strands stretching between cut stem sections, irreversible systemic vine collapse.",
-        sources=[SOURCE_PURDUE, SOURCE_CORNELL, SOURCE_NC_STATE, SOURCE_UC_IPM],
+        sources=[
+            SOURCE_UW_MADISON_CUCURBIT_BACTERIAL_WILT,
+            SOURCE_PNW_CUCUMBER_BACTERIAL_WILT,
+            SOURCE_UKY_CUCURBIT_BACTERIAL_WILT,
+            SOURCE_PURDUE,
+            SOURCE_CORNELL,
+            SOURCE_NC_STATE,
+        ],
+        quality_level="HIGH"
+    ),
+
+    "cucumber__belly_rot": DiseaseRecord(
+        id="cucumber__belly_rot",
+        canonical_name="Cucumber Belly Rot",
+        crop="cucumber",
+        pathogen_type=PathogenType.FUNGAL,
+        pathogen_name="Rhizoctonia solani",
+        affected_parts=[PlantPart.FRUIT],
+        symptoms=[
+            "Water-soaked, yellowish-brown to dark brown discoloration on the underside ('belly') of cucumber fruit touching the ground",
+            "Lesions become sunken, dry, irregular, and crater-like or cracked as they expand",
+            "Dense brown crusty mold or web-like fungal mycelium developing over the rotted area under humid conditions",
+            "Fruit rot remains predominantly on the lower rind surface without immediately turning internal fruit mushy"
+        ],
+        symptom_progression="Superficial yellowish-brown rind discoloration -> water-soaked sunken crater lesion -> cracked corky surface with brown fungal webbing -> postharvest cull.",
+        development_conditions="Warm soil temperatures (25-32°C), high humidity, heavy rainfall, prolonged 24+ hour fruit-to-soil contact.",
+        spread_transmission="Direct contact with soilborne fungal sclerotia and hyphae in infested field soil; splash dispersal during heavy rains.",
+        infection_sources="Soilborne sclerotia surviving in soil, infested crop residues, and weed hosts.",
+        immediate_actions=[
+            "Cull affected fruit at harvest to avoid contaminating packing bins and grading lines",
+            "Install plastic mulch or trellis vines to keep developing cucumbers off wet bare soil",
+            "Avoid overhead irrigation that pools water around fruit-soil contact zones"
+        ],
+        treatment=TreatmentPlan(
+            curative=[],
+            management=[
+                CulturalControl(
+                    description="Keep developing fruit off bare soil using plastic mulch, straw barriers, or vertical trellising; maintain adequate plant spacing for soil drying.",
+                    source_id=SOURCE_UKY_CUCURBIT_BELLY_ROT.id
+                )
+            ],
+            chemical=[
+                ChemicalControl(
+                    active_ingredient="Azoxystrobin (Quadris)",
+                    application_purpose="Directed soil/lower canopy protectant spray at vine tip over or early fruiting to suppress Rhizoctonia fruit rot.",
+                    limitations="Direct spray beneath foliage to cover soil and fruit; rotate FRAC 11 fungicides.",
+                    source_id=SOURCE_UKY_CUCURBIT_BELLY_ROT.id
+                )
+            ],
+            biological=[
+                BiologicalControl(
+                    agent_name="Trichoderma harzianum (strain T-22)",
+                    application_method="Soil bio-fungicide inoculation at transplanting to suppress soilborne Rhizoctonia inoculum.",
+                    source_id=SOURCE_PURDUE.id
+                )
+            ]
+        ),
+        prevention=PreventionProtocol(
+            cultural_practices=[
+                "Practice a minimum 3 to 4-year crop rotation with non-host crops (corn, small grains)",
+                "Plant cucumbers on raised beds covered with black plastic mulch",
+                "Ensure excellent field drainage to prevent standing puddles"
+            ],
+            sanitation_measures=[
+                "Deep-plow crop residues after harvest to bury sclerotia below root zones",
+                "Sanitize harvest totes and grading belts"
+            ],
+            resistant_varieties="Cucumber cultivars with tougher rinds and upright plant architecture show reduced belly rot incidence."
+        ),
+        similar_diseases=["cucumber__pythium_fruit_rot", "cucumber__anthracnose"],
+        severity_indicators="Large sunken corky crater lesions on fruit underside, brown fungal webbing, rejection at processing grading.",
+        sources=[
+            SOURCE_UKY_CUCURBIT_BELLY_ROT,
+            SOURCE_UC_IPM,
+            SOURCE_PURDUE,
+        ],
+        quality_level="HIGH"
+    ),
+
+    "cucumber__gummy_stem_blight": DiseaseRecord(
+        id="cucumber__gummy_stem_blight",
+        canonical_name="Cucumber Gummy Stem Blight",
+        crop="cucumber",
+        pathogen_type=PathogenType.FUNGAL,
+        pathogen_name="Stagonosporopsis cucurbitacearum",
+        affected_parts=[PlantPart.LEAF, PlantPart.STEM, PlantPart.FRUIT],
+        symptoms=[
+            "Round to triangular or wedge-shaped tan-to-brown spots beginning at leaf margins and rapidly enlarging",
+            "Water-soaked, cracked oval cankers on stems that exude a diagnostic amber or reddish-brown gummy sap",
+            "Tiny, black speck-like fruiting bodies (pycnidia/pseudothecia) visible inside older dead stem and leaf lesions",
+            "Fruit phase (black rot): circular sunken water-soaked spots with black fruiting bodies and internal dry rot"
+        ],
+        symptom_progression="Marginal leaf chlorosis/necrosis -> stem lesion with gummy amber exudate -> stem girdling and vine wilt -> black rot on fruit.",
+        development_conditions="Warm temperatures (20-28°C), prolonged leaf wetness (>95% RH for 1-2 days), frequent rainfall or overhead irrigation.",
+        spread_transmission="Airborne ascospores and water-splashed conidia from crop debris; seedborne transmission.",
+        infection_sources="Infected crop residue (survives over 2 years), volunteer cucurbit vines, contaminated seed lots.",
+        immediate_actions=[
+            "Cease overhead irrigation immediately to reduce canopy wetness duration",
+            "Prune or remove severely cankered vines with gummy exudate",
+            "Apply systemic and protectant fungicide rotation (e.g., chlorothalonil + difenoconazole/cyprodinil)"
+        ],
+        treatment=TreatmentPlan(
+            curative=[],
+            management=[
+                CulturalControl(
+                    description="Switch to drip irrigation under plastic mulch, ensure wide plant spacing for canopy aeration, and avoid wounding vines during field work.",
+                    source_id=SOURCE_UF_IFAS_CUCURBIT_GUMMY_STEM_BLIGHT.id
+                )
+            ],
+            chemical=[
+                ChemicalControl(
+                    active_ingredient="Chlorothalonil (Bravo WeatherStik)",
+                    application_purpose="Broad-spectrum protectant base spray applied preventively at 7-day intervals.",
+                    limitations="Apply before rain events; do not use with copper when weather is hot and dry.",
+                    source_id=SOURCE_UF_IFAS_CUCURBIT_GUMMY_STEM_BLIGHT.id
+                ),
+                ChemicalControl(
+                    active_ingredient="Difenoconazole + Cyprodinil (Inspire Super) / Fluopyram (Luna)",
+                    application_purpose="Targeted systemic fungicides for active gummy stem blight suppression.",
+                    limitations="Strictly rotate FRAC groups 3, 9, and 7 to prevent fungicide resistance.",
+                    source_id=SOURCE_UF_IFAS_CUCURBIT_GUMMY_STEM_BLIGHT.id
+                )
+            ],
+            biological=[
+                BiologicalControl(
+                    agent_name="Bacillus amyloliquefaciens (strain D747)",
+                    application_method="Foliar bio-fungicide protectant spray to reduce leaf surface colonization.",
+                    source_id=SOURCE_PURDUE.id
+                )
+            ]
+        ),
+        prevention=PreventionProtocol(
+            cultural_practices=[
+                "Practice a strict 2 to 3-year crop rotation out of all cucurbit crops",
+                "Use certified disease-free, tested seed lots",
+                "Trellis slicing cucumbers to elevate vines above ground level"
+            ],
+            sanitation_measures=[
+                "Destroy or deeply incorporate infected cucurbit debris immediately after final harvest",
+                "Disinfect greenhouse transplant flats and propagation benches"
+            ],
+            resistant_varieties="Commercial cucumber cultivars show variable tolerance; select varieties with documented gummy stem blight tolerance."
+        ),
+        similar_diseases=["cucumber__anthracnose", "cucumber__angular_leaf_spot", "cucumber__bacterial_wilt"],
+        severity_indicators="Amber gummy exudate oozing from cracked stem cankers, black pycnidia visible under hand lens, complete vine collapse.",
+        sources=[
+            SOURCE_UF_IFAS_CUCURBIT_GUMMY_STEM_BLIGHT,
+            SOURCE_UF_IFAS,
+            SOURCE_CORNELL,
+            SOURCE_NC_STATE,
+        ],
+        quality_level="HIGH"
+    ),
+
+    "cucumber__pythium_fruit_rot": DiseaseRecord(
+        id="cucumber__pythium_fruit_rot",
+        canonical_name="Cucumber Pythium Fruit Rot (Cottony Leak)",
+        crop="cucumber",
+        pathogen_type=PathogenType.OOMYCETE,
+        pathogen_name="Pythium aphanidermatum",
+        affected_parts=[PlantPart.FRUIT, PlantPart.STEM],
+        symptoms=[
+            "Water-soaked, dark green or brown soft rot initiating on the portion of the cucumber contacting wet soil",
+            "Rapid softening and liquefaction of internal fruit tissues within 24-48 hours ('leak')",
+            "Profuse, thick, brilliant white cottony mycelial growth blanketing the rotted fruit under warm, humid conditions",
+            "Rotted fruit collapses completely into a watery mush, exuding liquid"
+        ],
+        symptom_progression="Water-soaked fruit lesion in contact with wet soil -> soft watery decay -> dense white cottony mycelium blanket -> complete fruit liquefaction.",
+        development_conditions="High temperatures (28-35°C), saturated soils, waterlogged fields, poorly drained soils, prolonged fruit wetness.",
+        spread_transmission="Motile zoospores swimming through free water in saturated soils; direct contact with mycelium in soil.",
+        infection_sources="Oospores and mycelium surviving in soil, infested surface irrigation water, crop debris.",
+        immediate_actions=[
+            "Remove and destroy all rotting fruit showing cottony growth to prevent packing bin contamination",
+            "Improve field drainage and eliminate standing water immediately",
+            "Switch off surface or overhead irrigation to allow topsoil to dry"
+        ],
+        treatment=TreatmentPlan(
+            curative=[],
+            management=[
+                CulturalControl(
+                    description="Plant on raised plastic-mulched beds to elevate fruit above saturated soil; avoid harvest during or immediately after heavy rain.",
+                    source_id=SOURCE_MS_STATE_CUCURBIT_COTTONY_LEAK.id
+                )
+            ],
+            chemical=[
+                ChemicalControl(
+                    active_ingredient="Mefenoxam (Ridomil Gold) / Metalaxyl",
+                    application_purpose="Soil drench or band application targeted at oomycete root and fruit rot prevention.",
+                    limitations="Apply at planting or early vine layby; observe rotational restrictions.",
+                    source_id=SOURCE_MS_STATE_CUCURBIT_COTTONY_LEAK.id
+                ),
+                ChemicalControl(
+                    active_ingredient="Cyazofamid (Ranman)",
+                    application_purpose="Protectant foliar/ground spray directed at fruit and soil interface before heavy rain events.",
+                    limitations="Preventive application only; rotate with other oomycete FRAC chemistry.",
+                    source_id=SOURCE_UKY_CUCURBIT_COTTONY_LEAK.id
+                )
+            ],
+            biological=[
+                BiologicalControl(
+                    agent_name="Gliocladium virens / Trichoderma virens",
+                    application_method="Soil bio-fungicide application to colonize rhizosphere and outcompete Pythium spp.",
+                    source_id=SOURCE_PURDUE.id
+                )
+            ]
+        ),
+        prevention=PreventionProtocol(
+            cultural_practices=[
+                "Install raised beds with black or silver plastic mulch to provide a physical barrier between fruit and soil",
+                "Ensure laser-leveled fields or gentle slopes with excellent tile drainage",
+                "Practice a 2 to 3-year rotation away from cucurbits and solanaceous crops"
+            ],
+            sanitation_measures=[
+                "Rogue out water-soaked or cottony cucumbers prior to bin loading",
+                "Disinfect dump tanks and wash water with chlorine or peroxyacetic acid"
+            ],
+            resistant_varieties="Select cucumber cultivars with firm rinds and strong field holding capacity."
+        ),
+        similar_diseases=["cucumber__belly_rot", "cucumber__anthracnose"],
+        severity_indicators="Profuse white cottony fungal blanket over entire fruit, rapid liquefaction/leak, water-soaked collapse.",
+        sources=[
+            SOURCE_MS_STATE_CUCURBIT_COTTONY_LEAK,
+            SOURCE_UKY_CUCURBIT_COTTONY_LEAK,
+            SOURCE_UC_IPM,
+            SOURCE_PURDUE,
+        ],
         quality_level="HIGH"
     ),
 
@@ -382,7 +700,14 @@ CUCURBIT_DISEASES = {
         ),
         similar_diseases=["cucumber__bacterial_wilt", "squash_vine_borer_damage", "zucchini__fusarium_wilt"],
         severity_indicators="Positive bacterial streaming test from cut crown, irreversible crown collapse and plant death.",
-        sources=[SOURCE_PURDUE, SOURCE_CORNELL, SOURCE_NC_STATE, SOURCE_UC_IPM],
+        sources=[
+            SOURCE_UW_MADISON_CUCURBIT_BACTERIAL_WILT,
+            SOURCE_PNW_CUCUMBER_BACTERIAL_WILT,
+            SOURCE_UKY_CUCURBIT_BACTERIAL_WILT,
+            SOURCE_PURDUE,
+            SOURCE_CORNELL,
+            SOURCE_NC_STATE,
+        ],
         quality_level="HIGH"
     ),
 
@@ -597,7 +922,14 @@ CUCURBIT_DISEASES = {
         ),
         similar_diseases=["watermelon_mosaic_virus", "cucumber_mosaic_virus"],
         severity_indicators="Severe foliar blistering, shoestring leaf distortion, and knobby, warty, deformed unmarketable zucchini fruit.",
-        sources=[SOURCE_UC_IPM, SOURCE_CORNELL, SOURCE_NC_STATE, SOURCE_UF_IFAS],
+        sources=[
+            SOURCE_PNW_SQUASH_VIRUS_DISEASES,
+            SOURCE_UC_IPM_CUCURBIT_POTYVIRUSES,
+            SOURCE_UC_IPM,
+            SOURCE_CORNELL,
+            SOURCE_NC_STATE,
+            SOURCE_UF_IFAS,
+        ],
         quality_level="HIGH"
     ),
 }

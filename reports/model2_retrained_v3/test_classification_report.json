@@ -1,0 +1,801 @@
+{
+  "healthy": {
+    "precision": 0.9893203883495145,
+    "recall": 0.978866474543708,
+    "f1-score": 0.9840656687590535,
+    "support": 1041.0
+  },
+  "apple__black_rot": {
+    "precision": 0.8333333333333334,
+    "recall": 0.5,
+    "f1-score": 0.625,
+    "support": 10.0
+  },
+  "apple__mosaic_virus": {
+    "precision": 0.75,
+    "recall": 0.8181818181818182,
+    "f1-score": 0.782608695652174,
+    "support": 11.0
+  },
+  "apple__rust": {
+    "precision": 0.7857142857142857,
+    "recall": 0.7857142857142857,
+    "f1-score": 0.7857142857142857,
+    "support": 14.0
+  },
+  "apple__scab": {
+    "precision": 0.6923076923076923,
+    "recall": 0.72,
+    "f1-score": 0.7058823529411765,
+    "support": 25.0
+  },
+  "banana__anthracnose": {
+    "precision": 0.625,
+    "recall": 0.7142857142857143,
+    "f1-score": 0.6666666666666666,
+    "support": 7.0
+  },
+  "banana__black_leaf_streak": {
+    "precision": 0.9375,
+    "recall": 0.8823529411764706,
+    "f1-score": 0.9090909090909091,
+    "support": 17.0
+  },
+  "banana__bunchy_top": {
+    "precision": 1.0,
+    "recall": 0.6363636363636364,
+    "f1-score": 0.7777777777777778,
+    "support": 11.0
+  },
+  "banana__cigar_end_rot": {
+    "precision": 0.6666666666666666,
+    "recall": 1.0,
+    "f1-score": 0.8,
+    "support": 4.0
+  },
+  "banana__cordana_leaf_spot": {
+    "precision": 1.0,
+    "recall": 0.75,
+    "f1-score": 0.8571428571428571,
+    "support": 4.0
+  },
+  "banana__panama_disease": {
+    "precision": 0.7777777777777778,
+    "recall": 0.875,
+    "f1-score": 0.8235294117647058,
+    "support": 8.0
+  },
+  "basil__downy_mildew": {
+    "precision": 0.625,
+    "recall": 0.8333333333333334,
+    "f1-score": 0.7142857142857143,
+    "support": 6.0
+  },
+  "bean__angular_leaf_spot": {
+    "precision": 0.9393939393939394,
+    "recall": 0.9538461538461539,
+    "f1-score": 0.9465648854961832,
+    "support": 65.0
+  },
+  "bean__halo_blight": {
+    "precision": 0.75,
+    "recall": 0.5,
+    "f1-score": 0.6,
+    "support": 6.0
+  },
+  "bean__mosaic_virus": {
+    "precision": 0.14285714285714285,
+    "recall": 0.2,
+    "f1-score": 0.16666666666666666,
+    "support": 5.0
+  },
+  "bean__rust": {
+    "precision": 0.8536585365853658,
+    "recall": 0.9090909090909091,
+    "f1-score": 0.8805031446540881,
+    "support": 77.0
+  },
+  "bell_pepper__bacterial_spot": {
+    "precision": 1.0,
+    "recall": 0.7142857142857143,
+    "f1-score": 0.8333333333333334,
+    "support": 7.0
+  },
+  "bell_pepper__blossom_end_rot": {
+    "precision": 0.8888888888888888,
+    "recall": 0.7272727272727273,
+    "f1-score": 0.8,
+    "support": 11.0
+  },
+  "bell_pepper__frogeye_leaf_spot": {
+    "precision": 0.08333333333333333,
+    "recall": 0.25,
+    "f1-score": 0.125,
+    "support": 4.0
+  },
+  "bell_pepper__powdery_mildew": {
+    "precision": 0.25,
+    "recall": 1.0,
+    "f1-score": 0.4,
+    "support": 2.0
+  },
+  "blueberry__anthracnose": {
+    "precision": 0.6666666666666666,
+    "recall": 1.0,
+    "f1-score": 0.8,
+    "support": 4.0
+  },
+  "blueberry__botrytis_blight": {
+    "precision": 0.75,
+    "recall": 1.0,
+    "f1-score": 0.8571428571428571,
+    "support": 3.0
+  },
+  "blueberry__mummy_berry": {
+    "precision": 1.0,
+    "recall": 0.5,
+    "f1-score": 0.6666666666666666,
+    "support": 4.0
+  },
+  "blueberry__rust": {
+    "precision": 1.0,
+    "recall": 0.2,
+    "f1-score": 0.3333333333333333,
+    "support": 5.0
+  },
+  "blueberry__scorch": {
+    "precision": 1.0,
+    "recall": 0.2,
+    "f1-score": 0.3333333333333333,
+    "support": 5.0
+  },
+  "blueberry__septoria_leaf_spot": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "broccoli__alternaria_leaf_spot": {
+    "precision": 0.42857142857142855,
+    "recall": 0.75,
+    "f1-score": 0.5454545454545454,
+    "support": 8.0
+  },
+  "broccoli__downy_mildew": {
+    "precision": 0.3333333333333333,
+    "recall": 0.5,
+    "f1-score": 0.4,
+    "support": 4.0
+  },
+  "broccoli__ring_spot": {
+    "precision": 0.25,
+    "recall": 1.0,
+    "f1-score": 0.4,
+    "support": 1.0
+  },
+  "cabbage__alternaria_leaf_spot": {
+    "precision": 1.0,
+    "recall": 0.3333333333333333,
+    "f1-score": 0.5,
+    "support": 6.0
+  },
+  "cabbage__black_rot": {
+    "precision": 0.9285714285714286,
+    "recall": 1.0,
+    "f1-score": 0.9629629629629629,
+    "support": 13.0
+  },
+  "cabbage__downy_mildew": {
+    "precision": 0.5714285714285714,
+    "recall": 0.5,
+    "f1-score": 0.5333333333333333,
+    "support": 8.0
+  },
+  "carrot__alternaria_leaf_blight": {
+    "precision": 0.8571428571428571,
+    "recall": 0.8571428571428571,
+    "f1-score": 0.8571428571428571,
+    "support": 7.0
+  },
+  "carrot__cavity_spot": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 7.0
+  },
+  "carrot__cercospora_leaf_blight": {
+    "precision": 1.0,
+    "recall": 0.6666666666666666,
+    "f1-score": 0.8,
+    "support": 3.0
+  },
+  "cauliflower__alternaria_leaf_spot": {
+    "precision": 1.0,
+    "recall": 0.25,
+    "f1-score": 0.4,
+    "support": 4.0
+  },
+  "cauliflower__bacterial_soft_rot": {
+    "precision": 0.6666666666666666,
+    "recall": 1.0,
+    "f1-score": 0.8,
+    "support": 2.0
+  },
+  "cauliflower__downy_mildew": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "celery__anthracnose": {
+    "precision": 0.1,
+    "recall": 1.0,
+    "f1-score": 0.18181818181818182,
+    "support": 1.0
+  },
+  "celery__early_blight": {
+    "precision": 1.0,
+    "recall": 0.4,
+    "f1-score": 0.5714285714285714,
+    "support": 5.0
+  },
+  "cherry__leaf_spot": {
+    "precision": 0.75,
+    "recall": 0.6,
+    "f1-score": 0.6666666666666666,
+    "support": 10.0
+  },
+  "cherry__powdery_mildew": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 3.0
+  },
+  "citrus__canker": {
+    "precision": 1.0,
+    "recall": 0.9166666666666666,
+    "f1-score": 0.9565217391304348,
+    "support": 48.0
+  },
+  "citrus__greening_disease": {
+    "precision": 1.0,
+    "recall": 0.8571428571428571,
+    "f1-score": 0.9230769230769231,
+    "support": 14.0
+  },
+  "coffee__berry_blotch": {
+    "precision": 1.0,
+    "recall": 0.8888888888888888,
+    "f1-score": 0.9411764705882353,
+    "support": 9.0
+  },
+  "coffee__brown_eye_spot": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 1.0
+  },
+  "coffee__leaf_rust": {
+    "precision": 1.0,
+    "recall": 0.9375,
+    "f1-score": 0.967741935483871,
+    "support": 16.0
+  },
+  "corn__gray_leaf_spot": {
+    "precision": 0.875,
+    "recall": 0.5833333333333334,
+    "f1-score": 0.7,
+    "support": 12.0
+  },
+  "corn__northern_leaf_blight": {
+    "precision": 0.6666666666666666,
+    "recall": 0.8571428571428571,
+    "f1-score": 0.75,
+    "support": 14.0
+  },
+  "corn__rust": {
+    "precision": 0.8888888888888888,
+    "recall": 0.4444444444444444,
+    "f1-score": 0.5925925925925926,
+    "support": 18.0
+  },
+  "corn__smut": {
+    "precision": 1.0,
+    "recall": 0.9473684210526315,
+    "f1-score": 0.972972972972973,
+    "support": 19.0
+  },
+  "cucumber__angular_leaf_spot": {
+    "precision": 0.88,
+    "recall": 1.0,
+    "f1-score": 0.9361702127659575,
+    "support": 22.0
+  },
+  "cucumber__bacterial_wilt": {
+    "precision": 0.7647058823529411,
+    "recall": 1.0,
+    "f1-score": 0.8666666666666667,
+    "support": 13.0
+  },
+  "cucumber__powdery_mildew": {
+    "precision": 0.7,
+    "recall": 0.9545454545454546,
+    "f1-score": 0.8076923076923077,
+    "support": 22.0
+  },
+  "eggplant__cercospora_leaf_spot": {
+    "precision": 1.0,
+    "recall": 0.3333333333333333,
+    "f1-score": 0.5,
+    "support": 6.0
+  },
+  "eggplant__phomopsis_fruit_rot": {
+    "precision": 1.0,
+    "recall": 0.8,
+    "f1-score": 0.8888888888888888,
+    "support": 5.0
+  },
+  "eggplant__phytophthora_blight": {
+    "precision": 0.3333333333333333,
+    "recall": 0.75,
+    "f1-score": 0.46153846153846156,
+    "support": 4.0
+  },
+  "eggplant__wilt_disease": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "garlic__leaf_blight": {
+    "precision": 0.5625,
+    "recall": 0.75,
+    "f1-score": 0.6428571428571429,
+    "support": 12.0
+  },
+  "garlic__rust": {
+    "precision": 0.6363636363636364,
+    "recall": 0.5833333333333334,
+    "f1-score": 0.6086956521739131,
+    "support": 12.0
+  },
+  "ginger__leaf_spot": {
+    "precision": 0.6666666666666666,
+    "recall": 0.5,
+    "f1-score": 0.5714285714285714,
+    "support": 4.0
+  },
+  "ginger__sheath_blight": {
+    "precision": 0.5,
+    "recall": 0.125,
+    "f1-score": 0.2,
+    "support": 8.0
+  },
+  "grape__black_rot": {
+    "precision": 0.7692307692307693,
+    "recall": 0.7692307692307693,
+    "f1-score": 0.7692307692307693,
+    "support": 13.0
+  },
+  "grape__downy_mildew": {
+    "precision": 0.8666666666666667,
+    "recall": 0.8125,
+    "f1-score": 0.8387096774193549,
+    "support": 32.0
+  },
+  "grape__grapevine_leafroll_disease": {
+    "precision": 1.0,
+    "recall": 0.8,
+    "f1-score": 0.8888888888888888,
+    "support": 5.0
+  },
+  "grape__leaf_spot": {
+    "precision": 1.0,
+    "recall": 0.3,
+    "f1-score": 0.46153846153846156,
+    "support": 10.0
+  },
+  "lettuce__downy_mildew": {
+    "precision": 1.0,
+    "recall": 0.625,
+    "f1-score": 0.7692307692307693,
+    "support": 8.0
+  },
+  "lettuce__mosaic_virus": {
+    "precision": 1.0,
+    "recall": 0.75,
+    "f1-score": 0.8571428571428571,
+    "support": 4.0
+  },
+  "maple__tar_spot": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 8.0
+  },
+  "peach__anthracnose": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 1.0
+  },
+  "peach__brown_rot": {
+    "precision": 0.8125,
+    "recall": 0.9285714285714286,
+    "f1-score": 0.8666666666666667,
+    "support": 14.0
+  },
+  "peach__leaf_curl": {
+    "precision": 1.0,
+    "recall": 0.9444444444444444,
+    "f1-score": 0.9714285714285714,
+    "support": 18.0
+  },
+  "peach__rust": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 1.0
+  },
+  "peach__scab": {
+    "precision": 0.7,
+    "recall": 0.875,
+    "f1-score": 0.7777777777777778,
+    "support": 8.0
+  },
+  "plum__bacterial_spot": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 1.0
+  },
+  "plum__brown_rot": {
+    "precision": 0.8333333333333334,
+    "recall": 1.0,
+    "f1-score": 0.9090909090909091,
+    "support": 5.0
+  },
+  "plum__pocket_disease": {
+    "precision": 1.0,
+    "recall": 0.5,
+    "f1-score": 0.6666666666666666,
+    "support": 4.0
+  },
+  "plum__pox_virus": {
+    "precision": 1.0,
+    "recall": 0.25,
+    "f1-score": 0.4,
+    "support": 4.0
+  },
+  "plum__rust": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 2.0
+  },
+  "potato__early_blight": {
+    "precision": 0.7142857142857143,
+    "recall": 0.5,
+    "f1-score": 0.5882352941176471,
+    "support": 10.0
+  },
+  "potato__late_blight": {
+    "precision": 0.9090909090909091,
+    "recall": 0.8333333333333334,
+    "f1-score": 0.8695652173913043,
+    "support": 12.0
+  },
+  "raspberry__fire_blight": {
+    "precision": 0.75,
+    "recall": 0.75,
+    "f1-score": 0.75,
+    "support": 4.0
+  },
+  "raspberry__gray_mold": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 2.0
+  },
+  "raspberry__leaf_spot": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 1.0
+  },
+  "raspberry__yellow_rust": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 4.0
+  },
+  "rice__blast": {
+    "precision": 0.8,
+    "recall": 0.5714285714285714,
+    "f1-score": 0.6666666666666666,
+    "support": 7.0
+  },
+  "rice__sheath_blight": {
+    "precision": 0.5714285714285714,
+    "recall": 1.0,
+    "f1-score": 0.7272727272727273,
+    "support": 8.0
+  },
+  "rose__black_spot": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "rose__downy_mildew": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "rose__pest_damage": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "soybean__bacterial_blight": {
+    "precision": 0.8,
+    "recall": 0.4444444444444444,
+    "f1-score": 0.5714285714285714,
+    "support": 9.0
+  },
+  "soybean__brown_spot": {
+    "precision": 1.0,
+    "recall": 0.7142857142857143,
+    "f1-score": 0.8333333333333334,
+    "support": 7.0
+  },
+  "soybean__downy_mildew": {
+    "precision": 0.8461538461538461,
+    "recall": 1.0,
+    "f1-score": 0.9166666666666666,
+    "support": 11.0
+  },
+  "soybean__frog_eye_leaf_spot": {
+    "precision": 0.7727272727272727,
+    "recall": 0.8095238095238095,
+    "f1-score": 0.7906976744186046,
+    "support": 21.0
+  },
+  "soybean__mosaic": {
+    "precision": 0.5,
+    "recall": 0.38461538461538464,
+    "f1-score": 0.43478260869565216,
+    "support": 13.0
+  },
+  "soybean__rust": {
+    "precision": 0.5,
+    "recall": 0.4444444444444444,
+    "f1-score": 0.47058823529411764,
+    "support": 9.0
+  },
+  "spinach__anthracnose": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "spinach__bacterial_spot": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "spinach__pest_damage": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "squash__powdery_mildew": {
+    "precision": 0.6153846153846154,
+    "recall": 0.4,
+    "f1-score": 0.48484848484848486,
+    "support": 20.0
+  },
+  "strawberry__anthracnose": {
+    "precision": 1.0,
+    "recall": 0.6,
+    "f1-score": 0.75,
+    "support": 5.0
+  },
+  "strawberry__gray_mold": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "strawberry__leaf_scorch": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 3.0
+  },
+  "strawberry__leaf_spot": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "tobacco__blue_mold": {
+    "precision": 0.75,
+    "recall": 0.6,
+    "f1-score": 0.6666666666666666,
+    "support": 5.0
+  },
+  "tobacco__brown_spot": {
+    "precision": 0.8571428571428571,
+    "recall": 0.8571428571428571,
+    "f1-score": 0.8571428571428571,
+    "support": 7.0
+  },
+  "tobacco__frogeye_leaf_spot": {
+    "precision": 0.5,
+    "recall": 0.3333333333333333,
+    "f1-score": 0.4,
+    "support": 3.0
+  },
+  "tobacco__mosaic_virus": {
+    "precision": 0.8,
+    "recall": 0.8,
+    "f1-score": 0.8,
+    "support": 5.0
+  },
+  "tomato__bacterial_leaf_spot": {
+    "precision": 0.45454545454545453,
+    "recall": 0.38461538461538464,
+    "f1-score": 0.4166666666666667,
+    "support": 13.0
+  },
+  "tomato__early_blight": {
+    "precision": 0.7241379310344828,
+    "recall": 0.9545454545454546,
+    "f1-score": 0.8235294117647058,
+    "support": 22.0
+  },
+  "tomato__late_blight": {
+    "precision": 0.75,
+    "recall": 0.8823529411764706,
+    "f1-score": 0.8108108108108109,
+    "support": 17.0
+  },
+  "tomato__leaf_mold": {
+    "precision": 0.875,
+    "recall": 0.875,
+    "f1-score": 0.875,
+    "support": 16.0
+  },
+  "tomato__mosaic_virus": {
+    "precision": 1.0,
+    "recall": 0.2857142857142857,
+    "f1-score": 0.4444444444444444,
+    "support": 7.0
+  },
+  "tomato__septoria_leaf_spot": {
+    "precision": 0.7,
+    "recall": 0.5,
+    "f1-score": 0.5833333333333334,
+    "support": 14.0
+  },
+  "tomato__yellow_leaf_curl_virus": {
+    "precision": 0.6428571428571429,
+    "recall": 1.0,
+    "f1-score": 0.782608695652174,
+    "support": 9.0
+  },
+  "wheat__bacterial_leaf_streak_(black_chaff)": {
+    "precision": 0.2857142857142857,
+    "recall": 0.3076923076923077,
+    "f1-score": 0.2962962962962963,
+    "support": 13.0
+  },
+  "wheat__head_scab": {
+    "precision": 0.967741935483871,
+    "recall": 1.0,
+    "f1-score": 0.9836065573770492,
+    "support": 30.0
+  },
+  "wheat__leaf_rust": {
+    "precision": 0.5625,
+    "recall": 0.8181818181818182,
+    "f1-score": 0.6666666666666666,
+    "support": 11.0
+  },
+  "wheat__loose_smut": {
+    "precision": 1.0,
+    "recall": 0.9473684210526315,
+    "f1-score": 0.972972972972973,
+    "support": 19.0
+  },
+  "wheat__powdery_mildew": {
+    "precision": 0.88,
+    "recall": 0.8148148148148148,
+    "f1-score": 0.8461538461538461,
+    "support": 27.0
+  },
+  "wheat__septoria_blotch": {
+    "precision": 0.7857142857142857,
+    "recall": 0.5789473684210527,
+    "f1-score": 0.6666666666666666,
+    "support": 19.0
+  },
+  "wheat__stem_rust": {
+    "precision": 0.9230769230769231,
+    "recall": 0.9230769230769231,
+    "f1-score": 0.9230769230769231,
+    "support": 13.0
+  },
+  "wheat__stripe_rust": {
+    "precision": 0.6428571428571429,
+    "recall": 0.84375,
+    "f1-score": 0.7297297297297297,
+    "support": 32.0
+  },
+  "zucchini__bacterial_wilt": {
+    "precision": 0.6666666666666666,
+    "recall": 0.2222222222222222,
+    "f1-score": 0.3333333333333333,
+    "support": 9.0
+  },
+  "zucchini__downy_mildew": {
+    "precision": 0.3333333333333333,
+    "recall": 0.2,
+    "f1-score": 0.25,
+    "support": 5.0
+  },
+  "zucchini__powdery_mildew": {
+    "precision": 0.3125,
+    "recall": 0.2777777777777778,
+    "f1-score": 0.29411764705882354,
+    "support": 18.0
+  },
+  "zucchini__yellow_mosaic_virus": {
+    "precision": 1.0,
+    "recall": 0.8888888888888888,
+    "f1-score": 0.9411764705882353,
+    "support": 9.0
+  },
+  "tomato__anthracnose": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "cucumber__anthracnose": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "cucumber__downy_mildew": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "tomato__fruit_fusarium": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 0.0
+  },
+  "accuracy": 0.8550347222222222,
+  "macro avg": {
+    "precision": 0.645357615790757,
+    "recall": 0.5880662847183182,
+    "f1-score": 0.5837831580817062,
+    "support": 2304.0
+  },
+  "weighted avg": {
+    "precision": 0.8849048908155157,
+    "recall": 0.8550347222222222,
+    "f1-score": 0.8588767823987352,
+    "support": 2304.0
+  }
+}

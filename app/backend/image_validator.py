@@ -365,29 +365,30 @@ def validate_plant_image(
     chlorophyll_mask = green_foliage & (exg > 3)
 
     # 2. Chlorotic (Yellowing / Mosaic) & Necrotic (Brown / Rust / Blight) Tissues
-    yellow_chlorosis = (H >= 15) & (H < 24) & (S >= 25) & (V >= 25) & (G > B)
-    brown_necrotic = (H >= 8) & (H < 18) & (S >= 22) & (V >= 18) & (V <= 170)
+    yellow_chlorosis = (H >= 15) & (H < 25) & (S >= 20) & (V >= 20) & (G > B)
+    brown_necrotic = (H >= 6) & (H < 22) & (S >= 18) & (V >= 15)
 
-    # Core vegetative foliage coverage
-    vegetative_mask = chlorophyll_mask | yellow_chlorosis | brown_necrotic
-    veg_coverage = float(np.sum(vegetative_mask) / total_px) if total_px > 0 else 0.0
-
-    # 3. Fruits, Berries, and Flowers (only valid if vegetative tissue is also present)
-    warm_fruit = ((H <= 15) | (H >= 165)) & (S >= 35) & (V >= 30)
-    berry_fruit = (H >= 95) & (H <= 135) & (S >= 25) & (V >= 20) & (V <= 135)
+    # 3. Fruits, Berries, Flowers, and Purple/Violet Organs (Eggplant, Grapes, Berries, Tomatoes, Peppers)
+    warm_fruit = ((H <= 18) | (H >= 162)) & (S >= 25) & (V >= 25)
+    berry_fruit = (H >= 95) & (H <= 135) & (S >= 20) & (V >= 15) & (V <= 140)
     cool_flower = (H >= 135) & (H <= 165) & (S >= 25) & (V >= 20)
+    purple_fruit = (H >= 125) & (H <= 165) & (S >= 20) & (V >= 12)
 
-    # Non-foliage tissue requires at least minimal vegetative support (leaves/stems)
-    if veg_coverage > 0.002:
-        raw_plant_mask = vegetative_mask | warm_fruit | berry_fruit | cool_flower
-    else:
-        raw_plant_mask = vegetative_mask
+    # Combined plant presence: incorporates foliage, stems, chlorosis, necrosis, and fruits/flowers
+    raw_plant_mask = (
+        chlorophyll_mask
+        | yellow_chlorosis
+        | brown_necrotic
+        | warm_fruit
+        | berry_fruit
+        | cool_flower
+        | purple_fruit
+    )
 
-    # Suppress skin, lab coats, nitrile gloves
-    skin_mask = (Cr >= 133) & (Cr <= 173) & (Cb >= 77) & (Cb <= 127) & (R > G) & (G > B) & ((R - G) >= 6)
+    # 4. Non-plant suppression: white lab coats & cyan nitrile gloves
     white_coat_mask = (V >= 160) & (S <= 35) & (np.abs(R - G) < 20) & (np.abs(G - B) < 20)
     nitrile_mask = (B > (R + 45)) & (B > 115) & (H >= 95) & (H <= 130) & (S > 75)
-    non_plant = skin_mask | white_coat_mask | nitrile_mask
+    non_plant = white_coat_mask | nitrile_mask
 
     clean_plant_mask = raw_plant_mask & (~non_plant)
     plant_px_count = int(np.sum(clean_plant_mask))

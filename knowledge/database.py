@@ -48,17 +48,32 @@ class AgriculturalKnowledgeBase:
         for crop_name, c_rec in V4_CROP_KNOWLEDGE.items():
             self.crops[crop_name.lower()] = c_rec
 
-    def get_disease(self, disease_slug: Optional[str]) -> Optional[DiseaseRecord]:
-        """Look up a disease record by slug or common name (case-insensitive)."""
+    def get_disease(self, disease_slug: Optional[str], crop: Optional[str] = None) -> Optional[DiseaseRecord]:
+        """Look up a disease record by slug or common name (case-insensitive), optionally restricted to crop."""
         if not disease_slug:
             return None
         slug_clean = disease_slug.strip().lower()
-        if slug_clean in self.diseases:
-            return self.diseases[slug_clean]
-
-        # Fallback: match by common name or partial disease slug
         slug_norm = slug_clean.replace(" ", "_")
+
+        # 1. If crop is provided, prioritize crop__disease
+        if crop:
+            crop_clean = crop.strip().lower().replace(" ", "_")
+            composite = f"{crop_clean}__{slug_norm}"
+            if composite in self.diseases:
+                return self.diseases[composite]
+
+        # 2. Direct slug match (if crop specified, must match crop)
+        if slug_clean in self.diseases:
+            rec = self.diseases[slug_clean]
+            if crop and rec.crop.lower() != crop.strip().lower():
+                pass
+            else:
+                return rec
+
+        # 3. Fallback: match by common name or partial disease slug, strictly respecting crop if given
         for slug, rec in self.diseases.items():
+            if crop and rec.crop.lower() != crop.strip().lower():
+                continue
             if slug_norm == slug:
                 return rec
             if "__" in slug:

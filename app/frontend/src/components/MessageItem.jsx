@@ -75,6 +75,7 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
   const model2 = data.model2 || videoInference?.model2 || model1?.model2;
   const routerData = data.router;
   const annotatedPreviewUrl = data.annotated_preview_url || model2?.annotated_preview_url;
+  const treatmentData = data.treatment || data.knowledge?.treatment || data.knowledge?.structured_data?.treatment || model2?.treatment;
 
   const hasPlantResult = Boolean(model1 || videoInference);
   const rawCrop = videoInference?.predicted_crop || model1?.predicted_crop || model1?.predicted_label;
@@ -356,6 +357,121 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
         )}
 
         {/* ========================================================
+            SECTION 2.5: 💊 SIMPLIFIED TREATMENT & CURE (5 SECTIONS)
+            ======================================================== */}
+        {treatmentData && (hasDisease || (treatmentData.has_treatment && !isUncertain)) && !isSafeguardTriggered && (
+          <div className={`model-card treatment-card-simple curability-${treatmentData.curability_badge || 'manageable'}`}>
+            <div className="model-card-header">
+              <div className="model-badge-row">
+                <ShieldCheck size={16} color={
+                  treatmentData.curability_badge === 'curable' ? '#10b981' :
+                  treatmentData.curability_badge === 'no_cure' ? '#f43f5e' : '#f59e0b'
+                } />
+                <span className="model-title">TREATMENT & CURE</span>
+              </div>
+            </div>
+
+            <div className="model-card-body treatment-simple-body">
+              {/* 1. Curable? */}
+              <div className="treatment-simple-section curable-section">
+                <span className="simple-section-title">1. Curable?</span>
+                <div className="curable-row-content">
+                  <span className={`curable-pill pill-${treatmentData.curability_badge || 'manageable'}`}>
+                    {treatmentData.curable_simple || (
+                      treatmentData.can_it_be_cured === 'curable' ? 'Yes' :
+                      treatmentData.can_it_be_cured === 'no established cure' ? 'No established cure' :
+                      'Manageable'
+                    )}
+                  </span>
+                  <span className="curable-reason-text">
+                    {treatmentData.curable_reason || treatmentData.curability_description}
+                  </span>
+                </div>
+              </div>
+
+              {/* 2. Cure / Treatment */}
+              {((Array.isArray(treatmentData.cure_treatment) && treatmentData.cure_treatment.length > 0) ||
+                (Array.isArray(treatmentData.immediate_actions) && treatmentData.immediate_actions.length > 0)) && (
+                <div className="treatment-simple-section">
+                  <span className="simple-section-title">2. Cure / Treatment</span>
+                  <ul className="simple-bullet-list treatment-bullets">
+                    {(Array.isArray(treatmentData.cure_treatment) && treatmentData.cure_treatment.length > 0
+                      ? treatmentData.cure_treatment
+                      : treatmentData.immediate_actions
+                    ).slice(0, 4).map((item, idx) => (
+                      <li key={idx}>
+                        <span>{typeof item === 'string' ? item : (item?.statement || item?.practice || String(item))}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* 3. Precautions */}
+              {Array.isArray(treatmentData.precautions || treatmentData.application_precautions) && (
+                (treatmentData.precautions || treatmentData.application_precautions).length > 0
+              ) && (
+                <div className="treatment-simple-section">
+                  <span className="simple-section-title">3. Precautions</span>
+                  <ul className="simple-bullet-list precautions-bullets">
+                    {(treatmentData.precautions || treatmentData.application_precautions).slice(0, 3).map((item, idx) => (
+                      <li key={idx}>
+                        <span>{typeof item === 'string' ? item : (item?.statement || String(item))}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* 4. Prevention */}
+              {Array.isArray(treatmentData.prevention) && treatmentData.prevention.length > 0 && (
+                <div className="treatment-simple-section">
+                  <span className="simple-section-title">4. Prevention</span>
+                  <ul className="simple-bullet-list prevention-bullets">
+                    {treatmentData.prevention.slice(0, 4).map((item, idx) => (
+                      <li key={idx}>
+                        <span>{typeof item === 'string' ? item : (item?.statement || String(item))}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* 5. Sources */}
+              {Array.isArray(treatmentData.sources) && treatmentData.sources.length > 0 && (
+                <div className="treatment-simple-section sources-section">
+                  <span className="simple-section-title">5. Sources</span>
+                  <div className="simple-sources-badges">
+                    {treatmentData.sources.slice(0, 3).map((src, idx) => {
+                      const titleText = src.title || src.name || src.organization || src.source_id || 'Extension Guide';
+                      const targetUrl = src.url || src.url_or_doi;
+                      if (targetUrl) {
+                        return (
+                          <a
+                            key={idx}
+                            href={targetUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="source-citation-badge source-citation-link"
+                            title={`Open verified reference: ${titleText}`}
+                          >
+                            <span>{titleText}</span>
+                            <ExternalLink size={10} style={{ opacity: 0.85, flexShrink: 0 }} />
+                          </a>
+                        );
+                      }
+                      return (
+                        <span key={idx} className="source-citation-badge">{titleText}</span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ========================================================
             SECTION 3: 🌿 ANALYZED IMAGE (Clean Original Image)
             ======================================================== */}
         {data.original_image_url && (
@@ -397,72 +513,99 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
         )}
 
         {/* Grounded Agricultural Assistant Guidance & Explanation */}
-        {message.text && (
-          <div className="assistant-guidance-container">
-            <div className="assistant-text-body">
-              {String(typeof message.text === 'string' ? message.text : (message.text?.text || message.text?.message || message.text?.detail || ''))
-                .split('\n\n')
-                .map((paragraph, idx) => (
+        {message.text && (() => {
+          const rawText = String(typeof message.text === 'string' ? message.text : (message.text?.text || message.text?.message || message.text?.detail || ''));
+          // Filter out duplicate treatment and prevention sections if treatmentData is already displayed
+          const paragraphs = rawText
+            .split('\n\n')
+            .filter(p => {
+              const clean = p.trim().toLowerCase();
+              if (treatmentData && (hasDisease || treatmentData.has_treatment)) {
+                if (
+                  clean.startsWith('**recommended management') ||
+                  clean.startsWith('*1. cultural') ||
+                  clean.startsWith('*2. field sanitation') ||
+                  clean.startsWith('*3. moisture') ||
+                  clean.startsWith('*4. biological') ||
+                  clean.startsWith('*5. sourced chemical') ||
+                  clean.startsWith('**prevention guidelines') ||
+                  clean.startsWith('---') ||
+                  clean.startsWith('**authoritative sources:')
+                ) {
+                  return false;
+                }
+              }
+              return Boolean(clean);
+            });
+
+          if (paragraphs.length === 0) return null;
+
+          return (
+            <div className="assistant-guidance-container">
+              <div className="assistant-text-body">
+                {paragraphs.map((paragraph, idx) => (
                   <p key={idx} className="assistant-paragraph">{paragraph}</p>
                 ))}
-            </div>
-            {(() => {
-              const activeSources = (Array.isArray(data.knowledge_sources) && data.knowledge_sources.length > 0)
-                ? data.knowledge_sources
-                : (Array.isArray(data.knowledge?.sources) && data.knowledge.sources.length > 0)
-                  ? data.knowledge.sources
-                  : (Array.isArray(data.knowledge?.citations) && data.knowledge.citations.length > 0)
-                    ? data.knowledge.citations
-                    : null;
-              if (!activeSources || activeSources.length === 0) return null;
-              return (
-                <div className="knowledge-sources-row">
-                  <span className="sources-label">Sources:</span>
-                  {activeSources.map((src, idx) => {
-                    if (!src) return null;
-                    if (typeof src === 'string') {
-                      return (
-                        <span key={idx} className="source-citation-badge">{src}</span>
-                      );
-                    }
-                    if (typeof src === 'object') {
-                      const titleText = src.title || src.name || src.organization || src.source_id || 'Reference Source';
-                      const orgText = src.organization && !src.title?.includes(src.organization) ? ` (${src.organization})` : '';
-                      const isGeneral = Boolean(src.is_general);
-                      const label = isGeneral ? `[General] ${titleText}${orgText}` : `${titleText}${orgText}`;
-                      const targetUrl = src.url || src.url_or_doi;
-                      if (targetUrl) {
+              </div>
+              {/* Only show bottom sources if treatment panel was not rendered */}
+              {(!treatmentData || (!hasDisease && !treatmentData.has_treatment)) && (() => {
+                const activeSources = (Array.isArray(data.knowledge_sources) && data.knowledge_sources.length > 0)
+                  ? data.knowledge_sources
+                  : (Array.isArray(data.knowledge?.sources) && data.knowledge.sources.length > 0)
+                    ? data.knowledge.sources
+                    : (Array.isArray(data.knowledge?.citations) && data.knowledge.citations.length > 0)
+                      ? data.knowledge.citations
+                      : null;
+                if (!activeSources || activeSources.length === 0) return null;
+                return (
+                  <div className="knowledge-sources-row">
+                    <span className="sources-label">Sources:</span>
+                    {activeSources.map((src, sIdx) => {
+                      if (!src) return null;
+                      if (typeof src === 'string') {
                         return (
-                          <a
-                            key={idx}
-                            href={targetUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="source-citation-badge source-citation-link"
-                            title={`Open verified article: ${label}`}
-                          >
-                            <span>{label}</span>
-                            <ExternalLink size={10} style={{ opacity: 0.85, flexShrink: 0 }} />
-                          </a>
+                          <span key={sIdx} className="source-citation-badge">{src}</span>
+                        );
+                      }
+                      if (typeof src === 'object') {
+                        const titleText = src.title || src.name || src.organization || src.source_id || 'Reference Source';
+                        const orgText = src.organization && !src.title?.includes(src.organization) ? ` (${src.organization})` : '';
+                        const isGeneral = Boolean(src.is_general);
+                        const label = isGeneral ? `[General] ${titleText}${orgText}` : `${titleText}${orgText}`;
+                        const targetUrl = src.url || src.url_or_doi;
+                        if (targetUrl) {
+                          return (
+                            <a
+                              key={sIdx}
+                              href={targetUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="source-citation-badge source-citation-link"
+                              title={`Open verified article: ${label}`}
+                            >
+                              <span>{label}</span>
+                              <ExternalLink size={10} style={{ opacity: 0.85, flexShrink: 0 }} />
+                            </a>
+                          );
+                        }
+                        return (
+                          <span key={sIdx} className="source-citation-badge" title={label}>
+                            {label}
+                          </span>
                         );
                       }
                       return (
-                        <span key={idx} className="source-citation-badge" title={label}>
-                          {label}
+                        <span key={sIdx} className="source-citation-badge">
+                          {String(src)}
                         </span>
                       );
-                    }
-                    return (
-                      <span key={idx} className="source-citation-badge">
-                        {String(src)}
-                      </span>
-                    );
-                  })}
-                </div>
-              );
-            })()}
-          </div>
-        )}
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+          );
+        })()}
 
         {/* Footer info & Telemetry Inspector trigger */}
         <div className="assistant-card-footer">

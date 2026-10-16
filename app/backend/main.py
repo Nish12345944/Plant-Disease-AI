@@ -36,6 +36,7 @@ from app.backend.services import (
 )
 from knowledge.assistant import AgriculturalAssistant
 from knowledge.database import get_knowledge_base
+from knowledge.treatment import get_disease_treatment
 from video.frame_extractor import (
     EmptyVideoError,
     InvalidVideoError,
@@ -180,7 +181,7 @@ async def api_root():
         "frontend_url": "http://localhost:5173",
         "models": {
             "model1": "Plant Identification (Model 1 - EfficientNet-B2 46 crops)",
-            "model2": "Disease & Healthy Classification (Model 2 Retrained V2 - EfficientNet-B2 144 classes)",
+            "model2": "Disease & Healthy Classification (Model 2 Retrained V3 - EfficientNet-B2 152 classes)",
             "audio": "faster-whisper",
         },
     }
@@ -208,7 +209,7 @@ async def health_check():
                 "available": MODEL1_CHECKPOINT.exists(),
             },
             "model2": {
-                "name": "EfficientNet-B2 Retrained V2 144-Class Disease Classifier",
+                "name": f"EfficientNet-B2 Retrained V3 {srv._MODEL2_V4.num_classes if srv._MODEL2_V4 else 152}-Class Disease Classifier",
                 "loaded": srv._MODEL2_V4 is not None,
                 "checkpoint": str(MODEL2_CHECKPOINT),
                 "available": MODEL2_CHECKPOINT.exists(),
@@ -872,6 +873,30 @@ async def unified_chat_endpoint(
         "video": has_video,
     }
 
+    # Resolve structured disease treatment guidance
+    treatment_payload = None
+    if m2_data and m2_data.get("treatment"):
+        treatment_payload = m2_data["treatment"]
+    elif visual_evidence and visual_evidence.get("status") in ("diseased", "healthy", "uncertain"):
+        treatment_payload = get_disease_treatment(
+            crop=visual_evidence.get("crop"),
+            disease=visual_evidence.get("disease"),
+            status=visual_evidence.get("status"),
+        )
+    elif knowledge_data and isinstance(knowledge_data, dict) and knowledge_data.get("treatment"):
+        treatment_payload = knowledge_data["treatment"]
+    elif (
+        knowledge_data
+        and isinstance(knowledge_data, dict)
+        and knowledge_data.get("structured_data")
+        and knowledge_data["structured_data"].get("treatment")
+    ):
+        treatment_payload = knowledge_data["structured_data"]["treatment"]
+
+    if knowledge_data and isinstance(knowledge_data, dict) and treatment_payload:
+        if "treatment" not in knowledge_data:
+            knowledge_data["treatment"] = treatment_payload
+
     # Structured API Response
     return {
         "id": message_id,
@@ -893,6 +918,7 @@ async def unified_chat_endpoint(
             "status": "not_applicable",
             "message": "No visual media provided for disease detection.",
         },
+        "treatment": treatment_payload,
         "knowledge": knowledge_data,
         "knowledge_sources": knowledge_sources,
         "annotated_preview_url": annotated_preview,

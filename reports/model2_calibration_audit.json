@@ -1,0 +1,120 @@
+{
+  "calibration_dataset": "data/processed/model2_retraining_v2/val",
+  "total_val_samples": 3520,
+  "total_crops": 39,
+  "uncalibrated_metrics": {
+    "temperature": 1.0,
+    "nll": 0.5555,
+    "brier_score": 0.1918,
+    "ece": 0.0132,
+    "top1_accuracy": 0.8741
+  },
+  "fitted_calibration": {
+    "optimal_temperature": 0.9188,
+    "calibrated_nll": 0.548,
+    "calibrated_brier_score": 0.1907,
+    "calibrated_ece": 0.018,
+    "ece_reduction_pct": -35.9
+  },
+  "optimal_uncertainty_policy": {
+    "min_conf": 0.4,
+    "min_margin": 0.0,
+    "coverage": 0.9474,
+    "accuracy_on_accepted": 0.9291,
+    "error_rate_on_accepted": 0.0709,
+    "high_conf_errors": 121,
+    "f_score": 0.9382
+  },
+  "grid_search_summary": [
+    {
+      "min_conf": 0.4,
+      "min_margin": 0.0,
+      "coverage": 0.9474,
+      "accuracy_on_accepted": 0.9291,
+      "error_rate_on_accepted": 0.0709,
+      "high_conf_errors": 121,
+      "f_score": 0.9382
+    },
+    {
+      "min_conf": 0.45,
+      "min_margin": 0.0,
+      "coverage": 0.9451,
+      "accuracy_on_accepted": 0.9301,
+      "error_rate_on_accepted": 0.0699,
+      "high_conf_errors": 121,
+      "f_score": 0.9376
+    },
+    {
+      "min_conf": 0.4,
+      "min_margin": 0.05,
+      "coverage": 0.9446,
+      "accuracy_on_accepted": 0.9301,
+      "error_rate_on_accepted": 0.0699,
+      "high_conf_errors": 121,
+      "f_score": 0.9373
+    },
+    {
+      "min_conf": 0.5,
+      "min_margin": 0.0,
+      "coverage": 0.9428,
+      "accuracy_on_accepted": 0.9318,
+      "error_rate_on_accepted": 0.0682,
+      "high_conf_errors": 121,
+      "f_score": 0.9373
+    },
+    {
+      "min_conf": 0.45,
+      "min_margin": 0.05,
+      "coverage": 0.9428,
+      "accuracy_on_accepted": 0.9309,
+      "error_rate_on_accepted": 0.0691,
+      "high_conf_errors": 121,
+      "f_score": 0.9368
+    },
+    {
+      "min_conf": 0.5,
+      "min_margin": 0.05,
+      "coverage": 0.9408,
+      "accuracy_on_accepted": 0.9322,
+      "error_rate_on_accepted": 0.0678,
+      "high_conf_errors": 121,
+      "f_score": 0.9365
+    },
+    {
+      "min_conf": 0.4,
+      "min_margin": 0.1,
+      "coverage": 0.9394,
+      "accuracy_on_accepted": 0.9334,
+      "error_rate_on_accepted": 0.0666,
+      "high_conf_errors": 121,
+      "f_score": 0.9364
+    },
+    {
+      "min_conf": 0.45,
+      "min_margin": 0.1,
+      "coverage": 0.9383,
+      "accuracy_on_accepted": 0.9339,
+      "error_rate_on_accepted": 0.0661,
+      "high_conf_errors": 121,
+      "f_score": 0.9361
+    },
+    {
+      "min_conf": 0.5,
+      "min_margin": 0.1,
+      "coverage": 0.9365,
+      "accuracy_on_accepted": 0.9353,
+      "error_rate_on_accepted": 0.0647,
+      "high_conf_errors": 121,
+      "f_score": 0.9359
+    },
+    {
+      "min_conf": 0.4,
+      "min_margin": 0.15,
+      "coverage": 0.9351,
+      "accuracy_on_accepted": 0.9355,
+      "error_rate_on_accepted": 0.0645,
+      "high_conf_errors": 121,
+      "f_score": 0.9353
+    }
+  ]
+}

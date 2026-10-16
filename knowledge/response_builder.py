@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from knowledge.schema import AnswerPlan, FinalAgentResponse, StructuredReasoningResult
+from knowledge.treatment import get_disease_treatment
 from router.taxonomy import Intent
 
 
@@ -94,7 +95,11 @@ def build_response(
             sources=sources,
             reasoning_rule=reasoning.applicable_rule,
             needs_clarification=False,
-            structured_data={"status": "healthy", "crop": crop},
+            structured_data={
+                "status": "healthy",
+                "crop": crop,
+                "treatment": facts.get("treatment") or get_disease_treatment(crop=crop, status="healthy"),
+            },
         )
 
     # -----------------------------------------------------------------------
@@ -118,7 +123,11 @@ def build_response(
             sources=[],
             reasoning_rule=reasoning.applicable_rule,
             needs_clarification=True,
-            structured_data={"status": "uncertain", "candidate_disease": disease},
+            structured_data={
+                "status": "uncertain",
+                "candidate_disease": disease,
+                "treatment": facts.get("treatment") or get_disease_treatment(crop=crop, disease=disease, status="uncertain"),
+            },
         )
 
     # -----------------------------------------------------------------------
@@ -126,18 +135,20 @@ def build_response(
     # -----------------------------------------------------------------------
     if "unverified_notice" in sections:
         item_name = disease_title or crop_title
-        lines.append(f"I currently do not have verified agricultural management records for **{item_name}** in my verified knowledge base.")
-        lines.append("To ensure safety, I do not generate unverified chemical or treatment recommendations.")
-        lines.append("Please consult your local agricultural extension office or provide specific symptoms.")
+        lines.append(f"Information on **{item_name}** is not yet present in my verified local database.")
+        lines.append("To ensure safety, please consult authoritative agricultural extension resources:")
+        citations = [f"{s['title']} ({s['organization']})" for s in sources]
+        if citations:
+            lines.append(f"\n*Grounded in: {', '.join(citations[:2])}*")
         return FinalAgentResponse(
             text="\n".join(lines),
             intent=plan.intent,
             crop=crop,
             disease=disease,
             status="unverified",
-            sources=[],
+            sources=sources,
             reasoning_rule=reasoning.applicable_rule,
-            needs_clarification=True,
+            needs_clarification=False if sources else True,
             structured_data={"unverified_item": item_name},
         )
 
@@ -200,49 +211,51 @@ def build_response(
             for r in recur_list:
                 lines.append(f"• {r['statement']}")
 
-    # Management / Treatment Sections
-    mgmt = facts.get("management", {})
-    if mgmt:
-        lines.append("\n**Recommended Management & Treatment Strategies:**")
+    # Management / Treatment Sections (omitted when visual_evidence is present because the dedicated Treatment UI panel renders it)
+    if not visual_evidence:
+        mgmt = facts.get("management", {})
+        if mgmt:
+            lines.append("\n**Recommended Management & Treatment Strategies:**")
 
-        cultural = mgmt.get("cultural", [])
-        if cultural:
-            lines.append("\n*1. Cultural Practices:*")
-            for cult in cultural:
-                lines.append(f"• {cult['statement']}")
+            cultural = mgmt.get("cultural", [])
+            if cultural:
+                lines.append("\n*1. Cultural Practices:*")
+                for cult in cultural:
+                    lines.append(f"• {cult['statement']}")
 
-        sanitation = mgmt.get("sanitation", [])
-        if sanitation:
-            lines.append("\n*2. Field Sanitation:*")
-            for san in sanitation:
-                lines.append(f"• {san['statement']}")
+            sanitation = mgmt.get("sanitation", [])
+            if sanitation:
+                lines.append("\n*2. Field Sanitation:*")
+                for san in sanitation:
+                    lines.append(f"• {san['statement']}")
 
-        env = mgmt.get("environmental", [])
-        if env:
-            lines.append("\n*3. Moisture & Canopy Control:*")
-            for e in env:
-                lines.append(f"• {e['statement']}")
+            env = mgmt.get("environmental", [])
+            if env:
+                lines.append("\n*3. Moisture & Canopy Control:*")
+                for e in env:
+                    lines.append(f"• {e['statement']}")
 
-        bio = mgmt.get("biological", [])
-        if bio:
-            lines.append("\n*4. Biological Options:*")
-            for b in bio:
-                lines.append(f"• {b['statement']}")
+            bio = mgmt.get("biological", [])
+            if bio:
+                lines.append("\n*4. Biological Options:*")
+                for b in bio:
+                    lines.append(f"• {b['statement']}")
 
-        chem = mgmt.get("chemical_guidelines", [])
-        if chem:
-            lines.append("\n*5. Sourced Chemical & Fungicide Guidance:*")
-            for ch in chem:
-                lines.append(f"• {ch['statement']}")
-                if ch.get("detail"):
-                    lines.append(f"  *Note:* {ch['detail']}")
+            chem = mgmt.get("chemical_guidelines", [])
+            if chem:
+                lines.append("\n*5. Sourced Chemical & Fungicide Guidance:*")
+                for ch in chem:
+                    lines.append(f"• {ch['statement']}")
+                    if ch.get("detail"):
+                        lines.append(f"  *Note:* {ch['detail']}")
 
-    # Prevention Section
-    prev_list = facts.get("prevention", [])
-    if prev_list and ("prevention_summary" in sections or "preventive_measures" in sections):
-        lines.append("\n**Prevention Guidelines:**")
-        for p in prev_list:
-            lines.append(f"• {p['statement']}")
+    # Prevention Section (omitted when visual_evidence is present)
+    if not visual_evidence:
+        prev_list = facts.get("prevention", [])
+        if prev_list and ("prevention_summary" in sections or "preventive_measures" in sections):
+            lines.append("\n**Prevention Guidelines:**")
+            for p in prev_list:
+                lines.append(f"• {p['statement']}")
 
     # Crop Overview / Agronomy Section
     if "crop_overview" in sections or "crop_identification" in sections:
@@ -290,5 +303,6 @@ def build_response(
             "disease": disease,
             "status": status or reasoning.status,
             "facts_retrieved_count": len(facts),
+            "treatment": facts.get("treatment") or get_disease_treatment(crop=crop, disease=disease, status=status or reasoning.status),
         },
     )
