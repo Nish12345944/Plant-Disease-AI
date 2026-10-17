@@ -10,12 +10,69 @@ export default function ConversationArea({
   onFileDrop,
   isLoading 
 }) {
+  const containerRef = useRef(null);
   const bottomRef = useRef(null);
+  const latestAssistantMessageRef = useRef(null);
   const fileInputRef = useRef(null);
   const [isCardDragOver, setIsCardDragOver] = useState(false);
+  const lastScrolledMessageIdRef = useRef(null);
+  const wasLoadingRef = useRef(false);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // When a request is actively processing, scroll down to show the user's upload & loading indicator
+    if (isLoading) {
+      wasLoadingRef.current = true;
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    if (messages.length === 0) return;
+
+    const latestMessage = messages[messages.length - 1];
+    if (!latestMessage) return;
+
+    // Avoid repeatedly resetting the scroll position if this message was already scrolled to
+    if (latestMessage.id === lastScrolledMessageIdRef.current) {
+      return;
+    }
+    lastScrolledMessageIdRef.current = latestMessage.id;
+
+    if (latestMessage.role === 'assistant') {
+      const isMediaAnalysis = Boolean(
+        latestMessage.data?.model1 ||
+        latestMessage.data?.video_inference ||
+        latestMessage.data?.original_image_url ||
+        latestMessage.data?.media_type === 'image' ||
+        latestMessage.data?.media_type === 'video'
+      );
+
+      if (isMediaAnalysis) {
+        // Position chat viewport at the top of the newly rendered assistant response
+        const scrollTimer = setTimeout(() => {
+          if (latestAssistantMessageRef.current && containerRef.current) {
+            const container = containerRef.current;
+            const element = latestAssistantMessageRef.current;
+            const containerRect = container.getBoundingClientRect();
+            const elementRect = element.getBoundingClientRect();
+            const targetScrollTop = container.scrollTop + (elementRect.top - containerRect.top) - 16;
+            container.scrollTo({
+              top: Math.max(0, targetScrollTop),
+              behavior: 'smooth'
+            });
+          } else if (latestAssistantMessageRef.current) {
+            latestAssistantMessageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 50);
+        return () => clearTimeout(scrollTimer);
+      } else {
+        // For text-only messages, preserve standard scroll-to-view
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // User message
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+    wasLoadingRef.current = false;
   }, [messages, isLoading]);
 
   const samplePrompts = [
@@ -56,7 +113,7 @@ export default function ConversationArea({
   };
 
   return (
-    <div className="conversation-container" id="conversation-area">
+    <div className="conversation-container" ref={containerRef} id="conversation-area">
       {messages.length === 0 ? (
         <div className="empty-chat-welcome animate-fade-in">
           <div className="empty-chat-avatar">
@@ -118,14 +175,18 @@ export default function ConversationArea({
         </div>
       ) : (
         <div className="messages-list">
-          {messages.map((msg, index) => (
-            <MessageItem 
-              key={msg.id || index} 
-              message={msg} 
-              onOpenFramesModal={onOpenFramesModal}
-              onInspectTelemetry={onInspectTelemetry}
-            />
-          ))}
+          {messages.map((msg, index) => {
+            const isLatestAssistant = index === messages.length - 1 && msg.role === 'assistant';
+            return (
+              <MessageItem 
+                key={msg.id || index}
+                ref={isLatestAssistant ? latestAssistantMessageRef : null}
+                message={msg} 
+                onOpenFramesModal={onOpenFramesModal}
+                onInspectTelemetry={onInspectTelemetry}
+              />
+            );
+          })}
 
           {isLoading && (
             <div className="message-wrapper assistant animate-pulse-fade">

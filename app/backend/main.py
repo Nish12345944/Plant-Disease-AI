@@ -36,7 +36,8 @@ from app.backend.services import (
 )
 from knowledge.assistant import AgriculturalAssistant
 from knowledge.database import get_knowledge_base
-from knowledge.treatment import get_disease_treatment
+from knowledge.treatment import get_disease_treatment, get_disease_insights
+from router.response_mode import ResponseMode, detect_response_mode
 from video.frame_extractor import (
     EmptyVideoError,
     InvalidVideoError,
@@ -575,26 +576,34 @@ async def unified_chat_endpoint(
 
     if typed_clean and spoken_clean:
         if typed_clean.lower() == spoken_clean.lower():
-            final_query = typed_clean
+            user_instruction = typed_clean
         else:
-            final_query = f"{typed_clean} (Transcribed: {spoken_clean})"
+            user_instruction = f"{typed_clean} (Transcribed: {spoken_clean})"
     elif typed_clean:
-        final_query = typed_clean
+        user_instruction = typed_clean
     elif spoken_clean:
-        final_query = spoken_clean
+        user_instruction = spoken_clean
     else:
-        # Default prompt when user uploads media without a question
-        final_query = "What plant or crop is this?" if (has_image or has_video) else ""
+        user_instruction = ""
+
+    # Detect Response Mode based strictly on the user's explicit instruction
+    mode_result = detect_response_mode(user_instruction, has_media=has_image or has_video)
+    response_mode = mode_result.mode.value
+    visible_cards = mode_result.visible_cards
+
+    final_query = user_instruction
 
     # Route Intent
     if final_query:
         routing = await run_in_threadpool(process_query_routing, final_query)
     else:
         routing = {
-            "intent": "plant_identification" if (has_image or has_video) else "unknown",
+            "intent": "media_default_analysis" if (has_image or has_video) else "unknown",
+            "response_mode": response_mode,
+            "visible_cards": visible_cards,
             "needs_model1": True if (has_image or has_video) else False,
-            "needs_model2": False,
-            "needs_rag": False,
+            "needs_model2": True if (has_image or has_video) else False,
+            "needs_rag": True,
         }
 
     routing_meta = {
@@ -783,7 +792,7 @@ async def unified_chat_endpoint(
     knowledge_data = None
     knowledge_sources = []
 
-    if vision_unavailable and not typed_clean and not spoken_clean:
+    if vision_unavailable and not user_instruction:
         media_label = "video" if has_video else "plant"
         assistant_message = (
             f"Visual {media_label} identification is currently unavailable on this deployment because "
@@ -794,6 +803,16 @@ async def unified_chat_endpoint(
             "status": "checkpoint_unavailable",
             "text": assistant_message,
         }
+    elif mode_result.is_unrecognized and user_instruction:
+        assistant_message = mode_result.clarification_message or (
+            "I couldn't relate your instruction to plant identification, disease diagnosis, or crop care. "
+            "You can ask me to identify a plant, check for visible disease symptoms, or explain treatments and care guidelines."
+        )
+        knowledge_data = {
+            "status": "unrecognized_instruction",
+            "text": assistant_message,
+        }
+        knowledge_sources = []
     elif image_result and image_result.get("validation", {}).get("valid") is False:
         val_msg = image_result.get("validation", {}).get("message") or image_result.get("message")
         assistant_message = val_msg
@@ -873,25 +892,26 @@ async def unified_chat_endpoint(
         "video": has_video,
     }
 
-    # Resolve structured disease treatment guidance
+    # Resolve structured disease treatment guidance strictly according to visible_cards/response_mode
     treatment_payload = None
-    if m2_data and m2_data.get("treatment"):
-        treatment_payload = m2_data["treatment"]
-    elif visual_evidence and visual_evidence.get("status") in ("diseased", "healthy", "uncertain"):
-        treatment_payload = get_disease_treatment(
-            crop=visual_evidence.get("crop"),
-            disease=visual_evidence.get("disease"),
-            status=visual_evidence.get("status"),
-        )
-    elif knowledge_data and isinstance(knowledge_data, dict) and knowledge_data.get("treatment"):
-        treatment_payload = knowledge_data["treatment"]
-    elif (
-        knowledge_data
-        and isinstance(knowledge_data, dict)
-        and knowledge_data.get("structured_data")
-        and knowledge_data["structured_data"].get("treatment")
-    ):
-        treatment_payload = knowledge_data["structured_data"]["treatment"]
+    if visible_cards.get("treatment", True):
+        if m2_data and m2_data.get("treatment"):
+            treatment_payload = m2_data["treatment"]
+        elif visual_evidence and visual_evidence.get("status") in ("diseased", "healthy", "uncertain"):
+            treatment_payload = get_disease_treatment(
+                crop=visual_evidence.get("crop"),
+                disease=visual_evidence.get("disease"),
+                status=visual_evidence.get("status"),
+            )
+        elif knowledge_data and isinstance(knowledge_data, dict) and knowledge_data.get("treatment"):
+            treatment_payload = knowledge_data["treatment"]
+        elif (
+            knowledge_data
+            and isinstance(knowledge_data, dict)
+            and knowledge_data.get("structured_data")
+            and knowledge_data["structured_data"].get("treatment")
+        ):
+            treatment_payload = knowledge_data["structured_data"]["treatment"]
 
     if knowledge_data and isinstance(knowledge_data, dict) and treatment_payload:
         if "treatment" not in knowledge_data:
@@ -910,6 +930,8 @@ async def unified_chat_endpoint(
         "router": {
             "intent": routing.get("intent", "unknown"),
             "intent_type": routing.get("intent_type", routing.get("intent", "unknown")),
+            "response_mode": response_mode,
+            "visible_cards": visible_cards,
             "routing_metadata": routing_meta,
         },
         "model1": m1_data or image_result,
@@ -928,12 +950,16 @@ async def unified_chat_endpoint(
             "original_text": text or audio_transcription or final_query,
             "normalized_text": final_query,
             "intent": routing.get("intent", "unknown"),
+            "response_mode": response_mode,
+            "visible_cards": visible_cards,
             "routing_metadata": routing_meta,
         },
         "debug": {
             "input_types": inputs_dict,
             "language": detected_language,
             "intent": routing.get("intent", "unknown"),
+            "response_mode": response_mode,
+            "visible_cards": visible_cards,
             "needs_model1": routing_meta["needs_model1"],
             "needs_model2": routing_meta["needs_model2"],
             "needs_rag": routing_meta["needs_rag"],

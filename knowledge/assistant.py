@@ -122,6 +122,7 @@ class AgriculturalAssistant:
             intent=understanding.intent,
             reasoning=reasoning,
             retrieved_data=retrieved_data,
+            response_mode=getattr(understanding, "response_mode", None),
         )
 
         # 6. Deterministic Natural-Language Response Builder

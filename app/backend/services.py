@@ -664,8 +664,9 @@ def process_video_inference(
             f_disease_status = "not_run" if not should_run_disease_classification else "uncertain"
             f_detections = []
 
-            # Only run disease classification on valid plant frames IF crop guard accepted the crop
-            if f_status == "valid" and roi_img is not None:
+            # Only run disease classification on valid plant frames that contributed to crop aggregation IF crop guard accepted the crop
+            frame_contributed = f.get("contributed_to_crop", f_status in ("valid", "valid_plant_roi"))
+            if f_status in ("valid", "valid_plant_roi") and frame_contributed and roi_img is not None:
                 valid_plant_frames += 1
                 # Use canonical video consensus crop to avoid oscillating crop context
                 f_crop_class = canonical_video_crop or normalize_crop_id(f.get("predicted_class"))
@@ -690,7 +691,7 @@ def process_video_inference(
                                     image_input=f.get("thumbnail"),
                                     crop_name=f_crop_class,
                                     crop_confidence=crop_conf,
-                                )
+                                    )
                                 if thumb_m2.get("status") in ("diseased", "healthy"):
                                     m2_res = thumb_m2
 
@@ -755,6 +756,8 @@ def process_video_inference(
                 "percentage": f["percentage"],
                 "filter_reason": f.get("reason", ""),
                 "reason": f.get("reason", ""),
+                "rejection_reason": f.get("rejection_reason") or (f.get("reason") if f_status not in ("valid", "valid_plant_roi") else None),
+                "contributed_to_crop": frame_contributed,
                 "quality_score": f.get("quality_score", 1.0),
                 "thumbnail": thumb_b64,
                 "thumbnail_url": thumb_b64,
@@ -914,6 +917,9 @@ def process_video_inference(
             "fps": v_res["video"].get("fps", 30.0),
             "video_name": Path(original_filename).name,
             "video_metadata": v_res["video"],
+            "crop_disagreement": v_res.get("crop_disagreement", 0.0),
+            "crop_support_counts": v_res.get("crop_support_counts", {}),
+            "contributed_frames_count": sum(1 for f in frame_results if f.get("contributed_to_crop")),
             "status_note": v_res.get("status_note"),
             "top_k": v_res["top_k"],
             "final_prediction": final_pred,

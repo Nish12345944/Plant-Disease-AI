@@ -17,13 +17,85 @@ def plan_answer(
     intent: str,
     reasoning: StructuredReasoningResult,
     retrieved_data: dict[str, Any],
+    response_mode: Optional[str] = None,
 ) -> AnswerPlan:
     """
-    Formulates a structured answer plan specifying which sections to render.
+    Formulates a structured answer plan specifying which sections to render based
+    on the user's specific response mode and retrieved agricultural facts.
     """
     sections: list[str] = []
     facts = retrieved_data.get("facts", {})
     sources: list[SourceRecord] = retrieved_data.get("citations", [])
+
+    # Case 0: Mode-Specific Overrides based on User Instruction
+    if response_mode == "unrecognized_instruction":
+        return AnswerPlan(
+            intent=intent,
+            target_sections=["unrecognized_notice"],
+            retrieved_facts={},
+            sources_cited=[],
+        )
+
+    if response_mode == "crop_identification":
+        return AnswerPlan(
+            intent=intent,
+            target_sections=["crop_identification_only"],
+            retrieved_facts=facts,
+            sources_cited=[],
+        )
+
+    if response_mode == "disease_identification":
+        if reasoning.status == "healthy":
+            return AnswerPlan(
+                intent=intent,
+                target_sections=["disease_healthy_identification_only"],
+                retrieved_facts=facts,
+                sources_cited=[],
+            )
+        elif reasoning.status == "uncertain":
+            return AnswerPlan(
+                intent=intent,
+                target_sections=["disease_uncertain_identification_only"],
+                retrieved_facts=facts,
+                sources_cited=[],
+            )
+        return AnswerPlan(
+            intent=intent,
+            target_sections=["disease_identification_only"],
+            retrieved_facts=facts,
+            sources_cited=[],
+        )
+
+    if response_mode == "general_plant_info":
+        return AnswerPlan(
+            intent=intent,
+            target_sections=["crop_overview", "optimal_growing_conditions", "watering_and_soil"],
+            retrieved_facts=facts,
+            sources_cited=sources,
+        )
+
+    if response_mode == "treatment":
+        if reasoning.status == "uncertain":
+            return AnswerPlan(
+                intent=intent,
+                target_sections=["uncertain_treatment_guidance"],
+                retrieved_facts=facts,
+                sources_cited=sources,
+            )
+        return AnswerPlan(
+            intent=intent,
+            target_sections=[
+                "treatment_context_header",
+                "cultural_management",
+                "sanitation_practices",
+                "environmental_controls",
+                "biological_options",
+                "chemical_guidance",
+                "prevention_summary",
+            ],
+            retrieved_facts=facts,
+            sources_cited=sources,
+        )
 
     # Case 1: Clarification needed or Incompatible
     if reasoning.status == "clarification_needed" or reasoning.is_incompatible_rejected:

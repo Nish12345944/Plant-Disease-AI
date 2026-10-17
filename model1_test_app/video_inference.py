@@ -342,7 +342,10 @@ def predict_video(
 
     frame_records: list[dict[str, Any]] = []
     valid_plant_prob_vectors: list[np.ndarray] = []
+    valid_plant_weights: list[float] = []
+    valid_plant_classes: list[str] = []
     video_disease_detections: list[dict[str, Any]] = []
+    prev_contributed_bgr: Optional[np.ndarray] = None
 
     model1_inference_count = 0
     prev_best_roi_bgr: Optional[np.ndarray] = None
@@ -375,17 +378,19 @@ def predict_video(
         f_reason = assessment["reason"]
         candidate_rois = assessment.get("rois", [])
 
-        if f_status == "blurry":
+        if f_status in ("low_quality", "blurry"):
             frame_records.append({
                 "frame_number": seq_num,
                 "frame_index": idx,
                 "timestamp_seconds": t_sec,
-                "predicted_class": "blurry",
-                "predicted_label": "Blurry",
-                "status": "blurry",
+                "predicted_class": "low_quality",
+                "predicted_label": "Low Quality",
+                "status": "low_quality",
                 "confidence": 0.0,
                 "percentage": "N/A",
                 "reason": f_reason,
+                "rejection_reason": f_reason,
+                "contributed_to_crop": False,
                 "quality_score": q_score,
                 "thumbnail": thumb,
                 "roi_thumbnail": None,
@@ -400,17 +405,19 @@ def predict_video(
             f_data["frame_image"] = None
             continue
 
-        if f_status == "unknown" or not candidate_rois:
+        if f_status in ("no_plant_evidence", "unknown") or not candidate_rois:
             frame_records.append({
                 "frame_number": seq_num,
                 "frame_index": idx,
                 "timestamp_seconds": t_sec,
-                "predicted_class": "unknown",
-                "predicted_label": "Unknown",
-                "status": "unknown",
+                "predicted_class": "no_plant_evidence",
+                "predicted_label": "No Plant Evidence",
+                "status": "no_plant_evidence",
                 "confidence": 0.0,
                 "percentage": "N/A",
                 "reason": f_reason or "No plant specimen found in frame",
+                "rejection_reason": f_reason or "No plant specimen found in frame",
+                "contributed_to_crop": False,
                 "quality_score": q_score,
                 "thumbnail": thumb,
                 "roi_thumbnail": None,
@@ -456,6 +463,9 @@ def predict_video(
                 "roi_index": r_idx,
                 "box": roi_dict["box"],
                 "score": roi_dict["score"],
+                "plant_density": roi_dict.get("plant_density", 0.5),
+                "is_macro": roi_dict.get("is_macro", False),
+                "sharpness": roi_dict.get("sharpness", 100.0),
                 "probs": probs,
                 "top_idx": top_idx,
                 "top_class": top_cls_name,
@@ -500,27 +510,6 @@ def predict_video(
         roi_thumb = best_roi_pil.resize((240, 240), Image.Resampling.LANCZOS)
         roi_annotated_thumb = roi_thumb
 
-        # Model 2 Disease Detection on the SAME Plant ROI (if enabled directly)
-        frame_disease_detections = []
-        if detect_disease and best_roi_pil is not None:
-            try:
-                from model2.test_model2 import draw_predictions, predict_disease
-                m2_res = predict_disease(best_roi_pil, conf_threshold=disease_conf_threshold)
-                frame_disease_detections = m2_res.get("detections", [])
-                for det in frame_disease_detections:
-                    video_disease_detections.append({
-                        **det,
-                        "frame_number": seq_num,
-                        "frame_index": idx,
-                        "timestamp_seconds": t_sec,
-                    })
-                if frame_disease_detections and best_roi_bgr is not None:
-                    annotated_bgr = draw_predictions(best_roi_bgr, m2_res)
-                    annotated_rgb = cv2.cvtColor(annotated_bgr, cv2.COLOR_BGR2RGB)
-                    roi_annotated_thumb = Image.fromarray(annotated_rgb).resize((240, 240), Image.Resampling.LANCZOS)
-            except Exception as exc:
-                logger.warning(f"Frame {idx} Model 2 disease detection skipped: {exc}")
-
         # Top-K for this frame (from temporally stabilized probabilities)
         top_k_indices = np.argsort(smoothed_probs)[::-1][:top_k]
         frame_top_k = []
@@ -540,14 +529,16 @@ def predict_video(
                 "frame_number": seq_num,
                 "frame_index": idx,
                 "timestamp_seconds": t_sec,
-                "predicted_class": "unknown",
-                "predicted_label": "Unknown",
-                "status": "unknown",
+                "predicted_class": "crop_uncertain",
+                "predicted_label": "Crop Uncertain",
+                "status": "crop_uncertain",
                 "confidence": smoothed_top_conf,
                 "raw_confidence": best_top_conf,
                 "raw_class": best_top_cls,
                 "percentage": f"{smoothed_top_conf * 100:.2f}% (Low Conf)",
-                "reason": f"Low identification confidence ({smoothed_top_conf * 100:.1f}% < {DEFAULT_CONFIDENCE_THRESHOLD * 100:.0f}%)",
+                "reason": f"Crop identity uncertain ({smoothed_top_conf * 100:.1f}% < {DEFAULT_CONFIDENCE_THRESHOLD * 100:.0f}%)",
+                "rejection_reason": f"Crop identity uncertain ({smoothed_top_conf * 100:.1f}% < {DEFAULT_CONFIDENCE_THRESHOLD * 100:.0f}%)",
+                "contributed_to_crop": False,
                 "quality_score": q_score,
                 "thumbnail": thumb,
                 "roi_thumbnail": roi_thumb,
@@ -558,7 +549,7 @@ def predict_video(
                 "rois_found": len(candidate_rois),
                 "assessment": assessment,
                 "top_k": frame_top_k,
-                "disease_detections": frame_disease_detections,
+                "disease_detections": [],
             })
         else:
             canonical_best = normalize_crop_id(smoothed_top_cls) or smoothed_top_cls
@@ -568,12 +559,14 @@ def predict_video(
                 "timestamp_seconds": t_sec,
                 "predicted_class": canonical_best,
                 "predicted_label": format_class_name(canonical_best),
-                "status": "valid",
+                "status": "valid_plant_roi",
                 "confidence": smoothed_top_conf,
                 "raw_confidence": best_top_conf,
                 "raw_class": best_top_cls,
                 "percentage": f"{smoothed_top_conf * 100:.2f}%",
                 "reason": f"Identified from tight plant ROI {best_box}",
+                "rejection_reason": None,
+                "contributed_to_crop": True,
                 "quality_score": q_score,
                 "thumbnail": thumb,
                 "roi_thumbnail": roi_thumb,
@@ -584,9 +577,26 @@ def predict_video(
                 "rois_found": len(candidate_rois),
                 "assessment": assessment,
                 "top_k": frame_top_k,
-                "disease_detections": frame_disease_detections,
+                "disease_detections": [],
             })
+
+            # Calculate frame weight for robust crop aggregation
+            is_macro = best_roi.get("is_macro", False)
+            plant_density = best_roi.get("plant_density", 0.5)
+            sharpness = best_roi.get("sharpness", 100.0)
+            is_dup = (
+                prev_contributed_bgr is not None
+                and best_roi_bgr is not None
+                and compute_frame_difference(best_roi_bgr, prev_contributed_bgr) < DUPLICATE_DIFF_THRESHOLD
+            )
+            f_weight = (2.0 if is_macro else 1.0) * (0.5 + 0.5 * plant_density) * min(1.5, max(0.5, sharpness / 150.0))
+            if is_dup and not is_macro:
+                f_weight *= 0.5  # Discount consecutive duplicate non-macro shots
+
             valid_plant_prob_vectors.append(smoothed_probs)
+            valid_plant_weights.append(f_weight)
+            valid_plant_classes.append(canonical_best)
+            prev_contributed_bgr = best_roi_bgr
 
         # Release heavy frame buffers immediately after ROI inference to bound memory
         f_data["frame_bgr"] = None
@@ -594,7 +604,21 @@ def predict_video(
 
     # Step 5: Final Aggregated Video Prediction across all valid frames
     if valid_plant_prob_vectors:
-        mean_prob_vector = np.mean(valid_plant_prob_vectors, axis=0)
+        weights_arr = np.array(valid_plant_weights, dtype=np.float32)
+        total_weight = float(np.sum(weights_arr))
+        if total_weight > 0:
+            norm_weights = weights_arr / total_weight
+            mean_prob_vector = np.sum([w * p for w, p in zip(norm_weights, valid_plant_prob_vectors)], axis=0)
+        else:
+            mean_prob_vector = np.mean(valid_plant_prob_vectors, axis=0)
+
+        from collections import Counter
+        crop_counts = Counter(valid_plant_classes)
+        crop_support_counts = dict(crop_counts)
+        dominant_crop, max_support = crop_counts.most_common(1)[0]
+        support_ratio = max_support / len(valid_plant_classes)
+        crop_disagreement = round(1.0 - support_ratio, 3)
+
         sorted_class_indices = np.argsort(mean_prob_vector)[::-1]
         top_c_idx = int(sorted_class_indices[0])
         top_mean_conf = float(mean_prob_vector[top_c_idx])
@@ -613,12 +637,30 @@ def predict_video(
                 "percentage": f"{conf * 100:.2f}%",
             })
 
-        if top_mean_conf >= DEFAULT_CONFIDENCE_THRESHOLD:
+        # Safeguard: if crop predictions conflict (disagreement > 60% or when multiple frames exist and dominant has < 40% support)
+        if crop_disagreement > 0.60 or (len(valid_plant_classes) >= 3 and support_ratio < 0.40):
+            final_prediction = {
+                "rank": 1,
+                "class_id": -1,
+                "class_name": "uncertain",
+                "label": "Uncertain",
+                "confidence": top_mean_conf,
+                "percentage": f"{top_mean_conf * 100:.2f}% (Conflicted)",
+                "status": "uncertain",
+                "reason": f"Conflicting crop evidence across accepted frames (disagreement {crop_disagreement*100:.0f}%, dominant {dominant_crop} has {max_support}/{len(valid_plant_classes)} frames)",
+                "valid_frames_count": len(valid_plant_prob_vectors),
+                "crop_support_counts": crop_support_counts,
+                "crop_disagreement": crop_disagreement,
+            }
+            final_top_k = [final_prediction]
+        elif top_mean_conf >= DEFAULT_CONFIDENCE_THRESHOLD:
             final_prediction = {
                 **final_top_k[0],
                 "status": "valid",
-                "reason": f"Identified from {len(valid_plant_prob_vectors)} tight plant regions across video",
+                "reason": f"Identified from {len(valid_plant_prob_vectors)} tight plant regions across video ({max_support} supporting frames)",
                 "valid_frames_count": len(valid_plant_prob_vectors),
+                "crop_support_counts": crop_support_counts,
+                "crop_disagreement": crop_disagreement,
             }
         else:
             final_prediction = {
@@ -631,10 +673,14 @@ def predict_video(
                 "status": "unknown",
                 "reason": "No dominant crop confidence across valid plant regions",
                 "valid_frames_count": len(valid_plant_prob_vectors),
+                "crop_support_counts": crop_support_counts,
+                "crop_disagreement": crop_disagreement,
             }
             final_top_k = [final_prediction]
     else:
-        blurry_count = sum(1 for f in frame_records if f["status"] == "blurry")
+        crop_disagreement = 1.0
+        crop_support_counts = {}
+        blurry_count = sum(1 for f in frame_records if f["status"] in ("blurry", "low_quality"))
         if blurry_count > len(frame_records) // 2:
             final_prediction = {
                 "rank": 1,
@@ -646,6 +692,8 @@ def predict_video(
                 "status": "blurry",
                 "reason": f"Video frames ({blurry_count}/{len(frame_records)}) are too blurry for plant identification.",
                 "valid_frames_count": 0,
+                "crop_support_counts": {},
+                "crop_disagreement": 1.0,
             }
         else:
             final_prediction = {
@@ -658,43 +706,84 @@ def predict_video(
                 "status": "unknown",
                 "reason": "No proper plant, flower, or leaf detected in any video frame.",
                 "valid_frames_count": 0,
+                "crop_support_counts": {},
+                "crop_disagreement": 1.0,
             }
         final_top_k = [final_prediction]
         mean_prob_vector = None
 
-    # Step 6: Model 2 Video-Level Disease Aggregation
+    # Step 6: Model 2 Video-Level Disease Aggregation (Crop-Aware, only on accepted plant frames)
     disease_summary = {}
-    if video_disease_detections:
-        from collections import Counter
-        disease_counts = Counter(d.get("disease_label", d.get("disease")) for d in video_disease_detections)
-        dominant_disease_name, count_freq = disease_counts.most_common(1)[0]
-        dominant_dets = [d for d in video_disease_detections if d.get("disease_label", d.get("disease")) == dominant_disease_name]
-        avg_conf = float(np.mean([d["confidence"] for d in dominant_dets]))
-        max_conf = float(np.max([d["confidence"] for d in dominant_dets]))
-        
-        disease_summary = {
-            "status": "detected",
-            "has_disease": True,
-            "primary_disease": dominant_disease_name,
-            "confidence": round(max_conf, 4),
-            "percentage": f"{max_conf * 100:.1f}%",
-            "avg_confidence": round(avg_conf, 4),
-            "detections_count": len(video_disease_detections),
-            "frames_with_disease": len(set(d["frame_number"] for d in video_disease_detections)),
-            "detections": video_disease_detections,
-            "message": f"Detected {len(video_disease_detections)} disease lesion(s) across {len(set(d['frame_number'] for d in video_disease_detections))} frames. Dominant disease: {dominant_disease_name}.",
-        }
+    final_crop_slug = final_prediction.get("class_name")
+    if detect_disease and final_prediction.get("status") in ("valid", "valid_plant_roi") and final_crop_slug and final_crop_slug not in ("unknown", "blurry", "uncertain", "crop_uncertain", "low_quality", "no_plant_evidence"):
+        accepted_records = [f for f in frame_records if f.get("contributed_to_crop") and f.get("roi_pil")]
+        try:
+            from model2.test_model2 import draw_predictions, predict_disease
+            for f in accepted_records:
+                roi_p = f.get("roi_pil")
+                if roi_p is None:
+                    continue
+                m2_res = predict_disease(roi_p, conf_threshold=disease_conf_threshold)
+                f_dets = m2_res.get("detections", [])
+                # Filter crop-compatible detections only
+                compatible_dets = []
+                for det in f_dets:
+                    d_slug = det.get("disease", "")
+                    if d_slug.startswith(f"{final_crop_slug}__") or "_" not in d_slug:
+                        compatible_dets.append(det)
+                        video_disease_detections.append({
+                            **det,
+                            "frame_number": f["frame_number"],
+                            "frame_index": f["frame_index"],
+                            "timestamp_seconds": f["timestamp_seconds"],
+                        })
+                f["disease_detections"] = compatible_dets
+        except Exception as exc:
+            logger.warning(f"Standalone Model 2 disease detection skipped: {exc}")
+
+        if video_disease_detections:
+            from collections import Counter
+            disease_counts = Counter(d.get("disease_label", d.get("disease")) for d in video_disease_detections)
+            dominant_disease_name, count_freq = disease_counts.most_common(1)[0]
+            dominant_dets = [d for d in video_disease_detections if d.get("disease_label", d.get("disease")) == dominant_disease_name]
+            avg_conf = float(np.mean([d["confidence"] for d in dominant_dets]))
+            max_conf = float(np.max([d["confidence"] for d in dominant_dets]))
+
+            disease_summary = {
+                "status": "detected",
+                "has_disease": True,
+                "primary_disease": dominant_disease_name,
+                "confidence": round(max_conf, 4),
+                "percentage": f"{max_conf * 100:.1f}%",
+                "avg_confidence": round(avg_conf, 4),
+                "detections_count": len(video_disease_detections),
+                "frames_with_disease": len(set(d["frame_number"] for d in video_disease_detections)),
+                "detections": video_disease_detections,
+                "message": f"Detected {len(video_disease_detections)} disease lesion(s) across {len(set(d['frame_number'] for d in video_disease_detections))} frames. Dominant disease: {dominant_disease_name}.",
+            }
+        else:
+            disease_summary = {
+                "status": "healthy" if valid_plant_prob_vectors else "unknown",
+                "has_disease": False,
+                "primary_disease": "Healthy Specimen / No Disease Lesions Detected",
+                "confidence": 1.0 if valid_plant_prob_vectors else 0.0,
+                "percentage": "100.0%" if valid_plant_prob_vectors else "N/A",
+                "detections_count": 0,
+                "frames_with_disease": 0,
+                "detections": [],
+                "message": "No crop-compatible disease lesions detected across examined plant foliage frames.",
+            }
     else:
         disease_summary = {
-            "status": "healthy" if valid_plant_prob_vectors else "unknown",
+            "status": "unknown",
             "has_disease": False,
-            "primary_disease": "Healthy Specimen / No Disease Lesions Detected",
-            "confidence": 1.0 if valid_plant_prob_vectors else 0.0,
-            "percentage": "100.0%" if valid_plant_prob_vectors else "N/A",
+            "primary_disease": "Disease analysis withheld (crop unverified)",
+            "confidence": 0.0,
+            "percentage": "N/A",
             "detections_count": 0,
             "frames_with_disease": 0,
             "detections": [],
-            "message": "No disease lesions detected across examined plant foliage frames.",
+            "message": "Disease classification not run because crop was unverified or no valid plant frames.",
         }
 
     return {
@@ -705,7 +794,9 @@ def predict_video(
         "valid_plant_frames": len(valid_plant_prob_vectors),
         "sampled_frames_count": len(frame_records),
         "accepted_frames_count": len(valid_plant_prob_vectors),
-        "frames_rejected": len(rejected_frames),
+        "frames_rejected": len(rejected_frames) + sum(1 for f in frame_records if not f.get("contributed_to_crop")),
+        "crop_disagreement": crop_disagreement,
+        "crop_support_counts": crop_support_counts,
         "total_evaluated": extraction["total_evaluated"],
         "total_decoded": extraction.get("total_decoded", metadata.get("frame_count", 0)),
         "total_decoded_frames": extraction.get("total_decoded", metadata.get("frame_count", 0)),

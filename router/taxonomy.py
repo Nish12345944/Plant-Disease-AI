@@ -91,6 +91,8 @@ class QueryUnderstandingResult:
     clarification_reason: Optional[str] = None
     suggested_clarification: Optional[str] = None
     context: dict[str, Any] = field(default_factory=dict)
+    response_mode: str = "media_default_analysis"
+    visible_cards: dict[str, bool] = field(default_factory=lambda: {"crop": True, "disease": True, "treatment": True})
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -98,6 +100,8 @@ class QueryUnderstandingResult:
             "normalized_text": self.normalized_text,
             "intent": self.intent,
             "intent_confidence": round(float(self.intent_confidence), 4),
+            "response_mode": self.response_mode,
+            "visible_cards": self.visible_cards,
             "entities": self.entities.to_dict(),
             "routing_decision": {
                 "needs_model1": self.needs_model1,

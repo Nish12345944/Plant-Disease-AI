@@ -112,6 +112,12 @@ export default function DeveloperPanel({ isOpen, onClose, telemetryData }) {
                 </div>
               </div>
               <div className="debug-item mt-2">
+                <span className="debug-label">Response Mode</span>
+                <span className="debug-value text-emerald" style={{ fontWeight: 600 }}>
+                  {data.response_mode ? data.response_mode.toUpperCase().replace(/_/g, ' ') : 'DEFAULT COMBINED ANALYSIS'}
+                </span>
+              </div>
+              <div className="debug-item mt-2">
                 <span className="debug-label">Original Transcription / Input</span>
                 <p className="debug-text-box">
                   {data.original_text || '—'}

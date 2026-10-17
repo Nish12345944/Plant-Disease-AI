@@ -23,7 +23,7 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
   if (!isOpen || !videoData) return null;
 
   const frames = videoData.frame_results || videoData.frame_records || [];
-  const validFrames = frames.filter(f => f.quality_status === 'valid' || f.status === 'valid').length;
+  const validFrames = frames.filter(f => f.quality_status === 'valid' || f.status === 'valid' || f.quality_status === 'valid_plant_roi' || f.status === 'valid_plant_roi').length;
   const diseaseFrames = frames.filter(f => (f.disease_detections && f.disease_detections.length > 0) || f.disease_status === 'diseased').length;
   const m2Summary = videoData.model2 || {};
 
@@ -89,9 +89,10 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
         <div className="frames-grid-scroll">
           <div className="frames-grid">
             {frames.map((frame, idx) => {
-              const isValid = frame.quality_status === 'valid' || frame.status === 'valid';
-              const isBlurry = frame.quality_status === 'blurry' || frame.status === 'blurry';
-              const isNoPlant = frame.quality_status === 'unknown' || frame.status === 'unknown' || frame.quality_status === 'no_plant';
+              const isValid = frame.quality_status === 'valid' || frame.status === 'valid' || frame.quality_status === 'valid_plant_roi' || frame.status === 'valid_plant_roi';
+              const isBlurry = frame.quality_status === 'blurry' || frame.status === 'blurry' || frame.quality_status === 'low_quality' || frame.status === 'low_quality';
+              const isCropUncertain = frame.quality_status === 'crop_uncertain' || frame.status === 'crop_uncertain';
+              const isNoPlant = !isCropUncertain && (frame.quality_status === 'unknown' || frame.status === 'unknown' || frame.quality_status === 'no_plant' || frame.quality_status === 'no_plant_evidence' || frame.status === 'no_plant_evidence');
               const hasDiseaseDets = (frame.disease_detections && frame.disease_detections.length > 0) || frame.disease_status === 'diseased';
 
               let displayImg = frame.thumbnail || frame.thumbnail_url;
@@ -148,9 +149,14 @@ export default function ExtractedFramesModal({ isOpen, onClose, videoData }) {
                           <CheckCircle2 size={12} /> Valid Plant
                         </span>
                       )}
+                      {isCropUncertain && (
+                        <span className="tag-status uncertain" style={{ color: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)' }}>
+                          <AlertCircle size={12} /> Crop Uncertain
+                        </span>
+                      )}
                       {isBlurry && (
                         <span className="tag-status blurry">
-                          <AlertCircle size={12} /> Blurry
+                          <AlertCircle size={12} /> Low Quality
                         </span>
                       )}
                       {isNoPlant && (

@@ -2505,3 +2505,42 @@ a.source-citation-badge:hover {
   color: #bae6fd;
 }
 
+.assistant-paragraph-block {
+  margin-bottom: 8px;
+}
+
+.assistant-paragraph-block:last-child {
+  margin-bottom: 0;
+}
+
+.assistant-text-line {
+  line-height: 1.5;
+  color: var(--text-primary);
+  font-size: 0.92rem;
+}
+
+.assistant-text-line strong {
+  color: #f1f5f9;
+  font-weight: 700;
+}
+
+.assistant-text-line em {
+  font-style: italic;
+  color: #a7f3d0;
+}
+
+.assistant-text-bullets {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.assistant-text-bullets li::before {
+  content: "•";
+  position: absolute;
+  left: 2px;
+  top: -1px;
+  font-size: 1rem;
+  color: var(--primary-emerald);
+}
+
+

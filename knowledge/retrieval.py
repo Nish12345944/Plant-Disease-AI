@@ -20,7 +20,7 @@ from knowledge.schema import (
     SourcedFact,
 )
 from knowledge.sources import format_source_citation
-from knowledge.treatment import get_disease_treatment
+from knowledge.treatment import get_disease_treatment, get_disease_insights
 from router.taxonomy import ExtractedEntities, Intent
 
 logger = logging.getLogger(__name__)
@@ -197,6 +197,16 @@ def retrieve_relevant_knowledge(
     )
     result["treatment"] = treatment_data
     facts["treatment"] = treatment_data
+
+    # Populate structured disease insights (Key Symptoms, Pathogen, Conditions)
+    insights_data = get_disease_insights(
+        crop=crop or (d_rec.crop if d_rec else None),
+        disease=disease or (d_rec.disease_slug if d_rec else None),
+        d_rec=d_rec,
+        kb=kb,
+    )
+    result["disease_insights"] = insights_data
+    facts["disease_insights"] = insights_data
 
     # Clean and deduplicate source citations
     result["facts"] = facts

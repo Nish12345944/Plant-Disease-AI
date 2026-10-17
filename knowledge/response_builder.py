@@ -50,6 +50,120 @@ def build_response(
             disease_title = disease.replace("_", " ").title()
 
     # -----------------------------------------------------------------------
+    # 0. Mode-Specific Single-Topic Dispatches
+    # -----------------------------------------------------------------------
+    if "unrecognized_notice" in sections:
+        msg = (
+            "I couldn't relate your instruction to plant identification, disease diagnosis, or crop care. "
+            "You can ask me to identify a plant, check for visible disease symptoms, or explain treatments and care guidelines."
+        )
+        return FinalAgentResponse(
+            text=msg,
+            intent=plan.intent,
+            crop=crop,
+            disease=disease,
+            status="clarification_needed",
+            sources=[],
+            reasoning_rule=reasoning.applicable_rule,
+            needs_clarification=True,
+            structured_data={"clarification_prompt": msg},
+        )
+
+    # MODE 2: Plant/crop identification only ("What plant is this?")
+    if "crop_identification_only" in sections:
+        conf_str = ""
+        if visual_evidence and visual_evidence.get("crop_confidence"):
+            conf_str = f" ({visual_evidence['crop_confidence']*100:.1f}% confidence)"
+        lines.append(f"This plant is identified as **{crop_title}**{conf_str}.")
+        return FinalAgentResponse(
+            text="\n".join(lines),
+            intent=plan.intent,
+            crop=crop,
+            disease=None,
+            status="healthy" if reasoning.status == "healthy" else "identified",
+            sources=[],
+            reasoning_rule=reasoning.applicable_rule,
+            needs_clarification=False,
+            structured_data={"crop": crop, "treatment": None},
+        )
+
+    # MODE 1: Disease identification only ("What disease is this?", "What is wrong with this plant?")
+    if "disease_identification_only" in sections:
+        lines.append(f"PLANT: {crop_title}")
+        lines.append(f"DISEASE: {disease_title or 'No Disease Detected'}")
+        return FinalAgentResponse(
+            text="\n".join(lines),
+            intent=plan.intent,
+            crop=crop,
+            disease=disease,
+            status="diseased",
+            sources=[],
+            reasoning_rule=reasoning.applicable_rule,
+            needs_clarification=False,
+            structured_data={
+                "crop": crop,
+                "disease": disease,
+                "treatment": None,
+            },
+        )
+
+    if "disease_healthy_identification_only" in sections:
+        lines.append(f"PLANT: {crop_title}")
+        lines.append("DISEASE: No Disease Detected (Healthy Specimen)")
+        return FinalAgentResponse(
+            text="\n".join(lines),
+            intent=plan.intent,
+            crop=crop,
+            disease=None,
+            status="healthy",
+            sources=[],
+            reasoning_rule=reasoning.applicable_rule,
+            needs_clarification=False,
+            structured_data={"crop": crop, "status": "healthy", "treatment": None},
+        )
+
+    if "disease_uncertain_identification_only" in sections:
+        lines.append(f"PLANT: {crop_title}")
+        lines.append("DISEASE: Inconclusive / Uncertain")
+        lines.append(f"Visual symptoms for this {crop_title} are ambiguous or below the diagnostic confidence threshold.")
+        return FinalAgentResponse(
+            text="\n".join(lines),
+            intent=plan.intent,
+            crop=crop,
+            disease=disease,
+            status="uncertain",
+            sources=[],
+            reasoning_rule=reasoning.applicable_rule,
+            needs_clarification=True,
+            structured_data={"crop": crop, "status": "uncertain", "treatment": None},
+        )
+
+    # MODE 3 (Uncertain variant): Communicate uncertainty instead of certain treatment
+    if "uncertain_treatment_guidance" in sections:
+        lines.append(f"The disease diagnosis for this {crop_title.lower()} is uncertain (low model confidence).")
+        lines.append("To avoid crop injury from incorrect treatment, verify symptoms before applying chemical sprays.")
+        lines.append("\n**Recommended Safe Next Steps:**")
+        lines.append("• Isolate affected foliage and ensure leaves remain dry.")
+        lines.append("• Inspect whether leaf lesions have concentric rings, water-soaking, or spore masses.")
+        lines.append("• Provide a well-lit, close-up photograph of upper and lower leaf surfaces.")
+        lines.append("• Consult your local agricultural extension service for confirmed diagnosis.")
+        if sources:
+            lines.append("\n---")
+            citation_texts = [f"{s['title']} ({s['organization']})" for s in sources]
+            lines.append(f"**Authoritative Sources:** {'; '.join(citation_texts[:3])}")
+        return FinalAgentResponse(
+            text="\n".join(lines),
+            intent=plan.intent,
+            crop=crop,
+            disease=disease,
+            status="uncertain",
+            sources=sources,
+            reasoning_rule=reasoning.applicable_rule,
+            needs_clarification=True,
+            structured_data={"crop": crop, "disease": disease, "status": "uncertain", "treatment": None},
+        )
+
+    # -----------------------------------------------------------------------
     # 1. Special Case: Clarification Notice / Ambiguity / Missing Info
     # -----------------------------------------------------------------------
     if "clarification_notice" in sections:
@@ -156,21 +270,20 @@ def build_response(
     # 5. Standard Domain-Specific Composition
     # -----------------------------------------------------------------------
 
-    # Condition Identification Header
-    if "condition_identification" in sections or "diagnosis_summary" in sections:
-        conf_str = ""
-        if visual_evidence and visual_evidence.get("disease_confidence"):
-            conf_str = f" ({visual_evidence['disease_confidence']*100:.1f}% confidence)"
+    # Condition Identification Header:
+    # Omitted when visual_evidence is present because the structured Plant Identification
+    # and Disease Detection cards already display the crop, condition, and confidence.
+    if not visual_evidence and ("condition_identification" in sections or "diagnosis_summary" in sections):
         causal = facts.get("causal_agent")
         type_str = facts.get("disease_type")
 
-        intro = f"The identified condition on your **{crop_title}** is **{disease_title or 'Disease'}**{conf_str}."
+        intro = f"The identified condition on your **{crop_title}** is **{disease_title or 'Disease'}**."
         if causal and type_str:
             intro += f" It is a {type_str.lower()} disease caused by the pathogen *{causal}*."
         lines.append(intro)
 
     # Symptoms Section
-    if "primary_symptoms" in sections or "observed_symptoms" in sections or "symptoms" in facts:
+    if not visual_evidence and ("primary_symptoms" in sections or "observed_symptoms" in sections or "symptoms" in facts):
         symptom_list = facts.get("symptoms", [])
         if symptom_list:
             lines.append("\n**Key Diagnostic Symptoms:**")
@@ -188,7 +301,7 @@ def build_response(
             lines.append(f"• **Affected Plant Parts:** {', '.join(parts).title()}")
 
     # Causes and Environmental Conditions
-    if "favorable_conditions" in sections or "causes_and_conditions" in facts or "primary_cause" in sections:
+    if not visual_evidence and ("favorable_conditions" in sections or "causes_and_conditions" in facts or "primary_cause" in sections):
         cond_list = facts.get("causes_and_conditions", [])
         if cond_list:
             lines.append("\n**Causes & Favorable Environmental Conditions:**")
@@ -196,7 +309,7 @@ def build_response(
                 lines.append(f"• {c['statement']}")
 
     # Spread and Transmission
-    if "spread_mechanism" in sections or "spread_and_transmission" in facts:
+    if not visual_evidence and ("spread_mechanism" in sections or "spread_and_transmission" in facts):
         spread_list = facts.get("spread_and_transmission", [])
         if spread_list:
             lines.append("\n**Spread & Transmission:**")
@@ -204,15 +317,21 @@ def build_response(
                 lines.append(f"• {sp['statement']}")
 
     # Recurrence and Survival
-    if "recurrence_and_survival" in facts:
+    if not visual_evidence and ("recurrence_and_survival" in facts):
         recur_list = facts.get("recurrence_and_survival", [])
         if recur_list:
             lines.append("\n**Overwintering & Recurrence:**")
             for r in recur_list:
                 lines.append(f"• {r['statement']}")
 
-    # Management / Treatment Sections (omitted when visual_evidence is present because the dedicated Treatment UI panel renders it)
-    if not visual_evidence:
+    # Management / Treatment Sections (included when text-only OR when treatment is explicitly requested)
+    if not visual_evidence or "treatment_context_header" in sections:
+        if "treatment_context_header" in sections:
+            if disease_title:
+                lines.append(f"Management and treatment guidance for **{disease_title}** on **{crop_title}**:")
+            else:
+                lines.append(f"Management and care guidance for **{crop_title}**:")
+
         mgmt = facts.get("management", {})
         if mgmt:
             lines.append("\n**Recommended Management & Treatment Strategies:**")
@@ -249,8 +368,8 @@ def build_response(
                     if ch.get("detail"):
                         lines.append(f"  *Note:* {ch['detail']}")
 
-    # Prevention Section (omitted when visual_evidence is present)
-    if not visual_evidence:
+    # Prevention Section (included when text-only OR when treatment/prevention is explicitly requested)
+    if not visual_evidence or "treatment_context_header" in sections or "preventive_measures" in sections:
         prev_list = facts.get("prevention", [])
         if prev_list and ("prevention_summary" in sections or "preventive_measures" in sections):
             lines.append("\n**Prevention Guidelines:**")

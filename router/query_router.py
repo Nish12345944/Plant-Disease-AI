@@ -16,6 +16,7 @@ from typing import Any, Optional, Union
 from router.entity_extractor import extract_entities
 from router.intent_classifier import classify_intent_from_text
 from router.normalizer import normalize_text
+from router.response_mode import ResponseMode, detect_response_mode
 from router.taxonomy import (
     INTENT_ROUTING_MAP,
     ExtractedEntities,
@@ -119,12 +120,21 @@ def route_multimodal_query(
             if k not in active_context and v is not None:
                 active_context[k] = v
 
-    # 5. Intent Classification
+    # 5. Intent Classification & Response Mode Resolution
+    mode_result = detect_response_mode(query_text, has_media=has_visual)
+
     intent, confidence, needs_clarification, reason = classify_intent_from_text(
         normalized_text=normalized_text,
         entities=entities,
         has_visual_context=has_visual,
     )
+
+    # If response mode detected an unrecognized non-empty instruction, flag for clarification
+    if mode_result.is_unrecognized and query_text:
+        intent = Intent.AMBIGUOUS
+        confidence = 0.30
+        needs_clarification = True
+        reason = "User instruction could not be classified or related to agricultural tasks."
 
     # 6. Resolve Routing Capabilities
     m1, m2, rag, domain = INTENT_ROUTING_MAP.get(
@@ -138,12 +148,15 @@ def route_multimodal_query(
 
     clarification_msg = None
     if needs_clarification:
-        clarification_msg = generate_clarification_message(
-            intent=intent,
-            entities=entities,
-            has_visual_context=has_visual,
-            reason=reason,
-        )
+        if mode_result.is_unrecognized and mode_result.clarification_message:
+            clarification_msg = mode_result.clarification_message
+        else:
+            clarification_msg = generate_clarification_message(
+                intent=intent,
+                entities=entities,
+                has_visual_context=has_visual,
+                reason=reason,
+            )
 
     return QueryUnderstandingResult(
         raw_text=query_text,
@@ -159,6 +172,8 @@ def route_multimodal_query(
         clarification_reason=reason,
         suggested_clarification=clarification_msg,
         context=active_context,
+        response_mode=mode_result.mode.value,
+        visible_cards=mode_result.visible_cards,
     )
 
 
@@ -189,6 +204,8 @@ def route_query(query: Union[str, dict[str, Any]]) -> dict[str, Any]:
         "intent": legacy_intent,
         "official_intent": result.intent,
         "intent_confidence": result.intent_confidence,
+        "response_mode": result.response_mode,
+        "visible_cards": result.visible_cards,
         "needs_model1": result.needs_model1,
         "needs_model2": result.needs_model2,
         "needs_rag": result.needs_rag,

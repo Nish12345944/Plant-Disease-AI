@@ -99,7 +99,7 @@ def extract_tight_plant_rois(
     exg = 2 * G - R - B
     chlorophyll_mask = green_foliage & (exg > 3)
     yellow_chlorosis = (H >= 15) & (H < 25) & (S >= 20) & (V >= 20) & (G > B)
-    brown_necrotic = (H >= 6) & (H < 22) & (S >= 18) & (V >= 15)
+    brown_necrotic = (H >= 6) & (H < 22) & (S >= 18) & (V >= 15) & (R > B)
 
     warm_fruit = ((H <= 18) | (H >= 162)) & (S >= 25) & (V >= 25)
     berry_fruit = (H >= 95) & (H <= 135) & (S >= 20) & (V >= 15) & (V <= 140)
@@ -118,11 +118,12 @@ def extract_tight_plant_rois(
 
     raw_plant_mask = raw_mask_bool.astype(np.uint8) * 255
 
-    # 2. Non-plant suppression (white lab coats, cyan nitrile gloves)
-    white_coat_mask = (V >= 160) & (S <= 35) & (np.abs(R - G) < 20) & (np.abs(G - B) < 20)
+    # 2. Non-plant suppression (white lab coats, structural white glass, cyan nitrile gloves, human skin)
+    white_coat_mask = (V >= 150) & (S <= 40) & (np.abs(R - G) < 25) & (np.abs(G - B) < 25)
     nitrile_mask = (B > (R + 45)) & (B > 115) & (H >= 95) & (H <= 130) & (S > 75)
+    skin_mask = (Cr >= 133) & (Cr <= 173) & (Cb >= 77) & (Cb <= 127) & (R > G) & (G > B)
 
-    non_plant = (white_coat_mask | nitrile_mask).astype(np.uint8) * 255
+    non_plant = (white_coat_mask | nitrile_mask | skin_mask).astype(np.uint8) * 255
     kernel_dil = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (11, 11))
     non_plant_dil = cv2.dilate(non_plant, kernel_dil)
 
@@ -135,127 +136,97 @@ def extract_tight_plant_rois(
     if plant_coverage < DEFAULT_MIN_PLANT_COVERAGE:
         return []
 
-    # 3. Assess if frame is a Macro Close-up (high plant coverage, minimal/no lab coat)
-    coat_coverage = float(np.sum(white_coat_mask)) / total_pixels
-    is_macro_close_up = (plant_coverage > 0.40) and (coat_coverage < 0.10)
+    # Wide scene check: frame dominated by white structural glass/ceiling/walls with only distant foliage
+    white_coverage = float(np.sum(white_coat_mask)) / total_pixels
+    is_wide_scene = (white_coverage >= 0.45) and (plant_coverage < 0.45)
 
     candidates: list[dict[str, Any]] = []
 
-    if is_macro_close_up:
-        # Macro close-up: the entire camera frame is focused on the plant/fruit specimen
+    # Check contours of clean plant mask
+    kernel_c = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 13))
+    closed = cv2.morphologyEx(clean_plant_mask, cv2.MORPH_CLOSE, kernel_c)
+    contours, _ = cv2.findContours(closed, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    for cnt in contours:
+        x, y, bw, bh = cv2.boundingRect(cnt)
+        box_area = bw * bh
+        area_ratio = box_area / total_pixels
+
+        if bw < 64 or bh < 64 or area_ratio < 0.04:
+            continue
+
+        roi_mask = clean_plant_mask[y:y + bh, x:x + bw]
+        plant_density = float(np.sum(roi_mask > 0)) / max(1, box_area)
+        roi_coat = white_coat_mask[y:y + bh, x:x + bw]
+        coat_ratio = float(np.sum(roi_coat)) / max(1, box_area)
+
+        if is_wide_scene:
+            # In a wide background scene, skip distant benches / tables
+            if area_ratio < 0.35 or plant_density < 0.60:
+                continue
+
+        if plant_density < 0.35 or coat_ratio > 0.25:
+            continue
+
+        # Tight square bounding box around foliage cluster (1.08x padding, capped to frame dimensions)
+        cx, cy = x + bw // 2, y + bh // 2
+        side = int(max(bw, bh) * 1.08)
+        side = min(side, max(w, h))
+
+        x1 = max(0, cx - side // 2)
+        y1 = max(0, cy - side // 2)
+        x2 = min(w, x1 + side)
+        y2 = min(h, y1 + side)
+
+        if x2 - x1 < side and x1 > 0:
+            x1 = max(0, x2 - side)
+        if y2 - y1 < side and y1 > 0:
+            y1 = max(0, y2 - side)
+
+        if (x2 - x1) < 64 or (y2 - y1) < 64:
+            continue
+
+        crop_bgr = img_bgr[y1:y2, x1:x2]
+        crop_gray = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2GRAY)
+        sharpness = float(cv2.Laplacian(crop_gray, cv2.CV_64F).var())
+
+        score = plant_density * 0.4 + min(1.0, sharpness / 150.0) * 0.3 + min(1.0, area_ratio / 0.25) * 0.3
+        is_macro = (plant_density >= 0.65) and (area_ratio >= 0.30)
+
+        candidates.append({
+            "box": [x1, y1, x2, y2],
+            "raw_box": [x, y, x + bw, y + bh],
+            "score": score,
+            "plant_density": plant_density,
+            "sharpness": sharpness,
+            "coat_ratio": coat_ratio,
+            "is_macro": is_macro,
+            "roi_pil": Image.fromarray(cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2RGB)),
+            "roi_bgr": crop_bgr,
+        })
+
+    # Macro center candidate if frame is dominated by plant foliage
+    if plant_coverage >= 0.35 and not is_wide_scene:
         cx, cy = w // 2, h // 2
         side = min(w, h)
         x1 = max(0, cx - side // 2)
         y1 = max(0, cy - side // 2)
         x2 = min(w, x1 + side)
         y2 = min(h, y1 + side)
-
         crop_bgr = img_bgr[y1:y2, x1:x2]
         crop_gray = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2GRAY)
-        sharp = float(cv2.Laplacian(crop_gray, cv2.CV_64F).var())
-
+        sharpness = float(cv2.Laplacian(crop_gray, cv2.CV_64F).var())
         candidates.append({
             "box": [x1, y1, x2, y2],
             "raw_box": [0, 0, w, h],
-            "score": 1.0,
+            "score": 0.85 + 0.15 * min(1.0, sharpness / 150.0),
             "plant_density": plant_coverage,
-            "sharpness": sharp,
+            "sharpness": sharpness,
+            "coat_ratio": white_coverage,
             "is_macro": True,
             "roi_pil": Image.fromarray(cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2RGB)),
             "roi_bgr": crop_bgr,
         })
-
-        # Also search for localized fruit/leaf cluster inside macro view
-        kernel_m = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
-        closed_m = cv2.morphologyEx(clean_plant_mask, cv2.MORPH_CLOSE, kernel_m)
-        contours, _ = cv2.findContours(closed_m, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        for cnt in contours:
-            x, y, bw, bh = cv2.boundingRect(cnt)
-            if bw * bh > total_pixels * 0.15 and bw > 120 and bh > 120:
-                mcx, mcy = x + bw // 2, y + bh // 2
-                mside = int(max(bw, bh) * 1.05)
-                mx1 = max(0, mcx - mside // 2)
-                my1 = max(0, mcy - mside // 2)
-                mx2 = min(w, mx1 + mside)
-                my2 = min(h, my1 + mside)
-                if mx2 - mx1 > 64 and my2 - my1 > 64:
-                    sub_bgr = img_bgr[my1:my2, mx1:mx2]
-                    sub_gray = cv2.cvtColor(sub_bgr, cv2.COLOR_BGR2GRAY)
-                    sub_sharp = float(cv2.Laplacian(sub_gray, cv2.CV_64F).var())
-                    candidates.append({
-                        "box": [mx1, my1, mx2, my2],
-                        "raw_box": [x, y, x + bw, y + bh],
-                        "score": 0.9,
-                        "plant_density": float(np.sum(clean_plant_mask[my1:my2, mx1:mx2] > 0)) / max(1, (mx2 - mx1) * (my2 - my1)),
-                        "sharpness": sub_sharp,
-                        "is_macro": True,
-                        "roi_pil": Image.fromarray(cv2.cvtColor(sub_bgr, cv2.COLOR_BGR2RGB)),
-                        "roi_bgr": sub_bgr,
-                    })
-    else:
-        # Wide / medium shots (e.g. greenhouse with person in center, plants on shelves)
-        kernel_c = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (13, 13))
-        closed = cv2.morphologyEx(clean_plant_mask, cv2.MORPH_CLOSE, kernel_c)
-        kernel_o = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-        cleaned = cv2.morphologyEx(closed, cv2.MORPH_OPEN, kernel_o)
-
-        contours, _ = cv2.findContours(cleaned, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        for cnt in contours:
-            x, y, bw, bh = cv2.boundingRect(cnt)
-            box_area = bw * bh
-
-            if bw < 80 or bh < 80 or box_area < (total_pixels * min_area_ratio):
-                continue
-
-            roi_mask = clean_plant_mask[y:y + bh, x:x + bw]
-            plant_density = float(np.sum(roi_mask > 0)) / max(1, box_area)
-            if plant_density < 0.25:
-                continue
-
-            roi_coat = white_coat_mask[y:y + bh, x:x + bw]
-            coat_ratio = float(np.sum(roi_coat)) / max(1, box_area)
-            if coat_ratio > 0.25:
-                continue
-
-            roi_bgr = img_bgr[y:y + bh, x:x + bw]
-            roi_gray = cv2.cvtColor(roi_bgr, cv2.COLOR_BGR2GRAY)
-            sharpness = float(cv2.Laplacian(roi_gray, cv2.CV_64F).var())
-
-            # Tight square bounding box around foliage cluster (1.08x padding, capped to 85% frame height)
-            cx, cy = x + bw // 2, y + bh // 2
-            side = int(max(bw, bh) * 1.08)
-            side = min(side, int(h * 0.85))
-
-            x1 = max(0, cx - side // 2)
-            y1 = max(0, cy - side // 2)
-            x2 = min(w, x1 + side)
-            y2 = min(h, y1 + side)
-
-            if x2 - x1 < side and x1 > 0:
-                x1 = max(0, x2 - side)
-            if y2 - y1 < side and y1 > 0:
-                y1 = max(0, y2 - side)
-
-            if (x2 - x1) < 64 or (y2 - y1) < 64:
-                continue
-
-            crop_bgr = img_bgr[y1:y2, x1:x2]
-            crop_rgb = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2RGB)
-            crop_pil = Image.fromarray(crop_rgb)
-
-            score = plant_density * 0.5 + min(1.0, sharpness / 150.0) * 0.3 + min(1.0, box_area / (total_pixels * 0.15)) * 0.2
-
-            candidates.append({
-                "box": [x1, y1, x2, y2],
-                "raw_box": [x, y, x + bw, y + bh],
-                "score": score,
-                "plant_density": plant_density,
-                "sharpness": sharpness,
-                "is_macro": False,
-                "roi_pil": crop_pil,
-                "roi_bgr": crop_bgr,
-            })
 
     candidates.sort(key=lambda c: c["score"], reverse=True)
 
@@ -294,11 +265,11 @@ def assess_plant_presence_and_quality(
     min_brightness: float = DEFAULT_MIN_BRIGHTNESS,
     max_brightness: float = DEFAULT_MAX_BRIGHTNESS,
 ) -> dict[str, Any]:
-    """Non-destructive quality and plant ROI evaluation order:
+    """Graded quality and plant ROI evaluation order:
     
-    1. Basic corruption & extreme exposure check.
-    2. Plant ROI detection.
-    3. ROI-level quality evaluation (ensures macro close-ups are preserved).
+    1. Basic corruption & extreme exposure check -> 'low_quality'
+    2. Plant ROI detection -> 'valid_plant_roi' or 'no_plant_evidence'
+    3. ROI-level quality evaluation (ensures macro close-ups are preserved)
     """
     img_bgr = ensure_bgr_array(image_input)
     h, w = img_bgr.shape[:2]
@@ -306,7 +277,7 @@ def assess_plant_presence_and_quality(
 
     if total_pixels == 0:
         return {
-            "status": "unknown",
+            "status": "no_plant_evidence",
             "reason": "Empty or zero-size image frame",
             "blur_score": 0.0,
             "brightness": 0.0,
@@ -321,7 +292,7 @@ def assess_plant_presence_and_quality(
     # 1. Extreme underexposure / overexposure
     if mean_brightness < min_brightness:
         return {
-            "status": "unknown",
+            "status": "low_quality",
             "reason": f"Severely underexposed / dark frame (brightness {mean_brightness:.1f})",
             "blur_score": round(blur_score, 2),
             "brightness": round(mean_brightness, 2),
@@ -331,7 +302,7 @@ def assess_plant_presence_and_quality(
 
     if mean_brightness > max_brightness:
         return {
-            "status": "unknown",
+            "status": "low_quality",
             "reason": f"Severely overexposed / washed out frame (brightness {mean_brightness:.1f})",
             "blur_score": round(blur_score, 2),
             "brightness": round(mean_brightness, 2),
@@ -346,7 +317,7 @@ def assess_plant_presence_and_quality(
         # Check if frame had severe motion blur across entire scene
         if blur_score < min_blur_score:
             return {
-                "status": "blurry",
+                "status": "low_quality",
                 "reason": f"Severely blurred camera motion (sharpness {blur_score:.1f} < {min_blur_score})",
                 "blur_score": round(blur_score, 2),
                 "brightness": round(mean_brightness, 2),
@@ -354,9 +325,23 @@ def assess_plant_presence_and_quality(
                 "rois": [],
             }
 
+        # Check if frame is an uninformative wide scene with background clutter
+        hsv_t = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2HSV)
+        S_t, V_t = hsv_t[:, :, 1], hsv_t[:, :, 2]
+        R_t = img_bgr[:, :, 2].astype(np.float32)
+        G_t = img_bgr[:, :, 1].astype(np.float32)
+        B_t = img_bgr[:, :, 0].astype(np.float32)
+        w_mask_t = (V_t >= 150) & (S_t <= 40) & (np.abs(R_t - G_t) < 25) & (np.abs(G_t - B_t) < 25)
+        w_cov_t = float(np.sum(w_mask_t)) / max(1, total_pixels)
+
+        if w_cov_t >= 0.45:
+            reason_str = "Uninformative wide scene or background clutter"
+        else:
+            reason_str = "No identifiable plant foliage or crop specimen found in frame"
+
         return {
-            "status": "unknown",
-            "reason": "No identifiable plant foliage or crop specimen found in frame",
+            "status": "no_plant_evidence",
+            "reason": reason_str,
             "blur_score": round(blur_score, 2),
             "brightness": round(mean_brightness, 2),
             "plant_coverage": 0.0,
@@ -367,7 +352,7 @@ def assess_plant_presence_and_quality(
     best_roi_sharpness = max(r["sharpness"] for r in rois)
     if best_roi_sharpness < min_blur_score:
         return {
-            "status": "blurry",
+            "status": "low_quality",
             "reason": f"Plant region is severely out of focus (ROI sharpness {best_roi_sharpness:.1f} < {min_blur_score})",
             "blur_score": round(best_roi_sharpness, 2),
             "brightness": round(mean_brightness, 2),
@@ -376,8 +361,8 @@ def assess_plant_presence_and_quality(
         }
 
     return {
-        "status": "valid_plant",
-        "reason": f"Found {len(rois)} tight plant region(s)",
+        "status": "valid_plant_roi",
+        "reason": f"Found {len(rois)} usable plant region(s)",
         "blur_score": round(best_roi_sharpness, 2),
         "brightness": round(mean_brightness, 2),
         "plant_coverage": round(rois[0]["plant_density"], 3),

@@ -16,17 +16,83 @@ import {
   ShieldCheck,
   AlertOctagon,
   Image as ImageIcon,
-  Activity,
   ExternalLink
 } from 'lucide-react';
 
-export default function MessageItem({ message, onOpenFramesModal, onInspectTelemetry }) {
+function renderFormattedInline(str) {
+  if (!str) return null;
+  const parts = [];
+  const regex = /(\*\*[^*]+\*\*|\*[^*]+\*)/g;
+  let lastIdx = 0;
+  let match;
+  while ((match = regex.exec(str)) !== null) {
+    if (match.index > lastIdx) {
+      parts.push(str.substring(lastIdx, match.index));
+    }
+    const token = match[0];
+    if (token.startsWith('**') && token.endsWith('**')) {
+      parts.push(<strong key={match.index}>{token.slice(2, -2)}</strong>);
+    } else if (token.startsWith('*') && token.endsWith('*')) {
+      parts.push(<em key={match.index}>{token.slice(1, -1)}</em>);
+    }
+    lastIdx = regex.lastIndex;
+  }
+  if (lastIdx < str.length) {
+    parts.push(str.substring(lastIdx));
+  }
+  return parts;
+}
+
+function renderFormattedParagraph(paragraph) {
+  if (!paragraph) return null;
+  const lines = paragraph.split('\n').filter(line => line.trim().length > 0);
+  const bulletLines = [];
+  const renderedElements = [];
+
+  const flushBullets = () => {
+    if (bulletLines.length > 0) {
+      renderedElements.push(
+        <ul key={`ul-${renderedElements.length}`} className="simple-bullet-list assistant-text-bullets">
+          {bulletLines.map((bText, bIdx) => (
+            <li key={bIdx}>
+              <span>{renderFormattedInline(bText)}</span>
+            </li>
+          ))}
+        </ul>
+      );
+      bulletLines.length = 0;
+    }
+  };
+
+  lines.forEach((line, lIdx) => {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('•') || trimmed.startsWith('-') || trimmed.startsWith('* ')) {
+      const cleanBullet = trimmed.replace(/^[•\-\*]\s*/, '');
+      bulletLines.push(cleanBullet);
+    } else {
+      flushBullets();
+      renderedElements.push(
+        <div key={`p-${lIdx}`} className="assistant-text-line">
+          {renderFormattedInline(trimmed)}
+        </div>
+      );
+    }
+  });
+  flushBullets();
+
+  return renderedElements;
+}
+
+const MessageItem = React.forwardRef(function MessageItem(
+  { message, onOpenFramesModal, onInspectTelemetry },
+  ref
+) {
   const [showDetectionsList, setShowDetectionsList] = useState(true);
   const isUser = message.role === 'user';
 
   if (isUser) {
     return (
-      <div className="message-wrapper user animate-slide-up">
+      <div ref={ref} className="message-wrapper user animate-slide-up">
         <div className="message-bubble user-bubble">
           {/* Attached Media Previews */}
           {message.media && (
@@ -76,6 +142,24 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
   const routerData = data.router;
   const annotatedPreviewUrl = data.annotated_preview_url || model2?.annotated_preview_url;
   const treatmentData = data.treatment || data.knowledge?.treatment || data.knowledge?.structured_data?.treatment || model2?.treatment;
+
+  // Instruction-driven visible card policy
+  const visibleCards = data.visible_cards || routerData?.visible_cards || (() => {
+    const rawIntent = (typeof routerData?.intent === 'string' ? routerData.intent : (routerData?.intent?.name || '')).toLowerCase();
+    if (rawIntent === 'plant_identification' || rawIntent === 'identify_crop') {
+      return { crop: true, disease: false, treatment: false };
+    }
+    if (rawIntent === 'disease_identification' || rawIntent === 'identify_disease') {
+      return { crop: true, disease: true, treatment: false };
+    }
+    if (rawIntent === 'general_plant_information' || rawIntent === 'general_plant_info') {
+      return { crop: true, disease: false, treatment: false };
+    }
+    if (rawIntent === 'unknown' || rawIntent === 'unrecognized_instruction') {
+      return { crop: false, disease: false, treatment: false };
+    }
+    return { crop: true, disease: true, treatment: true };
+  })();
 
   const hasPlantResult = Boolean(model1 || videoInference);
   const rawCrop = videoInference?.predicted_crop || model1?.predicted_crop || model1?.predicted_label;
@@ -144,7 +228,7 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
   }, [model2]);
 
   return (
-    <div className="message-wrapper assistant animate-slide-up">
+    <div ref={ref} className="message-wrapper assistant animate-slide-up">
       <div className="message-avatar assistant-avatar">
         <Bot size={20} color="var(--primary-emerald)" />
       </div>
@@ -220,7 +304,7 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
               </button>
             </div>
           </div>
-        ) : hasPlantResult && (
+        ) : visibleCards.crop !== false && hasPlantResult && (
           <div className="model-card model1-card">
             <div className="model-card-header">
               <div className="model-badge-row">
@@ -283,7 +367,7 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
         {/* ========================================================
             SECTION 2: 🦠 DISEASE DETECTION (Model 2)
             ======================================================== */}
-        {hasDiseaseModel && (
+        {visibleCards.disease !== false && hasDiseaseModel && (
           <div className={`model-card model2-card ${hasDisease ? 'disease-detected' : isUncertain ? 'uncertain' : 'healthy'}`}>
             <div className="model-card-header">
               <div className="model-badge-row">
@@ -359,7 +443,7 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
         {/* ========================================================
             SECTION 2.5: 💊 SIMPLIFIED TREATMENT & CURE (5 SECTIONS)
             ======================================================== */}
-        {treatmentData && (hasDisease || (treatmentData.has_treatment && !isUncertain)) && !isSafeguardTriggered && (
+        {visibleCards.treatment !== false && treatmentData && (hasDisease || (treatmentData.has_treatment && !isUncertain)) && !isSafeguardTriggered && (
           <div className={`model-card treatment-card-simple curability-${treatmentData.curability_badge || 'manageable'}`}>
             <div className="model-card-header">
               <div className="model-badge-row">
@@ -472,30 +556,6 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
         )}
 
         {/* ========================================================
-            SECTION 3: 🌿 ANALYZED IMAGE (Clean Original Image)
-            ======================================================== */}
-        {data.original_image_url && (
-          <div className="model-card analyzed-image-card">
-            <div className="model-card-header">
-              <div className="model-badge-row">
-                <ImageIcon size={16} color="var(--primary-emerald)" />
-                <span className="model-title">ANALYZED IMAGE</span>
-              </div>
-            </div>
-
-            <div className="model-card-body">
-              <div className="clean-analyzed-image-frame">
-                <img
-                  src={data.original_image_url}
-                  alt="Analyzed Plant Specimen"
-                  className="clean-analyzed-img"
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ========================================================
             SECTION 4: VIDEO FRAMES MODAL TRIGGER (If Video)
             ======================================================== */}
         {videoInference && !['unavailable', 'error'].includes(videoInference.status) && (videoInference.frames_processed > 0) && (
@@ -520,6 +580,21 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
             .split('\n\n')
             .filter(p => {
               const clean = p.trim().toLowerCase();
+
+              // Remove redundant natural-language disease summary paragraph across all crops and diseases
+              // (e.g. "The identified condition on your Citrus is Greening Disease...",
+              //        "The identified condition on your Bell Pepper is Bacterial Spot...",
+              //        "The identified condition is...")
+              if (
+                clean.startsWith('the identified condition on your') ||
+                clean.startsWith('the identified condition on') ||
+                clean.startsWith('the identified condition is') ||
+                clean.startsWith('the diagnosed condition on') ||
+                (clean.includes('the identified condition') && (clean.includes('confidence)') || clean.includes('pathogen')))
+              ) {
+                return false;
+              }
+
               if (treatmentData && (hasDisease || treatmentData.has_treatment)) {
                 if (
                   clean.startsWith('**recommended management') ||
@@ -535,6 +610,23 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
                   return false;
                 }
               }
+
+              // Ensure symptoms, causes, pathogen, and environmental conditions are not reintroduced as long text paragraphs
+              if (
+                clean.startsWith('**key diagnostic symptoms') ||
+                clean.startsWith('key diagnostic symptoms:') ||
+                clean.startsWith('**causes & favorable') ||
+                clean.startsWith('causes & favorable') ||
+                clean.startsWith('**distinguishing characteristics') ||
+                clean.startsWith('distinguishing characteristics:') ||
+                clean.startsWith('**spread & transmission') ||
+                clean.startsWith('spread & transmission:') ||
+                clean.startsWith('**overwintering') ||
+                clean.startsWith('overwintering & recurrence:')
+              ) {
+                return false;
+              }
+
               return Boolean(clean);
             });
 
@@ -544,7 +636,9 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
             <div className="assistant-guidance-container">
               <div className="assistant-text-body">
                 {paragraphs.map((paragraph, idx) => (
-                  <p key={idx} className="assistant-paragraph">{paragraph}</p>
+                  <div key={idx} className="assistant-paragraph-block">
+                    {renderFormattedParagraph(paragraph)}
+                  </div>
                 ))}
               </div>
               {/* Only show bottom sources if treatment panel was not rendered */}
@@ -624,4 +718,6 @@ export default function MessageItem({ message, onOpenFramesModal, onInspectTelem
       </div>
     </div>
   );
-}
+});
+
+export default MessageItem;

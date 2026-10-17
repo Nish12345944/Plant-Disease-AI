@@ -547,3 +547,94 @@ def get_disease_treatment(
         "is_healthy": False,
         "is_uncertain": False,
     }
+
+
+def get_disease_insights(
+    crop: Optional[str] = None,
+    disease: Optional[str] = None,
+    status: Optional[str] = None,
+    d_rec: Optional[DiseaseRecord] = None,
+    kb: Optional[AgriculturalKnowledgeBase] = None,
+) -> dict[str, Any]:
+    """Retrieve structured disease insights (Key Symptoms, Pathogen/Causes, Favorable Conditions).
+
+    Enforces:
+    1. Returns has_insights=False for healthy or uncertain plants.
+    2. Retrieves verified facts from DiseaseRecord without hallucinating or rewriting facts.
+    3. Hides or leaves empty sections where data is not available.
+    """
+    empty_payload = {
+        "has_insights": False,
+        "disease_name": None,
+        "crop": crop,
+        "symptoms": [],
+        "distinguishing_features": [],
+        "affected_parts": [],
+        "pathogen": None,
+        "disease_type": None,
+        "favorable_conditions": [],
+        "spread_mechanism": [],
+    }
+
+    if status in ("healthy", "uncertain") or (disease and disease.lower() in ("healthy", "no disease detected", "uncertain", "none")):
+        return empty_payload
+
+    if d_rec is None and disease:
+        if kb is None:
+            from knowledge.database import AgriculturalKnowledgeBase
+            kb = AgriculturalKnowledgeBase()
+        d_rec = kb.get_disease(disease, crop=crop)
+
+    if not d_rec:
+        return empty_payload
+
+    # 1. Symptoms: extract clean statements without bullet characters
+    raw_symptoms = [_fact_to_str(s) for s in d_rec.symptoms if _fact_to_str(s)]
+    clean_symptoms = []
+    seen_s = set()
+    for s in raw_symptoms:
+        cleaned = s.lstrip("•-* ▸").strip()
+        norm = cleaned.lower()
+        if norm and norm not in seen_s:
+            seen_s.add(norm)
+            clean_symptoms.append(cleaned)
+
+    # Distinguishing features
+    raw_features = [_fact_to_str(df).lstrip("•-* ▸").strip() for df in d_rec.distinguishing_features if _fact_to_str(df)]
+
+    # Affected parts
+    affected_parts = [p.strip() for p in d_rec.affected_parts if isinstance(p, str) and p.strip()]
+
+    # 2. Pathogen / Classification
+    pathogen = (d_rec.scientific_name_causal_agent or "").strip()
+    disease_type = (d_rec.disease_type or "").strip()
+
+    # 3. Favorable Conditions
+    raw_conditions = [_fact_to_str(cc) for cc in d_rec.causes_and_conditions if _fact_to_str(cc)]
+    clean_conditions = []
+    seen_c = set()
+    for c in raw_conditions:
+        cleaned = c.lstrip("•-* ▸").strip()
+        norm = cleaned.lower()
+        if norm and norm not in seen_c:
+            seen_c.add(norm)
+            clean_conditions.append(cleaned)
+
+    # Spread / transmission
+    raw_spread = [_fact_to_str(sp).lstrip("•-* ▸").strip() for sp in d_rec.spread_and_transmission if _fact_to_str(sp)]
+
+    has_insights = bool(clean_symptoms or pathogen or clean_conditions)
+
+    return {
+        "has_insights": has_insights,
+        "disease_name": d_rec.common_name,
+        "crop": d_rec.crop,
+        "symptoms": clean_symptoms[:5],
+        "distinguishing_features": raw_features[:3],
+        "affected_parts": affected_parts,
+        "pathogen": pathogen or None,
+        "disease_type": disease_type or None,
+        "favorable_conditions": clean_conditions[:4],
+        "spread_mechanism": raw_spread[:2],
+    }
+
