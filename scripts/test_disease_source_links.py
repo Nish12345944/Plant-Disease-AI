@@ -76,14 +76,12 @@ def test_disease_source_pipeline():
     kb = get_knowledge_base()
     assistant = AgriculturalAssistant(kb=kb)
 
-    total_tests = 0
-    passed_tests = 0
+    stats = {"total": 0, "passed": 0}
 
     def assert_check(name: str, condition: bool, details: str = ""):
-        nonlocal total_tests, passed_tests
-        total_tests += 1
+        stats["total"] += 1
         if condition:
-            passed_tests += 1
+            stats["passed"] += 1
             print(f"  [PASS] {name}")
         else:
             print(f"  [FAIL] {name}")
@@ -888,15 +886,19 @@ def test_disease_source_pipeline():
         assert_check(f"22.rt [{batch_label}: {d_slug}] runtime assistant returns verified URL", any(s.get("url") == exp_url for s in res.sources))
         assert_check(f"22.rt [{batch_label}: {d_slug}] runtime assistant citation is marked specific", any(s.get("url") == exp_url and not s.get("is_general") for s in res.sources))
 
+    total = stats["total"]
+    passed = stats["passed"]
+    pct = (passed / total * 100) if total > 0 else 0.0
+
     print("\n" + "=" * 80)
-    print(f"RESULTS: {passed_tests}/{total_tests} TESTS PASSED ({(passed_tests/total_tests)*100:.1f}%)")
+    print(f"RESULTS: {passed}/{total} TESTS PASSED ({pct:.1f}%)")
     print("=" * 80)
 
-    if passed_tests == total_tests:
+    if total > 0 and passed == total:
         print("ALL DISEASE-SPECIFIC SOURCE LINK TESTS PASSED PERFECTLY!")
         return 0
     else:
-        print(f"FAILED: {total_tests - passed_tests} test(s) failed.")
+        print(f"FAILED: {total - passed} test(s) failed.")
         return 1
 
 
