@@ -40,17 +40,28 @@ export default function App() {
   const timerIntervalRef = useRef(null);
   const dragCounterRef = useRef(0);
 
-  // Check backend health on mount
+  // Check backend health on mount with adaptive retry
   useEffect(() => {
-    checkStatus();
-    const interval = setInterval(checkStatus, 30000);
-    return () => clearInterval(interval);
-  }, []);
+    let timeoutId = null;
+    let isMounted = true;
 
-  const checkStatus = async () => {
-    const health = await fetchHealth();
-    setBackendStatus(health);
-  };
+    const checkStatus = async () => {
+      const health = await fetchHealth();
+      if (!isMounted) return;
+      setBackendStatus(health);
+
+      // If backend is booting up or disconnected, retry every 3s; once healthy, poll every 30s
+      const delay = health?.status === 'healthy' ? 30000 : 3000;
+      timeoutId = setTimeout(checkStatus, delay);
+    };
+
+    checkStatus();
+
+    return () => {
+      isMounted = false;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, []);
 
   // Timer effect for recording
   useEffect(() => {

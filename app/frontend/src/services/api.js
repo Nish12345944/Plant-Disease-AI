@@ -8,10 +8,13 @@ const API_BASE = import.meta.env.VITE_API_URL
 export async function fetchHealth() {
   try {
     const res = await fetch(`${API_BASE}/health`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      if (data && data.status) return data;
+      throw new Error(`HTTP ${res.status}`);
+    }
     return await res.json();
   } catch (err) {
-    console.error('fetchHealth error:', err);
     return { status: 'error', error: err.message };
   }
 }

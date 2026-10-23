@@ -12,6 +12,19 @@ export default defineConfig({
       "/api": {
         target: "http://127.0.0.1:8000",
         changeOrigin: true,
+        configure: (proxy) => {
+          proxy.on("error", (err, _req, res) => {
+            if (!res.headersSent && res.writeHead) {
+              res.writeHead(503, { "Content-Type": "application/json" });
+              res.end(
+                JSON.stringify({
+                  status: "starting",
+                  detail: "Backend server is booting up or unreachable.",
+                })
+              );
+            }
+          });
+        },
       },
     },
   },
