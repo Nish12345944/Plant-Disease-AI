@@ -2420,6 +2420,17 @@ a.source-citation-badge:hover {
   line-height: 1.45;
 }
 
+.treatment-crop-disclaimer {
+  font-size: 0.81rem;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 3px solid rgba(245, 158, 11, 0.5);
+  border-radius: 4px;
+  line-height: 1.4;
+}
+
 /* 2–4. Bullet Lists */
 .simple-bullet-list {
   list-style: none;

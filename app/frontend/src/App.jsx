@@ -304,7 +304,7 @@ export default function App() {
 
       // Construct AI Assistant message
       const assistantMessage = {
-        id: (Date.now() + 1).toString(),
+        id: response.id || (Date.now() + 1).toString(),
         role: 'assistant',
         text: typeof response.message === 'string'
           ? response.message
@@ -326,7 +326,15 @@ export default function App() {
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       };
 
-      setMessages((prev) => [...prev, assistantMessage]);
+      setMessages((prev) => {
+        const existingIdx = prev.findIndex((m) => m.id === assistantMessage.id);
+        if (existingIdx !== -1) {
+          const updated = [...prev];
+          updated[existingIdx] = assistantMessage;
+          return updated;
+        }
+        return [...prev, assistantMessage];
+      });
     } catch (err) {
       console.error('Chat error:', err);
       const errorMessage = {

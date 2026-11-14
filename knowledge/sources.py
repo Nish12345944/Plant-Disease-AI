@@ -3626,9 +3626,17 @@ def format_source_citation(
                 key = target_url or s.source_id
                 if key not in seen_urls:
                     seen_urls.add(key)
+                    src_title = s.title
+                    clean_c = (crop or "").strip().lower()
+                    if not clean_c:
+                        for ckw in ("tomato", "potato", "apple", "grape", "corn", "rice", "citrus", "cucumber", "bell pepper", "pepper", "eggplant", "bean"):
+                            if f" of {ckw}" in src_title.lower() or f" on {ckw}" in src_title.lower() or f" in {ckw}" in src_title.lower():
+                                if f"[{ckw.title()}" not in src_title:
+                                    src_title = f"{src_title} [{ckw.title()} Reference]"
+                                break
                     citations.append({
                         "source_id": s.source_id,
-                        "title": s.title,
+                        "title": src_title,
                         "organization": s.organization,
                         "tier": s.source_tier.value,
                         "url": target_url,

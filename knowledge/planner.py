@@ -7,7 +7,7 @@ based on reasoning decisions, user intent, and retrieved verified facts.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Optional
 
 from knowledge.schema import AnswerPlan, SourceRecord, StructuredReasoningResult
 from router.taxonomy import Intent
@@ -23,11 +23,10 @@ def plan_answer(
     Formulates a structured answer plan specifying which sections to render based
     on the user's specific response mode and retrieved agricultural facts.
     """
-    sections: list[str] = []
     facts = retrieved_data.get("facts", {})
     sources: list[SourceRecord] = retrieved_data.get("citations", [])
 
-    # Case 0: Mode-Specific Overrides based on User Instruction
+    # Case 0: Unrecognized Instruction
     if response_mode == "unrecognized_instruction":
         return AnswerPlan(
             intent=intent,
@@ -36,6 +35,63 @@ def plan_answer(
             sources_cited=[],
         )
 
+    # Case 1: Clarification needed or Incompatible Protection (Strict Priority)
+    if reasoning.status == "clarification_needed" or reasoning.is_incompatible_rejected:
+        return AnswerPlan(
+            intent=intent,
+            target_sections=["clarification_notice"],
+            retrieved_facts={"clarification_prompt": reasoning.clarification_prompt},
+            uncertainty_banner="Additional Information Required",
+        )
+
+    # Case 2: Knowledge not in verified KB
+    if reasoning.status == "unverified" or not reasoning.kb_found:
+        return AnswerPlan(
+            intent=intent,
+            target_sections=["unverified_notice"],
+            retrieved_facts={
+                "crop": reasoning.resolved_crop,
+                "disease": reasoning.resolved_disease,
+                "unverified_query": facts.get("unverified_query"),
+            },
+            sources_cited=sources,
+            uncertainty_banner="Verified Agricultural Record Not Found",
+        )
+
+    # Case 3: Uncertain visual evidence
+    if reasoning.status == "uncertain":
+        if response_mode == "treatment" or intent in (Intent.TREATMENT.value, "treatment_information"):
+            return AnswerPlan(
+                intent=intent,
+                target_sections=["uncertain_treatment_guidance"],
+                retrieved_facts=facts,
+                sources_cited=sources,
+            )
+        return AnswerPlan(
+            intent=intent,
+            target_sections=["uncertainty_notice", "observed_possibilities", "verification_advice"],
+            retrieved_facts=facts,
+            sources_cited=sources,
+            uncertainty_banner="Diagnostic Uncertainty: Low Model Confidence",
+        )
+
+    # Case 4: Healthy confirmation
+    if reasoning.status == "healthy":
+        if response_mode == "disease_identification":
+            return AnswerPlan(
+                intent=intent,
+                target_sections=["disease_healthy_identification_only"],
+                retrieved_facts=facts,
+                sources_cited=[],
+            )
+        return AnswerPlan(
+            intent=intent,
+            target_sections=["healthy_confirmation", "crop_care_guidance"],
+            retrieved_facts=facts,
+            sources_cited=sources,
+        )
+
+    # Case 5: Mode-Specific Single-Aspect Dispatches
     if response_mode == "crop_identification":
         return AnswerPlan(
             intent=intent,
@@ -45,28 +101,64 @@ def plan_answer(
         )
 
     if response_mode == "disease_identification":
-        if reasoning.status == "healthy":
+        # If visual inference was used (e.g. Mode 1 with uploaded image: "What disease is this?")
+        if reasoning.visual_evidence_used:
             return AnswerPlan(
                 intent=intent,
-                target_sections=["disease_healthy_identification_only"],
+                target_sections=["disease_identification_only"],
                 retrieved_facts=facts,
                 sources_cited=[],
             )
-        elif reasoning.status == "uncertain":
-            return AnswerPlan(
-                intent=intent,
-                target_sections=["disease_uncertain_identification_only"],
-                retrieved_facts=facts,
-                sources_cited=[],
-            )
+        # If pure text question ("What is early blight?"): explain disease and key symptoms
         return AnswerPlan(
             intent=intent,
-            target_sections=["disease_identification_only"],
+            target_sections=["disease_overview", "primary_symptoms"],
             retrieved_facts=facts,
-            sources_cited=[],
+            sources_cited=sources,
         )
 
-    if response_mode == "general_plant_info":
+    # Prevention Intent (prioritize over generic treatment if intent is PREVENTION)
+    if intent in (Intent.PREVENTION.value,):
+        return AnswerPlan(
+            intent=intent,
+            target_sections=["prevention_context_header", "prevention_guidelines"],
+            retrieved_facts=facts,
+            sources_cited=sources,
+        )
+
+    # Disease explanation / symptom inquiries without treatment request
+    if intent in (Intent.IDENTIFY_DISEASE.value, Intent.SYMPTOMS.value):
+        return AnswerPlan(
+            intent=intent,
+            target_sections=["disease_overview", "primary_symptoms"],
+            retrieved_facts=facts,
+            sources_cited=sources,
+        )
+
+    # Treatment request (Mode 3 or TREATMENT intent)
+    if response_mode == "treatment" or intent in (Intent.TREATMENT.value, "treatment_information"):
+        return AnswerPlan(
+            intent=intent,
+            target_sections=[
+                "treatment_context_header",
+                "curability_section",
+                "treatment_control_options",
+                "precautions_section",
+                "prevention_section",
+            ],
+            retrieved_facts=facts,
+            sources_cited=sources,
+        )
+
+    if response_mode == "general_plant_info" or intent in (Intent.GENERAL_PLANT_INFO.value, "general_plant_information"):
+        # If user asked about a disease rather than a crop, show disease overview
+        if reasoning.resolved_disease and not reasoning.resolved_crop:
+            return AnswerPlan(
+                intent=intent,
+                target_sections=["disease_overview", "primary_symptoms"],
+                retrieved_facts=facts,
+                sources_cited=sources,
+            )
         return AnswerPlan(
             intent=intent,
             target_sections=["crop_overview", "optimal_growing_conditions", "watering_and_soil"],
@@ -74,144 +166,56 @@ def plan_answer(
             sources_cited=sources,
         )
 
-    if response_mode == "treatment":
-        if reasoning.status == "uncertain":
-            return AnswerPlan(
-                intent=intent,
-                target_sections=["uncertain_treatment_guidance"],
-                retrieved_facts=facts,
-                sources_cited=sources,
-            )
+    if intent in (Intent.CAUSE.value,):
         return AnswerPlan(
             intent=intent,
             target_sections=[
-                "treatment_context_header",
-                "cultural_management",
-                "sanitation_practices",
-                "environmental_controls",
-                "biological_options",
-                "chemical_guidance",
-                "prevention_summary",
+                "condition_identification",
+                "causal_agent_and_type",
+                "favorable_conditions",
+                "spread_mechanism",
             ],
             retrieved_facts=facts,
             sources_cited=sources,
         )
 
-    # Case 1: Clarification needed or Incompatible
-    if reasoning.status == "clarification_needed" or reasoning.is_incompatible_rejected:
+    if intent in (Intent.DIAGNOSE_PLANT.value, "diagnosis"):
         return AnswerPlan(
             intent=intent,
-            target_sections=["clarification_notice"],
-            retrieved_facts={"clarification_prompt": reasoning.clarification_prompt},
-            uncertainty_banner="Additional Information Required",
-        )
-
-    # Case 2: Healthy confirmation
-    if reasoning.status == "healthy":
-        sections = ["healthy_confirmation", "crop_care_guidance"]
-        return AnswerPlan(
-            intent=intent,
-            target_sections=sections,
+            target_sections=[
+                "diagnosis_summary",
+                "observed_symptoms",
+                "primary_cause",
+                "immediate_action_steps",
+            ],
             retrieved_facts=facts,
             sources_cited=sources,
         )
 
-    # Case 3: Uncertain visual evidence
-    if reasoning.status == "uncertain":
-        sections = ["uncertainty_notice", "observed_possibilities", "verification_advice"]
+    if intent in (Intent.IDENTIFY_CROP.value, "plant_identification"):
         return AnswerPlan(
             intent=intent,
-            target_sections=sections,
+            target_sections=["crop_identification", "optimal_growing_conditions"],
             retrieved_facts=facts,
             sources_cited=sources,
-            uncertainty_banner="Diagnostic Uncertainty: Low Model Confidence",
         )
 
-    # Case 4: Knowledge not in verified KB
-    if reasoning.status == "unverified" or not reasoning.kb_found:
+    if intent in (Intent.CHECK_HEALTH.value,):
         return AnswerPlan(
             intent=intent,
-            target_sections=["unverified_notice"],
-            retrieved_facts={
-                "crop": reasoning.resolved_crop,
-                "disease": reasoning.resolved_disease,
-            },
+            target_sections=["health_evaluation", "watering_and_soil"],
+            retrieved_facts=facts,
             sources_cited=sources,
-            uncertainty_banner="Verified Agricultural Record Not Found",
         )
 
-    # Case 5: Standard Grounded Knowledge Answering
-    if intent in (Intent.TREATMENT.value, "treatment_information"):
-        sections = [
-            "condition_identification",
-            "cultural_management",
-            "sanitation_practices",
-            "environmental_controls",
-            "biological_options",
-            "chemical_guidance",
-            "prevention_summary",
-        ]
-    elif intent in (Intent.PREVENTION.value,):
-        sections = [
-            "condition_identification",
-            "preventive_measures",
-            "cultural_practices",
-        ]
-    elif intent in (Intent.CAUSE.value,):
-        sections = [
-            "condition_identification",
-            "causal_agent_and_type",
-            "favorable_conditions",
-            "spread_mechanism",
-        ]
-    elif intent in (Intent.SYMPTOMS.value,):
-        sections = [
-            "condition_identification",
-            "primary_symptoms",
-            "distinguishing_features",
-            "affected_plant_parts",
-        ]
-    elif intent in (Intent.IDENTIFY_DISEASE.value,):
-        sections = [
-            "condition_identification",
-            "causal_agent_and_type",
-            "key_symptoms_summary",
-        ]
-    elif intent in (Intent.DIAGNOSE_PLANT.value, "diagnosis"):
-        sections = [
-            "diagnosis_summary",
-            "observed_symptoms",
-            "primary_cause",
-            "immediate_action_steps",
-        ]
-    elif intent in (Intent.GENERAL_PLANT_INFO.value, "general_plant_information"):
-        sections = [
-            "crop_overview",
-            "optimal_growing_conditions",
-            "watering_and_soil",
-            "common_disease_risks",
-        ]
-    elif intent in (Intent.IDENTIFY_CROP.value, "plant_identification"):
-        sections = [
-            "crop_identification",
-            "optimal_growing_conditions",
-        ]
-    elif intent in (Intent.CHECK_HEALTH.value,):
-        sections = [
-            "health_evaluation",
-            "watering_and_soil",
-        ]
-    else:
-        # Default overview
-        sections = [
+    # Default overview
+    return AnswerPlan(
+        intent=intent,
+        target_sections=[
             "condition_identification",
             "primary_symptoms",
             "management_overview",
-        ]
-
-    return AnswerPlan(
-        intent=intent,
-        target_sections=sections,
+        ],
         retrieved_facts=facts,
         sources_cited=sources,
     )

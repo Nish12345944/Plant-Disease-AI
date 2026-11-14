@@ -166,7 +166,8 @@ def reason_agricultural_query(
         if d_rec is not None:
             has_kb = True
             effective_disease = d_rec.disease_slug
-            effective_crop = effective_crop or d_rec.crop
+            # Do NOT assume or hardcode a crop if user/context did not explicitly specify one
+            # effective_crop remains None unless explicitly provided
     elif effective_crop:
         has_kb = kb.get_crop(effective_crop) is not None
 

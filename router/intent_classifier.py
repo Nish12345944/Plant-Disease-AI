@@ -31,6 +31,8 @@ INTENT_PATTERNS = {
         r"\b(identify (the |this )?(disease|infection))\b",
         r"\b(which disease|what disease)\b",
         r"\b(koun si bimari|kon si bimari)\b",
+        r"\b(what is|what's|explain|describe|tell me about) (a |an |the )?([a-z_ ]+ (blight|rust|rot|spot|mildew|virus|wilt|scab|canker|disease|infection))\b",
+        r"\b(what is|what's|explain|describe|tell me about) (early blight|late blight|powdery mildew|downy mildew|leaf spot|bacterial spot|septoria|anthracnose|black rot|apple scab|cedar rust)\b",
     ],
     Intent.TREATMENT: [
         r"\b(how (do i|to|can i) (treat|cure|control|manage|get rid of|heal|fix))\b",
@@ -43,7 +45,7 @@ INTENT_PATTERNS = {
         r"\b(what to do|what do)\b",
     ],
     Intent.PREVENTION: [
-        r"\b(how (can i|to) (prevent|avoid|stop|protect|reduce))\b",
+        r"\b(how (can i|to|do i) (prevent|avoid|stop|protect|reduce))\b",
         r"\b(prevention|preventative|precaution|protection) (tips|methods|guide|measures)\b",
         r"\b(how to (stop|protect) (from|spreading))\b",
         r"\b(roktham|bachav|kaise bache)\b",
@@ -139,13 +141,14 @@ def classify_intent_from_text(
         elif entities.action == "diagnosis":
             matched_scores[Intent.DIAGNOSE_PLANT] = matched_scores.get(Intent.DIAGNOSE_PLANT, 0.0) + 1.2
 
-    # Factor in Symptom Mentions without explicit action (e.g. "tomato leaves are yellow") -> DIAGNOSE_PLANT
-    if entities.symptoms and not matched_scores:
-        matched_scores[Intent.DIAGNOSE_PLANT] = 1.0
-
-    # If disease is named with no explicit action -> IDENTIFY_DISEASE / DIAGNOSE_PLANT
+    # If disease is named with no explicit action -> IDENTIFY_DISEASE
     if entities.disease and not matched_scores:
-        matched_scores[Intent.IDENTIFY_DISEASE] = 0.9
+        is_disease_query = any(w in text for w in ("what is", "what's", "explain", "describe", "tell me about", "about"))
+        matched_scores[Intent.IDENTIFY_DISEASE] = 2.0 if is_disease_query else 1.2
+
+    # Factor in Symptom Mentions without explicit action (e.g. "tomato leaves are yellow") -> DIAGNOSE_PLANT
+    elif entities.symptoms and not matched_scores:
+        matched_scores[Intent.DIAGNOSE_PLANT] = 1.0
 
     # If no intent matched:
     if not matched_scores:

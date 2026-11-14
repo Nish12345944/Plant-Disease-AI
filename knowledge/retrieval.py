@@ -146,8 +146,9 @@ def retrieve_relevant_knowledge(
             facts["disease_name"] = d_rec.common_name
             facts["causal_agent"] = d_rec.scientific_name_causal_agent
             facts["disease_type"] = d_rec.disease_type
+            facts["symptoms"] = [f.to_dict() for f in d_rec.symptoms]
             facts["key_symptoms"] = [f.to_dict() for f in d_rec.symptoms[:2]]
-            for f in d_rec.symptoms[:2]:
+            for f in d_rec.symptoms:
                 collected_sources.extend(f.source_ids)
 
     elif intent in (Intent.DIAGNOSE_PLANT.value, "diagnosis"):
@@ -178,8 +179,12 @@ def retrieve_relevant_knowledge(
             for f in c_rec.watering_guidelines:
                 collected_sources.extend(f.source_ids)
         elif d_rec:
-            facts["crop_name"] = d_rec.crop.title()
-            facts["related_disease"] = d_rec.common_name
+            facts["disease_name"] = d_rec.common_name
+            facts["causal_agent"] = d_rec.scientific_name_causal_agent
+            facts["disease_type"] = d_rec.disease_type
+            facts["symptoms"] = [f.to_dict() for f in d_rec.symptoms]
+            for f in d_rec.symptoms:
+                collected_sources.extend(f.source_ids)
 
     elif intent in (Intent.CHECK_HEALTH.value,):
         if c_rec:
@@ -190,7 +195,7 @@ def retrieve_relevant_knowledge(
 
     # Populate structured treatment details
     treatment_data = get_disease_treatment(
-        crop=crop or (d_rec.crop if d_rec else None),
+        crop=crop,
         disease=disease or (d_rec.disease_slug if d_rec else None),
         d_rec=d_rec,
         kb=kb,
@@ -198,23 +203,13 @@ def retrieve_relevant_knowledge(
     result["treatment"] = treatment_data
     facts["treatment"] = treatment_data
 
-    # Populate structured disease insights (Key Symptoms, Pathogen, Conditions)
-    insights_data = get_disease_insights(
-        crop=crop or (d_rec.crop if d_rec else None),
-        disease=disease or (d_rec.disease_slug if d_rec else None),
-        d_rec=d_rec,
-        kb=kb,
-    )
-    result["disease_insights"] = insights_data
-    facts["disease_insights"] = insights_data
-
     # Clean and deduplicate source citations
     result["facts"] = facts
     result["source_ids"] = list(dict.fromkeys(collected_sources))
     result["citations"] = format_source_citation(
         result["source_ids"],
         disease_slug=d_rec.disease_slug if d_rec else (disease or ""),
-        crop=crop or (d_rec.crop if d_rec else ""),
+        crop=crop,
         disease=d_rec.common_name if d_rec else (disease or ""),
         d_rec=d_rec,
     )

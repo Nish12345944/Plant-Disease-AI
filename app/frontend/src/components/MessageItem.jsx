@@ -227,6 +227,32 @@ const MessageItem = React.forwardRef(function MessageItem(
     return Object.values(groups);
   }, [model2]);
 
+  const isTreatmentCardRendered = Boolean(
+    visibleCards.treatment !== false &&
+    treatmentData &&
+    (hasDisease || (treatmentData.has_treatment && !isUncertain)) &&
+    !isSafeguardTriggered
+  );
+
+  const treatmentHeading = useMemo(() => {
+    if (!treatmentData) return '';
+    const rawD = treatmentData.disease_name || diseaseName;
+    if (!rawD || rawD === 'Disease Detected' || rawD === 'Inconclusive — verify image' || rawD === 'No disease detected') {
+      return '';
+    }
+    let cleanD = typeof rawD === 'string' ? rawD : (rawD?.name || rawD?.label || String(rawD));
+    if (!treatmentData.crop) {
+      for (const pfx of ['Tomato ', 'Potato ', 'Apple ', 'Grape ', 'Corn ', 'Cucumber ', 'Pepper ', 'Bell Pepper ', 'Bean ', 'French Bean ', 'Cherry ']) {
+        if (cleanD.startsWith(pfx)) {
+          cleanD = cleanD.slice(pfx.length).trim();
+          break;
+        }
+      }
+    }
+    const cropSuffix = treatmentData.crop ? ` ON ${formatCropDisplay(treatmentData.crop).toUpperCase()}` : '';
+    return `${cleanD.toUpperCase()}${cropSuffix}`;
+  }, [treatmentData, diseaseName]);
+
   return (
     <div ref={ref} className="message-wrapper assistant animate-slide-up">
       <div className="message-avatar assistant-avatar">
@@ -443,7 +469,7 @@ const MessageItem = React.forwardRef(function MessageItem(
         {/* ========================================================
             SECTION 2.5: 💊 SIMPLIFIED TREATMENT & CURE (5 SECTIONS)
             ======================================================== */}
-        {visibleCards.treatment !== false && treatmentData && (hasDisease || (treatmentData.has_treatment && !isUncertain)) && !isSafeguardTriggered && (
+        {isTreatmentCardRendered && (
           <div className={`model-card treatment-card-simple curability-${treatmentData.curability_badge || 'manageable'}`}>
             <div className="model-card-header">
               <div className="model-badge-row">
@@ -451,11 +477,20 @@ const MessageItem = React.forwardRef(function MessageItem(
                   treatmentData.curability_badge === 'curable' ? '#10b981' :
                   treatmentData.curability_badge === 'no_cure' ? '#f43f5e' : '#f59e0b'
                 } />
-                <span className="model-title">TREATMENT & CURE</span>
+                <span className="model-title">
+                  {treatmentHeading ? `TREATMENT & CURE: ${treatmentHeading}` : 'TREATMENT & CURE'}
+                </span>
               </div>
             </div>
 
             <div className="model-card-body treatment-simple-body">
+              {/* Optional note when crop is not specified */}
+              {!treatmentData.crop && (
+                <div className="treatment-crop-disclaimer">
+                  <span>*(Note: Recommendations can vary by host crop. If treating a specific plant, please specify the crop name.)*</span>
+                </div>
+              )}
+
               {/* 1. Curable? */}
               <div className="treatment-simple-section curable-section">
                 <span className="simple-section-title">1. Curable?</span>
@@ -595,36 +630,53 @@ const MessageItem = React.forwardRef(function MessageItem(
                 return false;
               }
 
-              if (treatmentData && (hasDisease || treatmentData.has_treatment)) {
+              // Filter out duplicate treatment, curability, prevention, and source sections if Treatment Card is rendered
+              if (isTreatmentCardRendered) {
                 if (
+                  clean.startsWith('treatment and management for') ||
+                  clean.startsWith('management and care guidance for') ||
+                  clean.startsWith('*(note: recommendations can vary') ||
+                  clean.startsWith('(note: recommendations can vary') ||
+                  clean.startsWith('**1. curable') ||
+                  clean.startsWith('1. curable') ||
+                  clean.startsWith('**2. treatment') ||
+                  clean.startsWith('2. treatment') ||
+                  clean.startsWith('**3. precautions') ||
+                  clean.startsWith('3. precautions') ||
+                  clean.startsWith('**4. prevention') ||
+                  clean.startsWith('4. prevention') ||
+                  clean.startsWith('**prevention guidelines') ||
+                  clean.startsWith('prevention guidelines:') ||
                   clean.startsWith('**recommended management') ||
                   clean.startsWith('*1. cultural') ||
                   clean.startsWith('*2. field sanitation') ||
                   clean.startsWith('*3. moisture') ||
                   clean.startsWith('*4. biological') ||
                   clean.startsWith('*5. sourced chemical') ||
-                  clean.startsWith('**prevention guidelines') ||
                   clean.startsWith('---') ||
-                  clean.startsWith('**authoritative sources:')
+                  clean.startsWith('**authoritative sources:') ||
+                  clean.startsWith('authoritative sources:')
                 ) {
                   return false;
                 }
               }
 
-              // Ensure symptoms, causes, pathogen, and environmental conditions are not reintroduced as long text paragraphs
-              if (
-                clean.startsWith('**key diagnostic symptoms') ||
-                clean.startsWith('key diagnostic symptoms:') ||
-                clean.startsWith('**causes & favorable') ||
-                clean.startsWith('causes & favorable') ||
-                clean.startsWith('**distinguishing characteristics') ||
-                clean.startsWith('distinguishing characteristics:') ||
-                clean.startsWith('**spread & transmission') ||
-                clean.startsWith('spread & transmission:') ||
-                clean.startsWith('**overwintering') ||
-                clean.startsWith('overwintering & recurrence:')
-              ) {
-                return false;
+              // When visual media cards (Model 1 or Model 2) are present, do not reintroduce symptoms or causes as long text paragraphs
+              if (hasPlantResult || hasDiseaseModel) {
+                if (
+                  clean.startsWith('**key diagnostic symptoms') ||
+                  clean.startsWith('key diagnostic symptoms:') ||
+                  clean.startsWith('**causes & favorable') ||
+                  clean.startsWith('causes & favorable') ||
+                  clean.startsWith('**distinguishing characteristics') ||
+                  clean.startsWith('distinguishing characteristics:') ||
+                  clean.startsWith('**spread & transmission') ||
+                  clean.startsWith('spread & transmission:') ||
+                  clean.startsWith('**overwintering') ||
+                  clean.startsWith('overwintering & recurrence:')
+                ) {
+                  return false;
+                }
               }
 
               return Boolean(clean);
@@ -642,7 +694,7 @@ const MessageItem = React.forwardRef(function MessageItem(
                 ))}
               </div>
               {/* Only show bottom sources if treatment panel was not rendered */}
-              {(!treatmentData || (!hasDisease && !treatmentData.has_treatment)) && (() => {
+              {(!isTreatmentCardRendered) && (() => {
                 const activeSources = (Array.isArray(data.knowledge_sources) && data.knowledge_sources.length > 0)
                   ? data.knowledge_sources
                   : (Array.isArray(data.knowledge?.sources) && data.knowledge.sources.length > 0)

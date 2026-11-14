@@ -319,7 +319,8 @@ def get_disease_treatment(
         or "pest_damage" in slug
     )
 
-    crop_name_disp = (d_rec.crop or clean_crop or "plant").replace("_", " ").title()
+    has_explicit_crop = bool(clean_crop and clean_crop not in ("unknown", "plant", "none", ""))
+    crop_name_disp = clean_crop.replace("_", " ").title() if has_explicit_crop else None
 
     if is_incurable:
         can_it_be_cured = "no established cure"
@@ -378,6 +379,8 @@ def get_disease_treatment(
                     break
         if not san_step:
             san_step = "Prune and dispose of infected leaves or rotting fruit during dry weather; never compost them."
+        if not has_explicit_crop:
+            san_step = san_step.replace("indeterminate tomatoes", "tall plants").replace("tomatoes", "plants").replace("tomato", "plant")
         cure_treatment.append(san_step)
 
         # 2. Moisture / canopy cultural management step
@@ -392,6 +395,8 @@ def get_disease_treatment(
                 break
         if not cult_step:
             cult_step = "Water only at the plant base using drip irrigation to keep foliage completely dry."
+        if not has_explicit_crop:
+            cult_step = cult_step.replace("indeterminate tomatoes", "tall plants").replace("tomatoes", "plants").replace("tomato", "plant")
         cure_treatment.append(cult_step)
 
         # 3. Chemical / biological guidance (only if supported by verified record)
@@ -445,7 +450,11 @@ def get_disease_treatment(
     # -------------------------------------------------------------------------
     precautions: list[str] = [
         "Always follow the pesticide label strictly for required protective equipment (PPE), dilution rates, and harvest waiting times.",
-        "Verify that any chemical or biological product is legally registered and approved for this crop in your region.",
+        (
+            f"Verify that any chemical or biological product is legally registered and approved for {crop_name_disp} in your region."
+            if has_explicit_crop
+            else "Verify that any chemical or biological product is legally registered and approved for your specific crop in your region."
+        ),
     ]
     if is_incurable:
         precautions.append("Do not apply chemical fungicides or antibiotics, as they cannot cure viral infections or systemic vascular wilts.")
@@ -462,11 +471,21 @@ def get_disease_treatment(
     for p in d_rec.prevention:
         txt = _to_concise_sentence(_fact_to_str(p))
         if txt and txt.lower() not in seen_ct and not any(w in txt.lower() for w in ("spray", "chemical", "label")):
+            if not has_explicit_crop:
+                txt = txt.replace("tomato stakes", "plant stakes").replace("Tomato stakes", "Plant stakes")
+                txt = txt.replace("indeterminate tomatoes", "tall plants").replace("Indeterminate tomatoes", "Tall plants")
+                txt = txt.replace("tomato crops", "susceptible crops").replace("Tomato crops", "Susceptible crops")
+                txt = txt.replace("tomatoes", "host crops").replace("Tomatoes", "Host crops")
+                txt = txt.replace("tomato", "host plant").replace("Tomato", "Host plant")
             prevention.append(txt)
 
     # Standard evidence-based prevention practices if record has generic or few entries
+    if crop_name_disp:
+        rotation_statement = f"Rotate {crop_name_disp.lower()} crops with non-susceptible plant families every 2 to 3 years."
+    else:
+        rotation_statement = "Rotate susceptible host crops with non-susceptible plant families every 2 to 3 years."
     standard_preventions = [
-        f"Rotate {crop_name_disp.lower()} crops with non-susceptible plant families every 2 to 3 years.",
+        rotation_statement,
         "Plant certified disease-free seeds, clean transplants, or resistant crop varieties.",
         "Space plants generously to promote good ventilation and rapid leaf drying.",
         "Clean up and destroy all fallen leaf litter and plant residue after the final harvest.",
@@ -497,7 +516,7 @@ def get_disease_treatment(
     citations = format_source_citation(
         d_rec.sources,
         disease_slug=d_rec.disease_slug,
-        crop=d_rec.crop,
+        crop=clean_crop if has_explicit_crop else None,
         disease=d_rec.common_name,
         d_rec=d_rec,
     )
@@ -518,6 +537,13 @@ def get_disease_treatment(
 
     biological_opts = [_fact_to_str(b) for b in d_rec.management.biological if _fact_to_str(b)]
     chemical_opts = [_fact_to_str(ch) for ch in d_rec.management.chemical_guidelines if _fact_to_str(ch)]
+
+    d_disp_name = d_rec.common_name
+    if not has_explicit_crop and d_disp_name:
+        for ckw in ("Tomato ", "Potato ", "Apple ", "Grape ", "Corn ", "Cucumber ", "Pepper ", "Bell Pepper ", "Bean ", "French Bean ", "Cherry "):
+            if d_disp_name.startswith(ckw):
+                d_disp_name = d_disp_name[len(ckw):].strip()
+                break
 
     return {
         # Core simplified 5-section layout payload
@@ -541,9 +567,9 @@ def get_disease_treatment(
             "chemical": chemical_opts,
         },
         "application_precautions": precautions,
-        "crop": d_rec.crop,
+        "crop": clean_crop if has_explicit_crop else None,
         "disease": d_rec.disease_slug,
-        "disease_name": d_rec.common_name,
+        "disease_name": d_disp_name,
         "is_healthy": False,
         "is_uncertain": False,
     }

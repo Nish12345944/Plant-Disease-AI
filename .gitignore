@@ -47,6 +47,9 @@ scratch/
 
 .idea/
 
+# Frontend build artifacts
+app/frontend/dist/
+
 # OS
 .DS_Store
 Thumbs.db

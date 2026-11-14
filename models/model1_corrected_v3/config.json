@@ -1,0 +1,26 @@
+{
+  "model_architecture": "efficientnet_b2",
+  "num_classes": 52,
+  "image_size": 224,
+  "mean": [
+    0.485,
+    0.456,
+    0.406
+  ],
+  "std": [
+    0.229,
+    0.224,
+    0.225
+  ],
+  "training_samples": 24289,
+  "val_samples": 2095,
+  "test_samples": 1829,
+  "best_epoch": 14,
+  "best_val_macro_f1": 0.8763933965297557,
+  "best_val_accuracy": 0.8801909307875895,
+  "test_top1_accuracy": 0.8922908693275013,
+  "test_top3_accuracy": 0.9546200109349372,
+  "test_macro_f1": 0.8826806509618174,
+  "test_weighted_f1": 0.8915852579717144
+}
+

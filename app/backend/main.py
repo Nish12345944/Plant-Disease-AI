@@ -582,7 +582,15 @@ async def unified_chat_endpoint(
     elif typed_clean:
         user_instruction = typed_clean
     elif spoken_clean:
-        user_instruction = spoken_clean
+        if has_video and audio_file is None and not typed_clean:
+            # Ambient/background sound extracted from video container; check if user spoke a real agricultural query
+            ambient_mode = detect_response_mode(spoken_clean, has_media=True)
+            if ambient_mode.is_unrecognized:
+                user_instruction = ""
+            else:
+                user_instruction = spoken_clean
+        else:
+            user_instruction = spoken_clean
     else:
         user_instruction = ""
 

@@ -27,21 +27,19 @@ def _resolve_model_path(env_var: str, default_subpath: Path) -> Path:
 # Flag to permit legacy / test checkpoints (disabled by default in production)
 ALLOW_LEGACY_MODEL1 = os.environ.get("ALLOW_LEGACY_MODEL1", "false").lower() in ("true", "1", "yes")
 
-# Model 1 Paths (Retrained V3 EfficientNet-B2 46-Crop Classifier for Production)
+# Model 1 Paths (Model 1 Corrected V3 EfficientNet-B2 52-Crop Classifier for Production)
 MODEL1_CHECKPOINT = _resolve_model_path(
-    "MODEL1_CHECKPOINT", PROJECT_ROOT / "models" / "model1_retrained_v3" / "best_model.pth"
+    "MODEL1_CHECKPOINT", PROJECT_ROOT / "models" / "model1_corrected_v3" / "best_model.pth"
 )
 MODEL1_CLASS_MAPPING = _resolve_model_path(
-    "MODEL1_CLASS_MAPPING", PROJECT_ROOT / "models" / "model1_retrained_v3" / "class_mapping.json"
+    "MODEL1_CLASS_MAPPING", PROJECT_ROOT / "models" / "model1_expanded_v2" / "class_mapping.json"
 )
 MODEL1_CONFIG = _resolve_model_path(
-    "MODEL1_CONFIG", PROJECT_ROOT / "models" / "model1_retrained_v3" / "config.json"
+    "MODEL1_CONFIG", PROJECT_ROOT / "models" / "model1_corrected_v3" / "config.json"
 )
 MODEL1_PROTOTYPES = _resolve_model_path(
     "MODEL1_PROTOTYPES",
-    PROJECT_ROOT / "models" / "model1_retrained_v3" / "crop_prototypes.npz"
-    if "model1_retrained_v3" in str(MODEL1_CHECKPOINT)
-    else PROJECT_ROOT / "models" / "model1_expanded" / "crop_prototypes.npz"
+    PROJECT_ROOT / "models" / "model1_corrected_v3" / "crop_prototypes.npz"
 )
 
 # Model 2 Paths (Retrained V3 152-Class Disease Classifier for Production)

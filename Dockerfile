@@ -53,13 +53,13 @@ ENV PYTHONUNBUFFERED=1 \
     PORT=10000 \
     EAGER_LOAD_MODELS=false \
     WHISPER_MODEL_SIZE=tiny \
-    MODEL1_CHECKPOINT=models/model1_expanded/best_model.pth \
-    MODEL1_CLASS_MAPPING=models/model1_expanded/class_mapping.json \
-    MODEL1_CONFIG=models/model1_expanded/config.json \
-    MODEL2_CHECKPOINT=models/model2_retraining_v2/best_model.pth \
-    MODEL2_CLASS_MAPPING=models/model2_retraining_v2/class_mapping.json \
-    MODEL2_CONFIG=models/model2_retraining_v2/config.json \
-    CROP_DISEASE_MAPPING=models/model2_retraining_v2/crop_disease_mapping.json
+    MODEL1_CHECKPOINT=models/model1_corrected_v3/best_model.pth \
+    MODEL1_CLASS_MAPPING=models/model1_expanded_v2/class_mapping.json \
+    MODEL1_CONFIG=models/model1_corrected_v3/config.json \
+    MODEL1_PROTOTYPES=models/model1_corrected_v3/crop_prototypes.npz \
+    MODEL2_CHECKPOINT=models/model2_retrained_v3/best_model.pth \
+    MODEL2_CLASS_MAPPING=models/model2_retrained_v3/class_mapping.json \
+    CROP_DISEASE_MAPPING=models/model2_retrained_v3/crop_disease_mapping.json
 
 EXPOSE 10000
 

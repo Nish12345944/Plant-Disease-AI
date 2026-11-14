@@ -30,7 +30,8 @@ def build_response(
     sources = plan.sources_cited
     lines: list[str] = []
 
-    if not crop:
+    has_explicit_crop = bool(crop and crop.strip().lower() not in ("unknown", "plant", "none", ""))
+    if not has_explicit_crop:
         crop_title = "Plant"
     else:
         clean_c = crop.lower().strip()
@@ -269,139 +270,171 @@ def build_response(
     # -----------------------------------------------------------------------
     # 5. Standard Domain-Specific Composition
     # -----------------------------------------------------------------------
+    treatment = facts.get("treatment") or get_disease_treatment(
+        crop=crop if has_explicit_crop else None,
+        disease=disease,
+        status=status or reasoning.status,
+    )
 
-    # Condition Identification Header:
-    # Omitted when visual_evidence is present because the structured Plant Identification
-    # and Disease Detection cards already display the crop, condition, and confidence.
-    if not visual_evidence and ("condition_identification" in sections or "diagnosis_summary" in sections):
+    # 5.1 Disease Overview / Condition Identification Header
+    if "disease_overview" in sections or (not visual_evidence and ("condition_identification" in sections or "diagnosis_summary" in sections)):
         causal = facts.get("causal_agent")
         type_str = facts.get("disease_type")
+        d_name = disease_title or facts.get("disease_name") or "Plant Disease"
+        if not has_explicit_crop and d_name:
+            for ckw in ("Tomato ", "Potato ", "Apple ", "Grape ", "Corn ", "Cucumber ", "Pepper ", "Bell Pepper ", "Bean ", "Cherry "):
+                if d_name.startswith(ckw):
+                    d_name = d_name[len(ckw):].strip()
 
-        intro = f"The identified condition on your **{crop_title}** is **{disease_title or 'Disease'}**."
+        if has_explicit_crop:
+            lines.append(f"**{d_name}** on **{crop_title}**:")
+        else:
+            lines.append(f"**{d_name}**:")
+
         if causal and type_str:
-            intro += f" It is a {type_str.lower()} disease caused by the pathogen *{causal}*."
-        lines.append(intro)
+            lines.append(f"\n**Overview:**\n**{d_name}** is a {type_str.lower()} disease caused by the pathogen *{causal}*.")
+        elif causal:
+            lines.append(f"\n**Overview:**\n**{d_name}** is caused by the pathogen *{causal}*.")
 
-    # Symptoms Section
-    if not visual_evidence and ("primary_symptoms" in sections or "observed_symptoms" in sections or "symptoms" in facts):
-        symptom_list = facts.get("symptoms", [])
+    # 5.2 Diagnostic Symptoms Section (omitted when visual evidence cards already show diagnosis)
+    if not visual_evidence and ("primary_symptoms" in sections or "observed_symptoms" in sections):
+        symptom_list = facts.get("symptoms", []) or facts.get("key_symptoms", [])
         if symptom_list:
             lines.append("\n**Key Diagnostic Symptoms:**")
-            for s in symptom_list:
-                lines.append(f"• {s['statement']}")
+            for s in symptom_list[:4]:
+                txt = s if isinstance(s, str) else s.get("statement", str(s))
+                lines.append(f"• {txt}")
 
         dist_list = facts.get("distinguishing_features", [])
         if dist_list and "distinguishing_features" in sections:
             lines.append("\n**Distinguishing Characteristics:**")
-            for d in dist_list:
-                lines.append(f"• {d['statement']}")
+            for d in dist_list[:2]:
+                txt = d if isinstance(d, str) else d.get("statement", str(d))
+                lines.append(f"• {txt}")
 
         parts = facts.get("affected_parts", [])
         if parts and "affected_plant_parts" in sections:
             lines.append(f"• **Affected Plant Parts:** {', '.join(parts).title()}")
 
-    # Causes and Environmental Conditions
-    if not visual_evidence and ("favorable_conditions" in sections or "causes_and_conditions" in facts or "primary_cause" in sections):
+    # 5.3 Causes & Environmental Conditions
+    if not visual_evidence and ("favorable_conditions" in sections or "primary_cause" in sections or "causal_agent_and_type" in sections):
         cond_list = facts.get("causes_and_conditions", [])
         if cond_list:
             lines.append("\n**Causes & Favorable Environmental Conditions:**")
-            for c in cond_list:
-                lines.append(f"• {c['statement']}")
+            for c in cond_list[:2]:
+                txt = c if isinstance(c, str) else c.get("statement", str(c))
+                lines.append(f"• {txt}")
 
-    # Spread and Transmission
-    if not visual_evidence and ("spread_mechanism" in sections or "spread_and_transmission" in facts):
+    # 5.4 Spread & Transmission
+    if not visual_evidence and ("spread_mechanism" in sections):
         spread_list = facts.get("spread_and_transmission", [])
         if spread_list:
             lines.append("\n**Spread & Transmission:**")
-            for sp in spread_list:
-                lines.append(f"• {sp['statement']}")
+            for sp in spread_list[:2]:
+                txt = sp if isinstance(sp, str) else sp.get("statement", str(sp))
+                lines.append(f"• {txt}")
 
-    # Recurrence and Survival
-    if not visual_evidence and ("recurrence_and_survival" in facts):
+    # 5.5 Recurrence & Survival
+    if not visual_evidence and ("recurrence_and_survival" in sections):
         recur_list = facts.get("recurrence_and_survival", [])
         if recur_list:
             lines.append("\n**Overwintering & Recurrence:**")
-            for r in recur_list:
-                lines.append(f"• {r['statement']}")
+            for r in recur_list[:2]:
+                txt = r if isinstance(r, str) else r.get("statement", str(r))
+                lines.append(f"• {txt}")
 
-    # Management / Treatment Sections (included when text-only OR when treatment is explicitly requested)
-    if not visual_evidence or "treatment_context_header" in sections:
-        if "treatment_context_header" in sections:
-            if disease_title:
-                lines.append(f"Management and treatment guidance for **{disease_title}** on **{crop_title}**:")
+    # 5.6 Treatment Context Header
+    if "treatment_context_header" in sections:
+        if disease_title:
+            if has_explicit_crop:
+                lines.append(f"Treatment and management for **{disease_title}** on **{crop_title}**:")
             else:
-                lines.append(f"Management and care guidance for **{crop_title}**:")
+                lines.append(f"Treatment and management for **{disease_title}**:")
+                lines.append("*(Note: Recommendations can vary by host crop. If treating a specific plant, please specify the crop name.)*")
+        else:
+            lines.append(f"Management and care guidance for **{crop_title}**:")
 
-        mgmt = facts.get("management", {})
-        if mgmt:
-            lines.append("\n**Recommended Management & Treatment Strategies:**")
+    # 5.7 Curability Section (Treatment Section 1)
+    if "curability_section" in sections:
+        curable_simple = treatment.get("curable_simple") or (
+            "Yes" if treatment.get("can_it_be_cured") == "curable"
+            else "No established cure" if treatment.get("can_it_be_cured") == "no established cure"
+            else "Manageable"
+        )
+        curable_reason = treatment.get("curable_reason") or treatment.get("curability_description") or ""
+        lines.append(f"\n**1. Curable?**\n• **{curable_simple}:** {curable_reason}")
 
-            cultural = mgmt.get("cultural", [])
-            if cultural:
-                lines.append("\n*1. Cultural Practices:*")
-                for cult in cultural:
-                    lines.append(f"• {cult['statement']}")
+    # 5.8 Treatment & Control Options (Treatment Section 2)
+    if "treatment_control_options" in sections or "cultural_management" in sections or "chemical_guidance" in sections:
+        lines.append("\n**2. Treatment & Control Options:**")
+        cure_items = treatment.get("cure_treatment") or treatment.get("immediate_actions") or []
+        if cure_items:
+            for item in cure_items[:4]:
+                txt = item if isinstance(item, str) else item.get("statement", str(item))
+                lines.append(f"• {txt}")
+        else:
+            mgmt = facts.get("management", {})
+            for cat in ["cultural", "sanitation", "biological", "chemical_guidelines"]:
+                for entry in mgmt.get(cat, [])[:1]:
+                    lines.append(f"• {entry['statement']}")
 
-            sanitation = mgmt.get("sanitation", [])
-            if sanitation:
-                lines.append("\n*2. Field Sanitation:*")
-                for san in sanitation:
-                    lines.append(f"• {san['statement']}")
+    # 5.9 Precautions Section (Treatment Section 3)
+    if "precautions_section" in sections:
+        prec_items = treatment.get("precautions") or treatment.get("application_precautions") or []
+        if prec_items:
+            lines.append("\n**3. Precautions:**")
+            for p in prec_items[:3]:
+                txt = p if isinstance(p, str) else p.get("statement", str(p))
+                lines.append(f"• {txt}")
 
-            env = mgmt.get("environmental", [])
-            if env:
-                lines.append("\n*3. Moisture & Canopy Control:*")
-                for e in env:
-                    lines.append(f"• {e['statement']}")
+    # 5.10 Prevention Context Header
+    if "prevention_context_header" in sections:
+        if disease_title:
+            if has_explicit_crop:
+                lines.append(f"Prevention guidelines for **{disease_title}** on **{crop_title}**:")
+            else:
+                lines.append(f"Prevention guidelines for **{disease_title}**:")
+                lines.append("*(Note: Prevention guidelines can vary by host crop. If managing a specific plant, please specify the crop name.)*")
+        else:
+            lines.append(f"Prevention guidelines for **{crop_title}**:")
 
-            bio = mgmt.get("biological", [])
-            if bio:
-                lines.append("\n*4. Biological Options:*")
-                for b in bio:
-                    lines.append(f"• {b['statement']}")
+    # 5.11 Prevention Guidelines (Treatment Section 4 or Standalone Prevention)
+    if "prevention_section" in sections or "prevention_guidelines" in sections or "prevention_summary" in sections or "preventive_measures" in sections:
+        prev_items = treatment.get("prevention") or facts.get("prevention") or []
+        if prev_items:
+            sec_title = "**4. Prevention Guidelines:**" if "treatment_context_header" in sections else "**Prevention Guidelines:**"
+            lines.append(f"\n{sec_title}")
+            for p in prev_items[:4]:
+                txt = p if isinstance(p, str) else p.get("statement", str(p))
+                lines.append(f"• {txt}")
 
-            chem = mgmt.get("chemical_guidelines", [])
-            if chem:
-                lines.append("\n*5. Sourced Chemical & Fungicide Guidance:*")
-                for ch in chem:
-                    lines.append(f"• {ch['statement']}")
-                    if ch.get("detail"):
-                        lines.append(f"  *Note:* {ch['detail']}")
-
-    # Prevention Section (included when text-only OR when treatment/prevention is explicitly requested)
-    if not visual_evidence or "treatment_context_header" in sections or "preventive_measures" in sections:
-        prev_list = facts.get("prevention", [])
-        if prev_list and ("prevention_summary" in sections or "preventive_measures" in sections):
-            lines.append("\n**Prevention Guidelines:**")
-            for p in prev_list:
-                lines.append(f"• {p['statement']}")
-
-    # Crop Overview / Agronomy Section
+    # 5.12 Crop Overview / Agronomy Section
     if "crop_overview" in sections or "crop_identification" in sections:
-        c_name = facts.get("crop_name", crop_title)
-        sc_name = facts.get("scientific_name")
-        cat = facts.get("category", "")
-        lines.append(f"**Crop Profile:** {c_name} (*{sc_name or ''}*) — {cat}")
+        if has_explicit_crop or (not disease_title and facts.get("crop_name")):
+            c_name = facts.get("crop_name", crop_title)
+            sc_name = facts.get("scientific_name")
+            cat = facts.get("category", "")
+            lines.append(f"\n**Crop Profile:** {c_name} (*{sc_name or ''}*) — {cat}")
 
-        opts = facts.get("optimal_conditions", [])
-        if opts:
-            lines.append("\n**Optimal Growing Conditions:**")
-            for o in opts:
-                lines.append(f"• {o['statement']}")
+            opts = facts.get("optimal_conditions", [])
+            if opts:
+                lines.append("\n**Optimal Growing Conditions:**")
+                for o in opts[:3]:
+                    lines.append(f"• {o['statement']}")
 
-        waters = facts.get("watering_guidelines", [])
-        if waters:
-            lines.append("\n**Watering & Soil Guidelines:**")
-            for w in waters:
-                lines.append(f"• {w['statement']}")
+            waters = facts.get("watering_guidelines", [])
+            if waters:
+                lines.append("\n**Watering & Soil Guidelines:**")
+                for w in waters[:3]:
+                    lines.append(f"• {w['statement']}")
 
-        common_d = facts.get("common_diseases", [])
-        if common_d and "common_disease_risks" in sections:
-            clean_d = [cd.split('__')[1].replace('_', ' ').title() if '__' in cd else cd for cd in common_d]
-            lines.append(f"\n**Common Disease Vulnerabilities:** {', '.join(clean_d)}")
+            common_d = facts.get("common_diseases", [])
+            if common_d and "common_disease_risks" in sections:
+                clean_d = [cd.split('__')[1].replace('_', ' ').title() if '__' in cd else cd for cd in common_d]
+                lines.append(f"\n**Common Disease Vulnerabilities:** {', '.join(clean_d)}")
 
-    # Citations Grounding Footer
-    if sources:
+    # 5.13 Citations Grounding Footer (Section 5: Sources)
+    if sources and "unrecognized_notice" not in sections and "clarification_notice" not in sections:
         lines.append("\n---")
         citation_texts = [f"{s['title']} ({s['organization']})" for s in sources]
         lines.append(f"**Authoritative Sources:** {'; '.join(citation_texts[:3])}")
@@ -411,17 +444,17 @@ def build_response(
     return FinalAgentResponse(
         text=final_text,
         intent=plan.intent,
-        crop=crop,
+        crop=crop if has_explicit_crop else None,
         disease=disease,
         status=status or reasoning.status,
         sources=sources,
         reasoning_rule=reasoning.applicable_rule,
         needs_clarification=False,
         structured_data={
-            "crop": crop,
+            "crop": crop if has_explicit_crop else None,
             "disease": disease,
             "status": status or reasoning.status,
             "facts_retrieved_count": len(facts),
-            "treatment": facts.get("treatment") or get_disease_treatment(crop=crop, disease=disease, status=status or reasoning.status),
+            "treatment": treatment if ("curability_section" in sections or "treatment_control_options" in sections) else None,
         },
     )

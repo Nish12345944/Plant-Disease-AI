@@ -61,12 +61,15 @@ DISEASE_PATTERNS = [
     r"\bwhat is (wrong|the matter) with (this|the|my)? (plant|crop|leaf|leaves)?\b",
     r"\bwhat happened to (this|the|my)? (plant|crop|leaf|leaves)\b",
     r"\bwhat is affecting (this|the|my)? (plant|crop|leaf|leaves)\b",
-    r"\bdiagnose (this|the|my)? (plant|crop|leaf|disease)\b",
+    r"\bdiagnose (this|the|my)? (plant|crop|leaf|disease|video|image|photo)?\b",
+    r"\b(check|analyze|inspect|examine|scan) (this |the |my )?(plant|crop|leaf|disease|video|image|photo)?\b",
     r"\bis (this|the|my)? (plant|crop|leaf|it) (healthy|sick|diseased|infected|damaged|normal)\b",
     r"\b(check (plant |leaf )?health)\b",
     r"\bhealthy or (diseased|sick|infected)\b",
     r"\b(koun si bimari|bimari ka naam|kya bimari hai|kya problem hai)\b",
     r"\b(why are|why is) (the |my )?(leaves|leaf|plant) (yellow|brown|turning|dying)\b",
+    r"\b(what is|what's|explain|describe|tell me about) (a |an |the )?([a-z_ ]+ (blight|rust|rot|spot|mildew|virus|wilt|scab|canker|disease|infection))\b",
+    r"\b(what is|what's|explain|describe|tell me about) (early blight|late blight|powdery mildew|downy mildew|leaf spot|bacterial spot|septoria|anthracnose|black rot|apple scab|cedar rust)\b",
 ]
 
 TREATMENT_PATTERNS = [
@@ -210,23 +213,42 @@ def detect_response_mode(
                 mode_label="Mode 2: Plant/Crop Identification",
             )
         elif aspect == "disease":
-            # Per Mode 1 requirement: The crop name must be included with the disease name
+            # Per Mode 1 requirement: If media was uploaded, include crop context; if text query without crop, do not force crop
+            req_crop = True if has_media else False
             return ResponseModeResult(
                 mode=ResponseMode.DISEASE_IDENTIFICATION,
-                requested_crop=True,
+                requested_crop=req_crop,
                 requested_disease=True,
-                visible_cards={"crop": True, "disease": True, "treatment": False},
+                visible_cards={"crop": req_crop, "disease": True, "treatment": False},
                 mode_label="Mode 1: Disease Identification",
             )
         elif aspect == "treatment":
-            # Per Mode 3 requirement: Crop name and identified disease as brief context
+            # Per Mode 3 requirement: If media is present, crop context is attached; if text-only without crop, do not assume crop
+            req_crop = True if has_media else False
+
+            # Check if query is specifically asking for prevention without requesting curative treatment
+            is_prevention_only = False
+            prev_patterns = [
+                r"\bhow (can i|to|do i) prevent\b",
+                r"\b(prevention|preventative|precaution|protection) (tips|methods|guide|measures)?\b",
+                r"\bhow (can i|to) (stop|prevent) (it |this )?(from )?spreading\b",
+                r"\b(bachav|roktham)\b",
+            ]
+            curative_patterns = [
+                r"\b(treat|cure|control|manage|heal|fix|remedy)\b",
+                r"\b(spray|apply|pesticide|fungicide|chemicals?|medicine)\b",
+                r"\b(ilaj|ilaaj|upchar|dawa|dawai|chhidkao)\b",
+            ]
+            if any(re.search(p, norm) for p in prev_patterns) and not any(re.search(p, norm) for p in curative_patterns):
+                is_prevention_only = True
+
             return ResponseModeResult(
                 mode=ResponseMode.TREATMENT,
-                requested_crop=True,
+                requested_crop=req_crop,
                 requested_disease=True,
-                requested_treatment=True,
-                visible_cards={"crop": True, "disease": True, "treatment": True},
-                mode_label="Mode 3: Treatment & Management Advisory",
+                requested_treatment=not is_prevention_only,
+                visible_cards={"crop": req_crop, "disease": True, "treatment": not is_prevention_only},
+                mode_label="Mode 3: Disease Prevention Guidelines" if is_prevention_only else "Mode 3: Treatment & Management Advisory",
             )
         elif aspect == "general":
             return ResponseModeResult(

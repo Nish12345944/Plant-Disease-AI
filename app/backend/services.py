@@ -647,8 +647,10 @@ def process_video_inference(
         m2_inference_count = 0
 
         prev_m2_roi = None
+        prev_m2_roi = None
         prev_m2_crop = None
         prev_m2_res = None
+        prev_smoothed_comp: dict[str, float] = {}
         t_m2_start = time.perf_counter()
 
         for f in v_res["frame_records"]:
@@ -656,20 +658,47 @@ def process_video_inference(
             roi_thumb_b64 = pil_to_base64_data_url(f["roi_thumbnail"], format="JPEG", quality=80) if f.get("roi_thumbnail") else None
 
             f_status = f.get("status", "valid")
-            roi_img = f.get("primary_roi_pil") or f.get("roi_pil") or f.get("roi_thumbnail") or f.get("thumbnail")
+            roi_img = f.get("roi_pil") or f.get("primary_roi_pil") or f.get("roi_thumbnail")
+
+            # Sequence Harmonization for crop identity:
+            # 1. If frame had borderline confidence (<40%) but aligns with the canonical video crop:
+            if f_status == "crop_uncertain" and canonical_video_crop:
+                frame_cands = {k["class_name"]: k["confidence"] for k in f.get("top_k", [])}
+                dom_p = frame_cands.get(canonical_video_crop, 0.0)
+                if dom_p >= 0.15 or f.get("predicted_class") == canonical_video_crop:
+                    f_status = "valid_plant_roi"
+                    f["status"] = "valid_plant_roi"
+                    f["confidence"] = max(f.get("confidence", 0.0), dom_p)
+                    f["percentage"] = f"{f['confidence'] * 100:.1f}%"
+                    f["contributed_to_crop"] = True
+
+            # 2. If frame is a wide scene or background clutter that predicted an entirely conflicting crop with zero support for the video crop:
+            if f_status in ("valid", "valid_plant_roi") and canonical_video_crop:
+                frame_cands = {k["class_name"]: k["confidence"] for k in f.get("top_k", [])}
+                dom_p = frame_cands.get(canonical_video_crop, 0.0)
+                f_raw_cls = f.get("predicted_class") or f.get("raw_class")
+                if f_raw_cls != canonical_video_crop and dom_p < 0.08:
+                    f_status = "no_plant_evidence"
+                    f["status"] = "no_plant_evidence"
+                    f["confidence"] = 0.0
+                    f["percentage"] = "0.0%"
+                    f["reason"] = "Uninformative wide scene or background clutter"
+                    f["filter_reason"] = "Uninformative wide scene or background clutter"
+                    f["contributed_to_crop"] = False
 
             f_disease_slug = None
             f_disease_label = None
             f_disease_conf = 0.0
             f_disease_status = "not_run" if not should_run_disease_classification else "uncertain"
             f_detections = []
+            f_comp_probs = {}
 
             # Only run disease classification on valid plant frames that contributed to crop aggregation IF crop guard accepted the crop
             frame_contributed = f.get("contributed_to_crop", f_status in ("valid", "valid_plant_roi"))
             if f_status in ("valid", "valid_plant_roi") and frame_contributed and roi_img is not None:
                 valid_plant_frames += 1
-                # Use canonical video consensus crop to avoid oscillating crop context
-                f_crop_class = canonical_video_crop or normalize_crop_id(f.get("predicted_class"))
+                # Use canonical video consensus crop to enforce stable crop conditioning across all frames
+                f_crop_class = canonical_video_crop
 
                 if should_run_disease_classification and f_crop_class:
                     try:
@@ -685,16 +714,6 @@ def process_video_inference(
                                 crop_name=f_crop_class,
                                 crop_confidence=crop_conf,
                             )
-                            # If tight ROI is ambiguous, evaluate full frame thumbnail
-                            if m2_res.get("status") == "uncertain" and f.get("thumbnail") and f.get("thumbnail") != roi_img:
-                                thumb_m2 = m2_classifier.predict_crop_aware(
-                                    image_input=f.get("thumbnail"),
-                                    crop_name=f_crop_class,
-                                    crop_confidence=crop_conf,
-                                    )
-                                if thumb_m2.get("status") in ("diseased", "healthy"):
-                                    m2_res = thumb_m2
-
                             m2_inference_count += 1
                             prev_m2_roi = roi_img
                             prev_m2_crop = f_crop_class
@@ -703,37 +722,60 @@ def process_video_inference(
                         f.pop("primary_roi_pil", None)
                         f.pop("roi_pil", None)
 
-                        f_disease_status = m2_res.get("status", "uncertain")
-                        f_disease_conf = float(m2_res.get("disease_confidence", 0.0))
+                        # Extract compatible candidates distribution for temporal smoothing
+                        top_comp = m2_res.get("top_compatible", [])
+                        raw_comp = {c["class_name"]: float(c.get("crop_aware_probability", c["probability"])) for c in top_comp}
 
-                        if f_disease_status == "diseased" and m2_res.get("disease"):
-                            f_disease_slug = m2_res["disease"]
-                            f_disease_label = format_disease_name_clean(f_disease_slug) or f_disease_slug
-                            det_dict = {
-                                "disease": f_disease_slug,
-                                "disease_label": f_disease_label,
-                                "confidence": round(f_disease_conf, 4),
-                                "percentage": f"{f_disease_conf * 100:.1f}%",
-                                "bbox": f.get("roi_box"),
-                                "frame_index": f["frame_index"],
-                                "frame_number": f["frame_number"],
-                                "timestamp_seconds": f["timestamp_seconds"],
-                            }
-                            f_detections.append(det_dict)
-                            all_disease_detections.append(det_dict)
-
-                            if f_disease_slug not in disease_candidates:
-                                disease_candidates[f_disease_slug] = {
-                                    "label": f_disease_label,
-                                    "count": 0,
-                                    "confidences": [],
-                                }
-                            disease_candidates[f_disease_slug]["count"] += 1
-                            disease_candidates[f_disease_slug]["confidences"].append(f_disease_conf)
-                        elif f_disease_status == "healthy":
-                            healthy_frames_count += 1
+                        # Exponential Moving Average across consecutive continuous video frames
+                        if prev_smoothed_comp and not f.get("is_scene_change", False):
+                            smoothed_comp = {}
+                            all_keys = set(raw_comp.keys()) | set(prev_smoothed_comp.keys())
+                            for k in all_keys:
+                                c_val = raw_comp.get(k, 0.0)
+                                p_val = prev_smoothed_comp.get(k, c_val)
+                                smoothed_comp[k] = 0.65 * c_val + 0.35 * p_val
                         else:
-                            uncertain_frames_count += 1
+                            smoothed_comp = raw_comp.copy()
+                        prev_smoothed_comp = smoothed_comp
+                        f_comp_probs = smoothed_comp
+
+                        if smoothed_comp:
+                            sorted_cands = sorted(smoothed_comp.items(), key=lambda x: x[1], reverse=True)
+                            top_cand_cls, top_cand_prob = sorted_cands[0]
+                            second_prob = sorted_cands[1][1] if len(sorted_cands) > 1 else 0.0
+                            cand_margin = top_cand_prob - second_prob
+
+                            if top_cand_prob >= 0.40 and cand_margin >= 0.04:
+                                if top_cand_cls == "healthy":
+                                    f_disease_status = "healthy"
+                                    f_disease_conf = top_cand_prob
+                                    healthy_frames_count += 1
+                                else:
+                                    f_disease_status = "diseased"
+                                    f_disease_slug = top_cand_cls
+                                    f_disease_label = format_disease_name_clean(top_cand_cls) or top_cand_cls
+                                    f_disease_conf = top_cand_prob
+
+                                    if f_disease_slug not in disease_candidates:
+                                        disease_candidates[f_disease_slug] = {
+                                            "label": f_disease_label,
+                                            "count": 0,
+                                            "confidences": [],
+                                        }
+                                    disease_candidates[f_disease_slug]["count"] += 1
+                                    disease_candidates[f_disease_slug]["confidences"].append(f_disease_conf)
+                            else:
+                                f_disease_status = "uncertain"
+                                f_disease_conf = top_cand_prob
+                                uncertain_frames_count += 1
+                        else:
+                            f_disease_status = m2_res.get("status", "uncertain")
+                            f_disease_conf = float(m2_res.get("disease_confidence", 0.0))
+                            if f_disease_status == "healthy":
+                                healthy_frames_count += 1
+                            else:
+                                uncertain_frames_count += 1
+
                     except Exception as exc:
                         logger.warning(f"Frame {f.get('frame_index')} Model 2 inference failed: {exc}")
                         f_disease_status = "failed"
@@ -742,6 +784,14 @@ def process_video_inference(
                     f_disease_status = "not_run"
                     f_disease_conf = 0.0
 
+            # Enforce video canonical crop for all valid plant frames to avoid single-frame crop flipping
+            if f_status == "no_plant_evidence":
+                resolved_crop_label = "No Plant Evidence"
+                resolved_crop_class = "no_plant"
+            else:
+                resolved_crop_label = crop_display_label if f_status in ("valid", "valid_plant_roi") else f.get("predicted_label")
+                resolved_crop_class = canonical_video_crop if f_status in ("valid", "valid_plant_roi") else f.get("predicted_class")
+
             frame_results.append({
                 "frame_idx": f["frame_index"],
                 "frame_number": f["frame_number"],
@@ -749,9 +799,9 @@ def process_video_inference(
                 "timestamp_seconds": f["timestamp_seconds"],
                 "quality_status": f_status,
                 "status": f_status,
-                "predicted_crop": f["predicted_label"],
-                "predicted_class": f["predicted_class"],
-                "predicted_label": f["predicted_label"],
+                "predicted_crop": resolved_crop_label,
+                "predicted_class": resolved_crop_class,
+                "predicted_label": resolved_crop_label,
                 "confidence": f["confidence"],
                 "percentage": f["percentage"],
                 "filter_reason": f.get("reason", ""),
@@ -772,6 +822,7 @@ def process_video_inference(
                 "disease_confidence": round(f_disease_conf, 4),
                 "disease_status": f_disease_status,
                 "disease_detections": f_detections,
+                "_comp_probs": f_comp_probs,
             })
 
         # Temporal Disease Aggregation across valid plant frames
@@ -799,6 +850,46 @@ def process_video_inference(
                 })
 
         ranked_diseases.sort(key=lambda x: x["score"], reverse=True)
+        consensus_disease_slug = ranked_diseases[0]["slug"] if ranked_diseases else None
+        consensus_disease_label = ranked_diseases[0]["label"] if ranked_diseases else None
+
+        # Pass 2: Sequence Consensus Harmonization
+        # Harmonize single-frame flickers or narrow-margin uncertain frames with the dominant video consensus disease
+        if consensus_disease_slug and consensus_disease_label:
+            for fr in frame_results:
+                if fr["status"] in ("valid", "valid_plant_roi"):
+                    c_probs = fr.get("_comp_probs", {})
+                    cons_p = c_probs.get(consensus_disease_slug, 0.0)
+                    should_harmonize = False
+
+                    if fr["disease"] == consensus_disease_slug:
+                        should_harmonize = True
+                    elif cons_p >= 0.20 or fr["disease"] is None:
+                        # If frame was uncertain, or predicted an isolated outlier with low confidence
+                        if fr["disease_status"] == "uncertain" or (fr["disease_confidence"] < 0.60 and cons_p >= 0.15):
+                            should_harmonize = True
+                            fr["disease"] = consensus_disease_slug
+                            fr["disease_label"] = consensus_disease_label
+                            fr["disease_confidence"] = round(max(fr["disease_confidence"], cons_p), 4)
+                            fr["disease_status"] = "diseased"
+
+                    if should_harmonize and fr["disease"] == consensus_disease_slug:
+                        det_dict = {
+                            "disease": fr["disease"],
+                            "disease_label": fr["disease_label"],
+                            "confidence": fr["disease_confidence"],
+                            "percentage": f"{fr['disease_confidence'] * 100:.1f}%",
+                            "bbox": fr.get("roi_box"),
+                            "frame_index": fr["frame_idx"],
+                            "frame_number": fr["frame_number"],
+                            "timestamp_seconds": fr["timestamp_seconds"],
+                        }
+                        fr["disease_detections"] = [det_dict]
+                        all_disease_detections.append(det_dict)
+
+        # Clean internal helper from frame records
+        for fr in frame_results:
+            fr.pop("_comp_probs", None)
 
         if not video_crop_guard.proceed_to_disease_detection:
             m2_summary = {
