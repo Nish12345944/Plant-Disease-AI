@@ -52,6 +52,7 @@ COPY --from=frontend-builder /build/frontend/dist ./app/frontend/dist
 ENV PYTHONUNBUFFERED=1 \
     PORT=10000 \
     EAGER_LOAD_MODELS=false \
+    SEQUENTIAL_MODEL_SWAPPING=true \
     WHISPER_MODEL_SIZE=tiny \
     MODEL1_CHECKPOINT=models/model1_corrected_v3/best_model.pth \
     MODEL1_CLASS_MAPPING=models/model1_expanded_v2/class_mapping.json \

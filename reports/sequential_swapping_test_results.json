@@ -1,0 +1,60 @@
+{
+  "test1_health": {
+    "passed": true,
+    "data": {
+      "rss_mb": 320.4,
+      "render_limit_mb": 512.0,
+      "headroom_mb": 191.6,
+      "sequential_swapping": true
+    }
+  },
+  "test2_diseased_banana": {
+    "passed": true,
+    "latency_sec": 5.444,
+    "rss_mb": 456.22
+  },
+  "test3_healthy_banana": {
+    "passed": true,
+    "latency_sec": 2.921,
+    "rss_mb": 471.23
+  },
+  "test4_unsupported_crop": {
+    "passed": true,
+    "latency_sec": 1.865,
+    "rss_mb": 476.87
+  },
+  "test5_non_plant": {
+    "passed": true,
+    "latency_sec": 0.193,
+    "rss_mb": 476.88
+  },
+  "test6_invalid_upload": {
+    "passed": true
+  },
+  "test7_consecutive": {
+    "passed": true,
+    "latencies": [
+      2.984,
+      2.91,
+      3.596,
+      2.725,
+      2.795
+    ],
+    "avg_latency": 3.002,
+    "rss_progression": [
+      477.72,
+      480.57,
+      483.4,
+      486.19,
+      489.0
+    ]
+  },
+  "test8_concurrency": {
+    "passed": true,
+    "health_latency_ms": 7.37,
+    "concurrent_statuses": [
+      200,
+      200
+    ]
+  }
+}

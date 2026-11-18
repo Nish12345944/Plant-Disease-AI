@@ -25,6 +25,7 @@ from typing import Any, Optional
 
 import numpy as np
 from PIL import Image
+import torch
 
 from app.backend.config import (
     CROP_DISEASE_MAPPING,
@@ -68,66 +69,51 @@ from video.frame_extractor import (
 )
 from app.backend.image_validator import validate_plant_image
 from app.backend.open_set_crop_guard import evaluate_crop_acceptance
+from app.backend.model_manager import model_manager, release_memory, get_process_rss_mb
 from knowledge.treatment import get_disease_treatment
 
 logger = logging.getLogger(__name__)
-
-# Cached model singletons & thread lock
-_MODEL_LOCK = threading.Lock()
-_MODEL1 = None
-_IDX_TO_CLASS = None
-_CLASS_TO_IDX = None
-
-_MODEL2_V4: Optional[Model2DiseaseClassifierV4] = None
 
 # Active server-side microphone recorder singleton
 _ACTIVE_RECORDER: Optional[Any] = None
 
 
 def get_model1():
-    """Retrieve or initialize the cached Model 1 neural network."""
-    global _MODEL1, _IDX_TO_CLASS, _CLASS_TO_IDX
-    if _MODEL1 is None:
-        with _MODEL_LOCK:
-            if _MODEL1 is None:
-                if not MODEL1_CHECKPOINT.exists():
-                    raise FileNotFoundError(
-                        f"Model 1 checkpoint not found at: '{MODEL1_CHECKPOINT}'. "
-                        "Ensure best_model.pth is mounted or configure MODEL1_CHECKPOINT env var."
-                    )
-                logger.info(f"Loading Model 1 from {MODEL1_CHECKPOINT} onto {DEVICE_NAME}...")
-                _MODEL1, _IDX_TO_CLASS, _CLASS_TO_IDX, _, _ = load_model(
-                    checkpoint_path=MODEL1_CHECKPOINT,
-                    mapping_path=MODEL1_CLASS_MAPPING,
-                    config_path=MODEL1_CONFIG,
-                    device=DEVICE,
-                )
-                logger.info("Model 1 initialized successfully.")
-    return _MODEL1, _IDX_TO_CLASS, _CLASS_TO_IDX
+    """Retrieve or initialize the cached Model 1 neural network via SharedModelManager."""
+    return model_manager.get_model1()
 
 
 def get_model2() -> Model2DiseaseClassifierV4:
-    """Retrieve or initialize the cached Model 2 V4 disease & healthy classifier."""
-    global _MODEL2_V4
-    if _MODEL2_V4 is None:
-        with _MODEL_LOCK:
-            if _MODEL2_V4 is None:
-                if not MODEL2_CHECKPOINT.exists():
-                    raise FileNotFoundError(
-                        f"Model 2 V4 checkpoint not found at: '{MODEL2_CHECKPOINT}'. "
-                        "Ensure best_model.pth is mounted or configure MODEL2_CHECKPOINT env var."
-                    )
-                logger.info(f"Loading Model 2 V4 from {MODEL2_CHECKPOINT} onto {DEVICE_NAME}...")
-                _MODEL2_V4 = Model2DiseaseClassifierV4(
-                    checkpoint_path=MODEL2_CHECKPOINT,
-                    class_mapping_path=MODEL2_CLASS_MAPPING,
-                    crop_disease_map_path=CROP_DISEASE_MAPPING,
-                    device=str(DEVICE),
-                    uncertainty_threshold=0.40,
-                    margin_threshold=0.05,
-                )
-                logger.info(f"Model 2 V4 initialized successfully with {_MODEL2_V4.num_classes} classes from {_MODEL2_V4.checkpoint_path}.")
-    return _MODEL2_V4
+    """Retrieve or initialize the cached Model 2 V4 classifier via SharedModelManager."""
+    return model_manager.get_model2()
+
+
+def unload_model1() -> None:
+    """Completely release Model 1 neural network from memory."""
+    model_manager.unload_model1()
+
+
+def unload_model2() -> None:
+    """Completely release Model 2 V4 classifier from memory."""
+    model_manager.unload_model2()
+
+
+def unload_all_models() -> None:
+    """Completely release all neural models from memory."""
+    model_manager.unload_all()
+
+
+def __getattr__(name: str):
+    """Backward-compatible attribute delegate for module-level model references."""
+    if name == "_MODEL1":
+        return model_manager.model1
+    if name == "_MODEL2_V4":
+        return model_manager.model2
+    if name == "_IDX_TO_CLASS":
+        return model_manager.idx_to_class
+    if name == "_CLASS_TO_IDX":
+        return model_manager.class_to_idx
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
 def pil_to_base64_data_url(pil_img: Image.Image, format: str = "JPEG", quality: int = 80, max_dim: int = 512) -> str:
@@ -312,6 +298,7 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
             "reason_code": validation.reason_code,
         }
 
+        release_memory()
         return {
             **model1_dict,
             "model1": model1_dict,
@@ -321,21 +308,23 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
             "annotated_preview_url": preview_b64,
         }
 
-    # Image validation passed - proceed to Model 1 inference
+    # Image validation passed - proceed sequentially to Model 1 inference
     m1_model, idx_to_class, _ = get_model1()
-    m2_classifier = get_model2()
 
     pil_img = Image.open(io.BytesIO(file_bytes)).convert("RGB")
-    if pil_img.width > 1024 or pil_img.height > 1024:
-        pil_img.thumbnail((1024, 1024), Image.Resampling.LANCZOS)
-    m1_result = predict_image(
-        image_input=pil_img,
-        model=m1_model,
-        idx_to_class=idx_to_class,
-        device=DEVICE,
-        top_k=5,
-        validate_plant=True,
-    )
+    # Cap image dimensions to max 512x512 to preserve diagnostic details while saving 75% array memory
+    if pil_img.width > 512 or pil_img.height > 512:
+        pil_img.thumbnail((512, 512), Image.Resampling.BILINEAR)
+
+    with torch.inference_mode():
+        m1_result = predict_image(
+            image_input=pil_img,
+            model=m1_model,
+            idx_to_class=idx_to_class,
+            device=DEVICE,
+            top_k=5,
+            validate_plant=False,
+        )
 
     preview_b64 = pil_to_base64_data_url(pil_img, format="JPEG", quality=80, max_dim=512)
 
@@ -355,6 +344,15 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
     crop_confidence = crop_guard.confidence
     top_list = m1_result.get("top_k", [])
     is_plant = True
+
+    # -----------------------------------------------------------------------
+    # Step 4 & 5: Completely release Model 1 references to minimize memory
+    # -----------------------------------------------------------------------
+    del m1_model
+    if model_manager.is_sequential_swapping_enabled:
+        model_manager.unload_model1()
+    else:
+        release_memory()
 
     # If crop is unsupported or ambiguous, DO NOT proceed to Model 2
     if not crop_guard.proceed_to_disease_detection:
@@ -410,6 +408,8 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
             "reason_code": crop_guard.reason_code,
         }
 
+        del pil_img
+        release_memory()
         return {
             **model1_dict,
             "model1": model1_dict,
@@ -420,94 +420,45 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
             "annotated_preview_url": preview_b64,
         }
 
-    # Stage 2: Model 2 V4 Crop-Aware Disease / Healthy Classification (Only for Accepted Crops)
+    # -----------------------------------------------------------------------
+    # Step 6, 7 & 8: Model 2 V4 Crop-Aware Disease / Healthy Classification
+    # Model 2 is loaded on-demand sequentially only after crop acceptance
+    # -----------------------------------------------------------------------
+    m2_res = None
+    m2_disease_id = 0
+    m2_error: Optional[Exception] = None
     try:
-        m2_res = m2_classifier.predict_crop_aware(
-            image_input=pil_img,
-            crop_name=canonical_crop_id,
-            crop_confidence=crop_confidence,
-        )
+        m2_classifier = get_model2()
+        with torch.inference_mode():
+            m2_res = m2_classifier.predict_crop_aware(
+                image_input=pil_img,
+                crop_name=canonical_crop_id,
+                crop_confidence=crop_confidence,
+            )
 
         final_status = m2_res["status"]
         final_disease = m2_res["disease"]
         disease_conf = m2_res["disease_confidence"]
-
-        if final_status == "healthy":
-            model2_dict = {
-                "status": "healthy",
-                "has_disease": False,
-                "primary_disease": "Healthy Specimen / No Disease Detected",
-                "primary_disease_slug": None,
-                "primary_disease_id": 0,
-                "confidence": disease_conf,
-                "percentage": f"{disease_conf * 100:.1f}%",
-                "primary_bbox": None,
-                "detections_count": 0,
-                "detections": [],
-                "raw_top1": m2_res["raw_top1"],
-                "top_compatible": m2_res["top_compatible"],
-                "raw_top10": m2_res["raw_top10"],
-                "annotated_preview_url": preview_b64,
-                "message": f"Verified healthy foliage for {crop_display_label}.",
-                "treatment": get_disease_treatment(crop=canonical_crop_id, status="healthy"),
-            }
-        elif final_status == "diseased" and final_disease:
-            clean_title = format_disease_name_clean(final_disease) or final_disease
-            model2_dict = {
-                "status": "detected",
-                "has_disease": True,
-                "primary_disease": clean_title,
-                "primary_disease_slug": final_disease,
-                "primary_disease_id": m2_classifier.class_to_id.get(final_disease, 1),
-                "confidence": disease_conf,
-                "percentage": f"{disease_conf * 100:.1f}%",
-                "primary_bbox": None,
-                "detections_count": 1,
-                "detections": [
-                    {
-                        "disease": final_disease,
-                        "disease_label": clean_title,
-                        "confidence": disease_conf,
-                        "percentage": f"{disease_conf * 100:.1f}%",
-                    }
-                ],
-                "raw_top1": m2_res["raw_top1"],
-                "top_compatible": m2_res["top_compatible"],
-                "raw_top10": m2_res["raw_top10"],
-                "annotated_preview_url": preview_b64,
-                "message": f"Diagnosed {clean_title} on {crop_display_label} ({disease_conf * 100:.1f}% confidence).",
-                "treatment": get_disease_treatment(crop=canonical_crop_id, disease=final_disease, status="diseased"),
-            }
-        else:
-            # Uncertain / Inconclusive condition
-            actual_conf = (
-                disease_conf
-                if (disease_conf and disease_conf > 0)
-                else (m2_res.get("raw_top1", {}).get("confidence", 0.0) if m2_res.get("raw_top1") else 0.0)
-            )
-            conf_val = round(float(actual_conf), 4) if actual_conf is not None else None
-            conf_pct = f"{conf_val * 100:.1f}%" if (conf_val is not None and conf_val > 0) else "N/A"
-
-            model2_dict = {
-                "status": "uncertain",
-                "has_disease": False,
-                "primary_disease": "Inconclusive / Uncertain",
-                "primary_disease_slug": None,
-                "primary_disease_id": None,
-                "confidence": conf_val,
-                "percentage": conf_pct,
-                "primary_bbox": None,
-                "detections_count": 0,
-                "detections": [],
-                "raw_top1": m2_res["raw_top1"],
-                "top_compatible": m2_res["top_compatible"],
-                "raw_top10": m2_res["raw_top10"],
-                "annotated_preview_url": preview_b64,
-                "message": f"Condition uncertain on {crop_display_label}. Crop-disease compatibility or confidence threshold not met.",
-                "treatment": get_disease_treatment(crop=canonical_crop_id, disease=final_disease, status="uncertain"),
-            }
+        m2_class_to_id = getattr(m2_classifier, "class_to_id", {})
+        m2_disease_id = m2_class_to_id.get(final_disease, 1) if final_disease else 0
     except Exception as exc:
         logger.error(f"Model 2 V4 image inference failed: {exc}", exc_info=True)
+        m2_error = exc
+        final_status = "error"
+        final_disease = None
+        disease_conf = 0.0
+        m2_res = {"status": "error", "error": str(exc), "raw_top1": None, "top_compatible": [], "raw_top10": []}
+    finally:
+        # Step 9: Completely release Model 2 references and reclaim memory
+        if "m2_classifier" in locals():
+            del m2_classifier
+        if model_manager.is_sequential_swapping_enabled:
+            model_manager.unload_model2()
+        else:
+            release_memory()
+
+    # Step 10: Continue treatment retrieval and API response generation
+    if m2_error is not None:
         model2_dict = {
             "status": "error",
             "has_disease": False,
@@ -517,7 +468,81 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
             "detections_count": 0,
             "detections": [],
             "annotated_preview_url": preview_b64,
-            "message": f"Disease classification encountered an issue: {str(exc)}",
+            "message": f"Disease classification encountered an issue: {str(m2_error)}",
+        }
+    elif final_status == "healthy":
+        model2_dict = {
+            "status": "healthy",
+            "has_disease": False,
+            "primary_disease": "Healthy Specimen / No Disease Detected",
+            "primary_disease_slug": None,
+            "primary_disease_id": 0,
+            "confidence": disease_conf,
+            "percentage": f"{disease_conf * 100:.1f}%",
+            "primary_bbox": None,
+            "detections_count": 0,
+            "detections": [],
+            "raw_top1": m2_res["raw_top1"],
+            "top_compatible": m2_res["top_compatible"],
+            "raw_top10": m2_res["raw_top10"],
+            "annotated_preview_url": preview_b64,
+            "message": f"Verified healthy foliage for {crop_display_label}.",
+            "treatment": get_disease_treatment(crop=canonical_crop_id, status="healthy"),
+        }
+    elif final_status == "diseased" and final_disease:
+        clean_title = format_disease_name_clean(final_disease) or final_disease
+        model2_dict = {
+            "status": "detected",
+            "has_disease": True,
+            "primary_disease": clean_title,
+            "primary_disease_slug": final_disease,
+            "primary_disease_id": m2_disease_id,
+            "confidence": disease_conf,
+            "percentage": f"{disease_conf * 100:.1f}%",
+            "primary_bbox": None,
+            "detections_count": 1,
+            "detections": [
+                {
+                    "disease": final_disease,
+                    "disease_label": clean_title,
+                    "confidence": disease_conf,
+                    "percentage": f"{disease_conf * 100:.1f}%",
+                }
+            ],
+            "raw_top1": m2_res["raw_top1"],
+            "top_compatible": m2_res["top_compatible"],
+            "raw_top10": m2_res["raw_top10"],
+            "annotated_preview_url": preview_b64,
+            "message": f"Diagnosed {clean_title} on {crop_display_label} ({disease_conf * 100:.1f}% confidence).",
+            "treatment": get_disease_treatment(crop=canonical_crop_id, disease=final_disease, status="diseased"),
+        }
+    else:
+        # Uncertain / Inconclusive condition
+        actual_conf = (
+            disease_conf
+            if (disease_conf and disease_conf > 0)
+            else (m2_res.get("raw_top1", {}).get("confidence", 0.0) if m2_res.get("raw_top1") else 0.0)
+        )
+        conf_val = round(float(actual_conf), 4) if actual_conf is not None else None
+        conf_pct = f"{conf_val * 100:.1f}%" if (conf_val is not None and conf_val > 0) else "N/A"
+
+        model2_dict = {
+            "status": "uncertain",
+            "has_disease": False,
+            "primary_disease": "Inconclusive / Uncertain",
+            "primary_disease_slug": None,
+            "primary_disease_id": None,
+            "confidence": conf_val,
+            "percentage": conf_pct,
+            "primary_bbox": None,
+            "detections_count": 0,
+            "detections": [],
+            "raw_top1": m2_res["raw_top1"],
+            "top_compatible": m2_res["top_compatible"],
+            "raw_top10": m2_res["raw_top10"],
+            "annotated_preview_url": preview_b64,
+            "message": f"Condition uncertain on {crop_display_label}. Crop-disease compatibility or confidence threshold not met.",
+            "treatment": get_disease_treatment(crop=canonical_crop_id, disease=final_disease, status="uncertain"),
         }
 
     model1_dict = {
@@ -554,6 +579,10 @@ def process_image_inference(file_bytes: bytes, conf_threshold: float = 0.20) -> 
         "disease_confidence": round(float(model2_dict.get("confidence", 0.0)), 4),
     }
 
+    del pil_img
+    release_memory()
+    logger.debug(f"[MEMORY] Inference completed. Process RSS: {get_process_rss_mb():.1f} MB")
+
     return {
         **model1_dict,
         "model1": model1_dict,
@@ -582,7 +611,6 @@ def process_video_inference(
 
     t0 = time.perf_counter()
     model, idx_to_class, _ = get_model1()
-    m2_classifier = get_model2()
 
     suffix = Path(original_filename).suffix.lower() or ".mp4"
     temp_path = None
@@ -605,6 +633,13 @@ def process_video_inference(
             save_debug_rois=False,
         )
         t_v_predict_ms = (time.perf_counter() - t_v0) * 1000
+
+        # Step 4: Release Model 1 neural network before video crop guard and Model 2
+        del model
+        if model_manager.is_sequential_swapping_enabled:
+            model_manager.unload_model1()
+        else:
+            release_memory()
 
         final_pred = v_res["final_prediction"]
         raw_video_crop = final_pred.get("class_name", "unknown")
@@ -640,7 +675,10 @@ def process_video_inference(
         valid_plant_frames = 0
         m2_inference_count = 0
 
-        prev_m2_roi = None
+        m2_classifier = None
+        if should_run_disease_classification:
+            m2_classifier = get_model2()
+
         prev_m2_roi = None
         prev_m2_crop = None
         prev_m2_res = None
@@ -818,6 +856,14 @@ def process_video_inference(
                 "disease_detections": f_detections,
                 "_comp_probs": f_comp_probs,
             })
+
+        # Step 9: Release Model 2 V4 references and reclaim memory
+        if m2_classifier is not None:
+            del m2_classifier
+        if model_manager.is_sequential_swapping_enabled:
+            model_manager.unload_model2()
+        else:
+            release_memory()
 
         # Temporal Disease Aggregation across valid plant frames
         min_support_count = 3 if valid_plant_frames >= 12 else 2

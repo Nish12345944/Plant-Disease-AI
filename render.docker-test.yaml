@@ -19,6 +19,8 @@ services:
         value: 10000
       - key: EAGER_LOAD_MODELS
         value: "false"
+      - key: SEQUENTIAL_MODEL_SWAPPING
+        value: "true"
       - key: WHISPER_MODEL_SIZE
         value: "tiny"
       - key: MODEL1_CHECKPOINT
@@ -30,8 +32,8 @@ services:
       - key: MODEL1_PROTOTYPES
         value: "models/model1_corrected_v3/crop_prototypes.npz"
       - key: MODEL2_CHECKPOINT
-        value: "models/model2_retrained_v3/best_model.pth"
+        value: "models/model2_retrained_v4/best_model.pth"
       - key: MODEL2_CLASS_MAPPING
-        value: "models/model2_retrained_v3/class_mapping.json"
+        value: "models/model2_retrained_v4/class_mapping.json"
       - key: CROP_DISEASE_MAPPING
-        value: "models/model2_retrained_v3/crop_disease_mapping.json"
+        value: "models/model2_retrained_v4/crop_disease_mapping.json"

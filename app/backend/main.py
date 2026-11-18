@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from contextlib import asynccontextmanager
 import io
 import logging
 import time
@@ -10,7 +11,7 @@ import uuid
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -51,6 +52,23 @@ logger = logging.getLogger(__name__)
 _INFERENCE_SEMAPHORE = asyncio.Semaphore(1)  # Max 1 concurrent vision inference (strictly protects 512MB RAM)
 _VIDEO_SEMAPHORE = asyncio.Semaphore(1)      # Max 1 concurrent video inference pipeline
 _AUDIO_SEMAPHORE = asyncio.Semaphore(1)      # Max 1 concurrent Whisper transcription
+
+
+@asynccontextmanager
+async def bounded_inference_slot(timeout: float = 20.0):
+    """Acquire inference semaphore with bounded wait timeout to prevent memory pileup."""
+    try:
+        await asyncio.wait_for(_INFERENCE_SEMAPHORE.acquire(), timeout=timeout)
+    except asyncio.TimeoutError:
+        logger.warning(f"Inference slot wait timed out after {timeout:.1f}s. Server under heavy load.")
+        raise HTTPException(
+            status_code=503,
+            detail="Diagnostic engine is busy processing concurrent requests. Please retry in a few moments."
+        )
+    try:
+        yield
+    finally:
+        _INFERENCE_SEMAPHORE.release()
 
 
 def _check_video_has_audio(vid_bytes: bytes) -> bool:
@@ -101,6 +119,63 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Lightweight in-memory rate limiting middleware
+# Protects Render Free tier (512MB RAM, 0.5 vCPU) against CPU saturation.
+# Health-checks and monitoring endpoints are EXPLICITLY EXEMPT so they never consume quota.
+_RATE_LIMIT_BUCKET: dict[str, list[float]] = {}
+_RATE_LIMIT_WINDOW = 60.0  # seconds
+_MAX_REQUESTS_PER_WINDOW = 60  # general requests
+_MAX_INFERENCE_PER_WINDOW = 30  # heavy inference requests (/predict, /inference, /chat)
+
+@app.middleware("http")
+async def rate_limiting_middleware(request: Request, call_next):
+    path = request.url.path
+
+    # 1. Explicitly exempt routes: health checks, docs, root api info
+    if path in ("/health", "/api/health", "/docs", "/openapi.json", "/redoc", "/api", "/favicon.ico"):
+        return await call_next(request)
+
+    # 2. Extract client IP (handle X-Forwarded-For if behind Render proxy)
+    forwarded_for = request.headers.get("x-forwarded-for")
+    if forwarded_for:
+        client_ip = forwarded_for.split(",")[0].strip()
+    else:
+        client_ip = request.client.host if request.client else "unknown"
+
+    now = time.time()
+
+    # Periodically prune stale tracking entries
+    if len(_RATE_LIMIT_BUCKET) > 1000:
+        cutoff = now - _RATE_LIMIT_WINDOW
+        stale_keys = [k for k, timestamps in _RATE_LIMIT_BUCKET.items() if not timestamps or timestamps[-1] < cutoff]
+        for k in stale_keys:
+            _RATE_LIMIT_BUCKET.pop(k, None)
+
+    # Segment heavy inference endpoints from general API endpoints
+    is_heavy = any(path.startswith(prefix) for prefix in ("/api/v1/predict", "/api/inference", "/api/chat"))
+    max_reqs = _MAX_INFERENCE_PER_WINDOW if is_heavy else _MAX_REQUESTS_PER_WINDOW
+    key = f"{client_ip}:{'heavy' if is_heavy else 'general'}"
+
+    timestamps = _RATE_LIMIT_BUCKET.setdefault(key, [])
+    cutoff = now - _RATE_LIMIT_WINDOW
+    timestamps[:] = [t for t in timestamps if t > cutoff]
+
+    if len(timestamps) >= max_reqs:
+        logger.warning(
+            f"Rate limit exceeded for IP {client_ip} on path {path} ({len(timestamps)}/{max_reqs} in {_RATE_LIMIT_WINDOW}s)"
+        )
+        return JSONResponse(
+            status_code=429,
+            content={
+                "detail": "Too Many Requests: Rate limit exceeded. Please wait a moment before sending another request.",
+                "retry_after": 5,
+            },
+            headers={"Retry-After": "5"},
+        )
+
+    timestamps.append(now)
+    return await call_next(request)
+
 
 @app.on_event("startup")
 async def on_startup():
@@ -141,7 +216,7 @@ async def on_startup():
     except Exception as exc:
         logger.warning(f"Knowledge base initialization note: {exc}")
 
-    if EAGER_LOAD_MODELS:
+    if EAGER_LOAD_MODELS and not srv.model_manager.is_sequential_swapping_enabled:
         logger.info("EAGER_LOAD_MODELS=true: Pre-warming neural models on startup...")
         try:
             get_model1()
@@ -198,7 +273,7 @@ async def health_check():
         "device": DEVICE_NAME,
         "models": {
             "model1": {
-                "name": f"EfficientNet-B2 {len(srv._MODEL1[1]) if srv._MODEL1 else 52}-Crop Identifier",
+                "name": f"EfficientNet-B2 {len(srv._IDX_TO_CLASS) if srv._IDX_TO_CLASS else 52}-Crop Identifier",
                 "loaded": srv._MODEL1 is not None,
                 "checkpoint": str(MODEL1_CHECKPOINT),
                 "available": MODEL1_CHECKPOINT.exists(),
@@ -220,6 +295,12 @@ async def health_check():
             "images": sorted(list(SUPPORTED_IMAGE_EXTS)),
             "videos": sorted(list(SUPPORTED_VIDEO_EXTS)),
             "audio": sorted(list(SUPPORTED_AUDIO_EXTS)),
+        },
+        "memory": {
+            "rss_mb": round(srv.get_process_rss_mb(), 1),
+            "render_limit_mb": 512.0,
+            "headroom_mb": round(512.0 - srv.get_process_rss_mb(), 1),
+            "sequential_swapping": srv.model_manager.is_sequential_swapping_enabled,
         },
     }
 
@@ -396,7 +477,7 @@ async def predict_v1_endpoint(file: UploadFile = File(...)):
 
     t0 = time.perf_counter()
     try:
-        async with _INFERENCE_SEMAPHORE:
+        async with bounded_inference_slot(timeout=20.0):
             raw_res = await run_in_threadpool(process_image_inference, file_bytes)
         t_total = (time.perf_counter() - t0) * 1000
         logger.info(f"[PERF_TIMING] /api/v1/predict id={prediction_id} total={t_total:.1f}ms")
@@ -591,7 +672,7 @@ async def inference_image_endpoint(file: UploadFile = File(...)):
 
     t0 = time.perf_counter()
     try:
-        async with _INFERENCE_SEMAPHORE:
+        async with bounded_inference_slot(timeout=20.0):
             res = await run_in_threadpool(process_image_inference, file_bytes)
         t_total = (time.perf_counter() - t0) * 1000
         logger.info(f"[PERF_TIMING] /api/inference/image total={t_total:.1f}ms")
