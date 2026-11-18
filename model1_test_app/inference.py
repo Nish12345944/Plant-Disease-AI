@@ -98,6 +98,9 @@ def validate_model1_setup(
         raise ValueError(f"Unable to locate classifier head in checkpoint '{chk_path}'.")
 
     checkpoint_output_dim = int(out_weight.shape[0])
+    del ckpt, state_dict, out_weight
+    import gc
+    gc.collect()
 
     # 3. Verify output dimension matches class mapping count
     if checkpoint_output_dim != mapping_class_count:
@@ -218,9 +221,19 @@ def load_model(
     checkpoint = torch.load(chk_path, map_location=device, weights_only=False)
 
     if "model_state_dict" in checkpoint:
-        model.load_state_dict(checkpoint["model_state_dict"])
+        state_dict = checkpoint["model_state_dict"]
     else:
-        model.load_state_dict(checkpoint)
+        state_dict = checkpoint
+
+    if isinstance(checkpoint, dict):
+        checkpoint.clear()
+    del checkpoint
+    import gc
+    gc.collect()
+
+    model.load_state_dict(state_dict)
+    del state_dict
+    gc.collect()
 
     model = model.to(device)
     model.eval()
@@ -321,28 +334,30 @@ def predict_image(
             "image_size": (w, h),
         }
 
-    # Basic non-destructive blur check (scale down large images to prevent multi-megabyte Laplacian allocations)
-    if w > 1024 or h > 1024:
-        scale = 1024.0 / max(w, h)
-        blur_img = img_rgb.resize((int(w * scale), int(h * scale)), Image.Resampling.BILINEAR)
-    else:
-        blur_img = img_rgb
+    # Non-destructive blur check (only when explicitly requested, using max 512px to prevent memory spikes)
+    if validate_plant:
+        if w > 512 or h > 512:
+            scale = 512.0 / max(w, h)
+            blur_img = img_rgb.resize((int(w * scale), int(h * scale)), Image.Resampling.BILINEAR)
+        else:
+            blur_img = img_rgb
 
-    np_rgb = np.array(blur_img)
-    gray = cv2.cvtColor(np_rgb, cv2.COLOR_RGB2GRAY)
-    blur_score = float(cv2.Laplacian(gray, cv2.CV_64F).var())
+        np_rgb = np.array(blur_img)
+        gray = cv2.cvtColor(np_rgb, cv2.COLOR_RGB2GRAY)
+        blur_score = float(cv2.Laplacian(gray, cv2.CV_64F).var())
+        del np_rgb, gray
 
-    if validate_plant and blur_score < min_blur_score:
-        return {
-            "predicted_class": "blurry",
-            "predicted_label": "Blurry",
-            "status": "blurry",
-            "confidence": 0.0,
-            "percentage": "N/A",
-            "reason": f"Severely blurry image (sharpness {blur_score:.1f} < {min_blur_score})",
-            "top_k": [],
-            "image_size": (w, h),
-        }
+        if blur_score < min_blur_score:
+            return {
+                "predicted_class": "blurry",
+                "predicted_label": "Blurry",
+                "status": "blurry",
+                "confidence": 0.0,
+                "percentage": "N/A",
+                "reason": f"Severely blurry image (sharpness {blur_score:.1f} < {min_blur_score})",
+                "top_k": [],
+                "image_size": (w, h),
+            }
 
     # Direct Model 1 Preprocessing & Inference with Feature Embedding Extraction
     tensor = transform(img_rgb).unsqueeze(0).to(device)
@@ -357,6 +372,9 @@ def predict_image(
         probs = torch.softmax(logits, dim=1)[0].cpu().numpy()
         f_vec = feats[0].detach().cpu().numpy()
         f_norm = f_vec / max(float(np.linalg.norm(f_vec)), 1e-12)
+        logits_np = logits[0].detach().cpu().numpy()
+
+    del tensor, feats, logits
 
     num_classes = len(idx_to_class)
     k = min(top_k, num_classes)
@@ -389,10 +407,10 @@ def predict_image(
             "reason": f"Low identification confidence ({top_pred['confidence'] * 100:.1f}% < {min_confidence * 100:.0f}%)",
             "top_k": top_k_list,
             "all_probabilities": probs,
-            "logits": logits[0].detach().cpu().numpy(),
+            "logits": logits_np,
             "feature_vector": f_norm,
             "image_size": (w, h),
-            "_preprocessed_tensor": tensor,
+            "_preprocessed_tensor": None,
         }
 
     return {
@@ -404,8 +422,8 @@ def predict_image(
         "reason": "Plant successfully identified",
         "top_k": top_k_list,
         "all_probabilities": probs,
-        "logits": logits[0].detach().cpu().numpy(),
+        "logits": logits_np,
         "feature_vector": f_norm,
         "image_size": (w, h),
-        "_preprocessed_tensor": tensor,
+        "_preprocessed_tensor": None,
     }

@@ -230,7 +230,16 @@ class Model2DiseaseClassifierV4:
 
         ckpt = torch.load(self.checkpoint_path, map_location="cpu", weights_only=False)
         state_dict = ckpt.get("model_state_dict", ckpt)
+        if isinstance(ckpt, dict):
+            ckpt.clear()
+        del ckpt
+        import gc
+        gc.collect()
+
         model.load_state_dict(state_dict)
+        del state_dict
+        gc.collect()
+
         model.to(self.device)
         model.eval()
         return model
@@ -331,6 +340,10 @@ class Model2DiseaseClassifierV4:
             else:
                 scaled_logits = logits
             probs = torch.softmax(scaled_logits, dim=1).squeeze(0).cpu().numpy()
+
+        del tensor, logits
+        if scaled_logits is not None:
+            del scaled_logits
 
         sorted_indices = np.argsort(probs)[::-1]
         top_classes = [
