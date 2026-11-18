@@ -182,6 +182,7 @@ async def on_startup():
     """Verify services and securely ensure model checkpoints on startup.
     Lazy loads heavy neural models to conserve memory unless EAGER_LOAD_MODELS=true.
     """
+    from app.backend import services as srv
     from app.backend.config import EAGER_LOAD_MODELS, MODEL1_CHECKPOINT, MODEL1_CLASS_MAPPING, MODEL1_CONFIG, MODEL2_CHECKPOINT
     from app.backend.weights_manager import ensure_model_checkpoints
     from model1_test_app.inference import validate_model1_setup
@@ -843,14 +844,18 @@ async def unified_chat_endpoint(
         t_a0 = time.perf_counter()
         audio_bytes = await audio_file.read()
         if audio_bytes:
-            async with _AUDIO_SEMAPHORE:
-                audio_res = await run_in_threadpool(
-                    process_audio_file,
-                    audio_bytes,
-                    original_filename=audio_file.filename or "speech.wav",
-                )
-            audio_transcription = audio_res["text"]
-            detected_language = audio_res.get("language") or detected_language
+            try:
+                async with _AUDIO_SEMAPHORE:
+                    audio_res = await run_in_threadpool(
+                        process_audio_file,
+                        audio_bytes,
+                        original_filename=audio_file.filename or "speech.wav",
+                    )
+                audio_transcription = audio_res["text"]
+                detected_language = audio_res.get("language") or detected_language
+            finally:
+                import app.backend.services as srv
+                srv.model_manager.unload_whisper()
         t_audio_ms = (time.perf_counter() - t_a0) * 1000
     elif has_video_audio and vid_bytes:
         t_a0 = time.perf_counter()
@@ -869,6 +874,9 @@ async def unified_chat_endpoint(
                 has_audio = True
         except Exception as exc:
             logger.warning(f"Video audio transcription failed or skipped: {exc}")
+        finally:
+            import app.backend.services as srv
+            srv.model_manager.unload_whisper()
         t_audio_ms = (time.perf_counter() - t_a0) * 1000
 
     # Resolve active query text (combining typed prompt and spoken instruction)

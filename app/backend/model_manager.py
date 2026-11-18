@@ -247,10 +247,19 @@ class SharedModelManager:
                     f"(Reclaimed: {rss_before - rss_after:.1f} MB)"
                 )
 
+    def unload_whisper(self) -> None:
+        """Release any cached Whisper speech model instances and free C-heap memory."""
+        try:
+            from audio.test_audio import unload_whisper
+            unload_whisper()
+        except Exception:
+            pass
+
     def unload_all(self) -> None:
-        """Release both neural models to minimize memory footprint."""
+        """Release all neural models (Model 1, Model 2, Whisper) to minimize memory footprint."""
         self.unload_model1()
         self.unload_model2()
+        self.unload_whisper()
 
     def get_memory_telemetry(self) -> dict[str, Any]:
         """Return memory diagnostics for logging and operational health status."""

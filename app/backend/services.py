@@ -173,6 +173,7 @@ def process_audio_file(file_bytes: bytes, original_filename: str = "audio.wav") 
                 Path(temp_path).unlink()
             except OSError:
                 pass
+        release_memory()
 
 
 def start_server_microphone() -> dict[str, Any]:
@@ -232,6 +233,7 @@ def stop_server_microphone() -> dict[str, Any]:
             except OSError:
                 pass
         _ACTIVE_RECORDER = None
+        release_memory()
 
 
 # ---------------------------------------------------------------------------
@@ -688,6 +690,8 @@ def process_video_inference(
         for f in v_res["frame_records"]:
             thumb_b64 = pil_to_base64_data_url(f["thumbnail"], format="JPEG", quality=75) if f.get("thumbnail") else None
             roi_thumb_b64 = pil_to_base64_data_url(f["roi_thumbnail"], format="JPEG", quality=80) if f.get("roi_thumbnail") else None
+            f["thumbnail"] = None
+            f["roi_thumbnail"] = None
 
             f_status = f.get("status", "valid")
             roi_img = f.get("roi_pil") or f.get("primary_roi_pil") or f.get("roi_thumbnail")

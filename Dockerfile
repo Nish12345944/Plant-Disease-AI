@@ -35,6 +35,9 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
+# Pre-cache faster-whisper tiny model to eliminate runtime network downloads & memory spikes
+RUN python -c "from faster_whisper import WhisperModel; WhisperModel('tiny', device='cpu', compute_type='int8')"
+
 # Copy backend code, models, knowledge base, router, and audio/video modules
 COPY app/ ./app/
 COPY knowledge/ ./knowledge/

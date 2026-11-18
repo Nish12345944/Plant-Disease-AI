@@ -34,6 +34,26 @@ _WHISPER_MODELS: dict[tuple[str, str, str], Any] = {}
 _WHISPER_LOCK = threading.Lock()
 
 
+def unload_whisper() -> None:
+    """Explicitly release all cached WhisperModel instances and reclaim resident memory."""
+    global _WHISPER_MODELS
+    with _WHISPER_LOCK:
+        for k in list(_WHISPER_MODELS.keys()):
+            m = _WHISPER_MODELS.pop(k, None)
+            if m is not None:
+                del m
+        _WHISPER_MODELS.clear()
+
+    import gc
+    gc.collect()
+    try:
+        import ctypes
+        libc = ctypes.CDLL("libc.so.6")
+        libc.malloc_trim(0)
+    except Exception:
+        pass
+
+
 @dataclass
 class TranscriptionSegment:
     """One transcribed segment with timestamps."""
@@ -87,6 +107,7 @@ def transcribe_audio(
     model_size: str = DEFAULT_MODEL_SIZE,
     device: str = "auto",
     compute_type: str = "auto",
+    keep_in_memory: bool = False,
 ) -> TranscriptionResult:
     """Transcribe an audio file with faster-whisper.
 
@@ -95,6 +116,8 @@ def transcribe_audio(
         model_size: faster-whisper model size (default "small").
         device: "auto" (cuda if available else cpu), "cuda", or "cpu".
         compute_type: "auto" picks float16 on CUDA, int8 on CPU.
+        keep_in_memory: If False (default for low-memory cloud containers),
+                        unloads the model and frees C-heap memory immediately in finally.
 
     Returns:
         TranscriptionResult with language, probability, full text, segments.
@@ -124,28 +147,38 @@ def transcribe_audio(
         compute_type = "float16" if device == "cuda" else "int8"
 
     cache_key = (model_size, device, compute_type)
-    with _WHISPER_LOCK:
-        if cache_key not in _WHISPER_MODELS:
-            _WHISPER_MODELS[cache_key] = WhisperModel(model_size, device=device, compute_type=compute_type)
-        model = _WHISPER_MODELS[cache_key]
+    model = None
+    try:
+        with _WHISPER_LOCK:
+            if keep_in_memory:
+                if cache_key not in _WHISPER_MODELS:
+                    _WHISPER_MODELS[cache_key] = WhisperModel(model_size, device=device, compute_type=compute_type)
+                model = _WHISPER_MODELS[cache_key]
+            else:
+                model = WhisperModel(model_size, device=device, compute_type=compute_type)
 
-        segments_iter, info = model.transcribe(str(audio_path), beam_size=5)
+            segments_iter, info = model.transcribe(str(audio_path), beam_size=5)
 
-        segments: list = []
-        text_parts: list = []
-        for seg in segments_iter:
-            text = seg.text.strip()
-            segments.append(
-                TranscriptionSegment(start=seg.start, end=seg.end, text=text)
+            segments: list = []
+            text_parts: list = []
+            for seg in segments_iter:
+                text = seg.text.strip()
+                segments.append(
+                    TranscriptionSegment(start=seg.start, end=seg.end, text=text)
+                )
+                text_parts.append(text)
+
+            return TranscriptionResult(
+                language=info.language,
+                language_probability=info.language_probability,
+                text=" ".join(text_parts).strip(),
+                segments=segments,
             )
-            text_parts.append(text)
-
-        return TranscriptionResult(
-            language=info.language,
-            language_probability=info.language_probability,
-            text=" ".join(text_parts).strip(),
-            segments=segments,
-        )
+    finally:
+        if not keep_in_memory:
+            if model is not None:
+                del model
+            unload_whisper()
 
 
 def print_result(result: TranscriptionResult) -> None:

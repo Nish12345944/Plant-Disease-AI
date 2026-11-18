@@ -40,7 +40,7 @@ DEFAULT_SAMPLE_FPS = 2.0
 TARGET_FRAMES_DEFAULT = None  # None indicates dynamic computation based on sample_fps & video duration
 FALLBACK_TARGET_FRAMES = 8
 MIN_TARGET_FRAMES = 4
-MAX_TARGET_FRAMES = 60
+MAX_TARGET_FRAMES = int(os.environ.get("MAX_VIDEO_FRAMES", "16"))
 MAX_FRAME_DIMENSION = 512
 MAX_VIDEO_DURATION_SECONDS = 30.0
 MAX_VIDEO_SIZE_BYTES = 50 * 1024 * 1024  # 50 MB
@@ -217,10 +217,6 @@ def extract_adaptive_video_frames(
                 else:
                     reason = "accepted (low-motion frame)"
 
-        # Resized RGB & BGR
-        full_rgb = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2RGB)
-        frame_pil = Image.fromarray(full_rgb)
-
         # In-memory thumbnail for UI
         thumb_bgr = cv2.resize(frame_bgr, thumbnail_size, interpolation=cv2.INTER_AREA)
         thumb_rgb = cv2.cvtColor(thumb_bgr, cv2.COLOR_BGR2RGB)
@@ -234,8 +230,7 @@ def extract_adaptive_video_frames(
             "reason": reason,
             "quality_score": q_score,
             "thumbnail": thumb_pil,
-            "frame_image": frame_pil,
-            "frame_bgr": frame_bgr,
+            "frame_bgr": frame_bgr if is_acc else None,
         }
 
         if is_acc:
@@ -273,8 +268,11 @@ def extract_adaptive_video_frames(
 
     selected_frames = sorted(selected_frames, key=lambda x: x["frame_index"])
 
-    # Release heavy buffers from rejected frames to prevent memory spikes (preserving any chosen fallback frames)
+    # Release heavy buffers from unselected and rejected frames to bound memory
     selected_ids = {id(f) for f in selected_frames}
+    for a in accepted_pool:
+        if id(a) not in selected_ids:
+            a["frame_bgr"] = None
     for r in rejected_pool:
         if id(r) not in selected_ids:
             r["frame_bgr"] = None
