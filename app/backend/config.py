@@ -42,15 +42,15 @@ MODEL1_PROTOTYPES = _resolve_model_path(
     PROJECT_ROOT / "models" / "model1_corrected_v3" / "crop_prototypes.npz"
 )
 
-# Model 2 Paths (Retrained V3 152-Class Disease Classifier for Production)
+# Model 2 Paths (Retrained V4 233-Class Disease Classifier for Testing & MERN Integration)
 MODEL2_CHECKPOINT = _resolve_model_path(
-    "MODEL2_CHECKPOINT", PROJECT_ROOT / "models" / "model2_retrained_v3" / "best_model.pth"
+    "MODEL2_CHECKPOINT", PROJECT_ROOT / "models" / "model2_retrained_v4" / "best_model.pth"
 )
 MODEL2_CLASS_MAPPING = _resolve_model_path(
-    "MODEL2_CLASS_MAPPING", PROJECT_ROOT / "models" / "model2_retrained_v3" / "class_mapping.json"
+    "MODEL2_CLASS_MAPPING", PROJECT_ROOT / "models" / "model2_retrained_v4" / "class_mapping.json"
 )
 MODEL2_CONFIG = _resolve_model_path(
-    "MODEL2_CONFIG", PROJECT_ROOT / "models" / "model2_retrained_v3" / "config.json"
+    "MODEL2_CONFIG", PROJECT_ROOT / "models" / "model2_retrained_v4" / "config.json"
 )
 
 _env_crop_disease_map = os.environ.get("CROP_DISEASE_MAPPING")
@@ -58,7 +58,7 @@ if _env_crop_disease_map:
     _cdm_p = Path(_env_crop_disease_map)
     CROP_DISEASE_MAPPING = (PROJECT_ROOT / _cdm_p).resolve() if not _cdm_p.is_absolute() else _cdm_p.resolve()
 else:
-    CROP_DISEASE_MAPPING = (PROJECT_ROOT / "models" / "model2_retrained_v3" / "crop_disease_mapping.json").resolve()
+    CROP_DISEASE_MAPPING = (PROJECT_ROOT / "models" / "model2_retrained_v4" / "crop_disease_mapping.json").resolve()
 
 # Deployment & Memory Tuning Flags
 EAGER_LOAD_MODELS = os.environ.get("EAGER_LOAD_MODELS", "false").lower() in ("true", "1", "yes")

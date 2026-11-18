@@ -57,9 +57,9 @@ ENV PYTHONUNBUFFERED=1 \
     MODEL1_CLASS_MAPPING=models/model1_expanded_v2/class_mapping.json \
     MODEL1_CONFIG=models/model1_corrected_v3/config.json \
     MODEL1_PROTOTYPES=models/model1_corrected_v3/crop_prototypes.npz \
-    MODEL2_CHECKPOINT=models/model2_retrained_v3/best_model.pth \
-    MODEL2_CLASS_MAPPING=models/model2_retrained_v3/class_mapping.json \
-    CROP_DISEASE_MAPPING=models/model2_retrained_v3/crop_disease_mapping.json
+    MODEL2_CHECKPOINT=models/model2_retrained_v4/best_model.pth \
+    MODEL2_CLASS_MAPPING=models/model2_retrained_v4/class_mapping.json \
+    CROP_DISEASE_MAPPING=models/model2_retrained_v4/crop_disease_mapping.json
 
 EXPOSE 10000
 

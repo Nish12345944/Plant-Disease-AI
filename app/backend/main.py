@@ -8,7 +8,7 @@ import logging
 import time
 import uuid
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 
 from fastapi import FastAPI, File, Form, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,7 +26,6 @@ from app.backend.config import (
 from app.backend.services import (
     get_model1,
     get_model2,
-    pil_to_base64_data_url,
     process_audio_file,
     process_image_inference,
     process_query_routing,
@@ -36,16 +35,11 @@ from app.backend.services import (
 )
 from knowledge.assistant import AgriculturalAssistant
 from knowledge.database import get_knowledge_base
-from knowledge.treatment import get_disease_treatment, get_disease_insights
-from router.response_mode import ResponseMode, detect_response_mode
+from knowledge.treatment import get_disease_treatment
+from router.response_mode import detect_response_mode
 from video.frame_extractor import (
-    EmptyVideoError,
-    InvalidVideoError,
-    MAX_VIDEO_DURATION_SECONDS,
     MAX_VIDEO_SIZE_BYTES,
-    VideoDurationExceededError,
     VideoProcessingError,
-    VideoSizeExceededError,
 )
 
 # Configure logging
@@ -181,8 +175,8 @@ async def api_root():
         "health": "/health",
         "frontend_url": "http://localhost:5173",
         "models": {
-            "model1": "Plant Identification (Model 1 - EfficientNet-B2 46 crops)",
-            "model2": "Disease & Healthy Classification (Model 2 Retrained V3 - EfficientNet-B2 152 classes)",
+            "model1": "Plant Identification (Model 1 - EfficientNet-B2 52 crops)",
+            "model2": "Disease & Healthy Classification (Model 2 Retrained V4 - EfficientNet-B2 233 classes)",
             "audio": "faster-whisper",
         },
     }
@@ -204,13 +198,13 @@ async def health_check():
         "device": DEVICE_NAME,
         "models": {
             "model1": {
-                "name": "EfficientNet-B2 46-Crop Identifier",
+                "name": f"EfficientNet-B2 {len(srv._MODEL1[1]) if srv._MODEL1 else 52}-Crop Identifier",
                 "loaded": srv._MODEL1 is not None,
                 "checkpoint": str(MODEL1_CHECKPOINT),
                 "available": MODEL1_CHECKPOINT.exists(),
             },
             "model2": {
-                "name": f"EfficientNet-B2 Retrained V3 {srv._MODEL2_V4.num_classes if srv._MODEL2_V4 else 152}-Class Disease Classifier",
+                "name": f"EfficientNet-B2 Retrained V4 {srv._MODEL2_V4.num_classes if srv._MODEL2_V4 else 233}-Class Disease Classifier",
                 "loaded": srv._MODEL2_V4 is not None,
                 "checkpoint": str(MODEL2_CHECKPOINT),
                 "available": MODEL2_CHECKPOINT.exists(),
@@ -354,6 +348,232 @@ async def clear_query_history_endpoint(session_id: Optional[str] = None):
 # ---------------------------------------------------------------------------
 # Direct Image & Video Inference Endpoints
 # ---------------------------------------------------------------------------
+
+@app.post("/api/v1/predict")
+async def predict_v1_endpoint(file: UploadFile = File(...)):
+    """Dedicated clean ML prediction endpoint for Allexa Farm MERN application.
+
+    Reuses the full multi-stage production inference pipeline:
+    1. Safeguard A: Plant Image Validation Gate (blur, exposure, vegetation coverage).
+    2. Model 1: EfficientNet-B2 Plant/Crop Identification.
+    3. Safeguard B: Open-Set Crop Guard (prototype distance distribution verification).
+    4. Model 2: EfficientNet-B2 Crop-Aware Disease Classification.
+    5. Knowledge Engine: Deterministic agricultural treatment & precautions.
+    """
+    prediction_id = str(uuid.uuid4())
+
+    # 1. Validate file presence & format
+    filename = file.filename or ""
+    ext = Path(filename).suffix.lower() if filename else ""
+    if ext and ext not in SUPPORTED_IMAGE_EXTS:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "success": False,
+                "prediction_id": prediction_id,
+                "error": {
+                    "code": "UNSUPPORTED_IMAGE_FORMAT",
+                    "message": f"Unsupported image format '{ext}'. Supported formats: {sorted(list(SUPPORTED_IMAGE_EXTS))}",
+                    "details": {"filename": filename, "extension": ext},
+                },
+            },
+        )
+
+    file_bytes = await file.read()
+    if not file_bytes:
+        return JSONResponse(
+            status_code=400,
+            content={
+                "success": False,
+                "prediction_id": prediction_id,
+                "error": {
+                    "code": "INVALID_OR_MISSING_IMAGE",
+                    "message": "Uploaded image file is empty or missing.",
+                    "details": {"filename": filename, "file_size": 0},
+                },
+            },
+        )
+
+    t0 = time.perf_counter()
+    try:
+        async with _INFERENCE_SEMAPHORE:
+            raw_res = await run_in_threadpool(process_image_inference, file_bytes)
+        t_total = (time.perf_counter() - t0) * 1000
+        logger.info(f"[PERF_TIMING] /api/v1/predict id={prediction_id} total={t_total:.1f}ms")
+
+        # 2. Check Safeguard A (Image Validation Gate)
+        validation = raw_res.get("validation", {})
+        if not validation.get("valid", True):
+            return JSONResponse(
+                status_code=422,
+                content={
+                    "success": False,
+                    "prediction_id": prediction_id,
+                    "error": {
+                        "code": "INVALID_IMAGE",
+                        "reason_code": validation.get("reason_code", "invalid_image"),
+                        "message": validation.get("message", "Plant image validation failed."),
+                        "details": {
+                            "image_size": validation.get("image_size"),
+                            "blur_score": validation.get("blur_score"),
+                            "mean_brightness": validation.get("mean_brightness"),
+                            "plant_coverage": validation.get("plant_coverage"),
+                        },
+                    },
+                },
+            )
+
+        # 3. Check Safeguard B (Open-Set Crop Guard)
+        crop_guard = raw_res.get("crop_guard", {})
+        crop_status = crop_guard.get("crop_status", "")
+        if crop_status == "unsupported_crop":
+            return JSONResponse(
+                status_code=422,
+                content={
+                    "success": False,
+                    "prediction_id": prediction_id,
+                    "error": {
+                        "code": "UNSUPPORTED_CROP",
+                        "message": crop_guard.get("user_message") or "This crop is not currently supported for disease diagnosis.",
+                        "details": {
+                            "crop_status": "unsupported_crop",
+                            "reason_code": crop_guard.get("reason_code"),
+                            "predicted_crop": crop_guard.get("predicted_crop"),
+                            "margin": crop_guard.get("margin"),
+                            "entropy": crop_guard.get("entropy"),
+                        },
+                    },
+                },
+            )
+        elif crop_status in ("uncertain_crop", "ambiguous_crop") or not crop_guard.get("proceed_to_disease_detection", True):
+            return JSONResponse(
+                status_code=422,
+                content={
+                    "success": False,
+                    "prediction_id": prediction_id,
+                    "error": {
+                        "code": "UNCERTAIN_CROP",
+                        "message": crop_guard.get("user_message") or "Crop identification was inconclusive. Please upload a clearer plant photo.",
+                        "details": {
+                            "crop_status": crop_status,
+                            "reason_code": crop_guard.get("reason_code"),
+                            "predicted_crop": crop_guard.get("predicted_crop"),
+                            "margin": crop_guard.get("margin"),
+                            "entropy": crop_guard.get("entropy"),
+                        },
+                    },
+                },
+            )
+
+        # 4. Check Model 2 Disease Classification status
+        model2_dict = raw_res.get("model2", {})
+        m2_status = model2_dict.get("status")
+
+        if m2_status == "error":
+            return JSONResponse(
+                status_code=500,
+                content={
+                    "success": False,
+                    "prediction_id": prediction_id,
+                    "error": {
+                        "code": "DISEASE_PREDICTION_FAILED",
+                        "message": model2_dict.get("message", "Disease prediction failed during inference."),
+                        "details": {"status": "error"},
+                    },
+                },
+            )
+        elif m2_status == "uncertain":
+            return JSONResponse(
+                status_code=422,
+                content={
+                    "success": False,
+                    "prediction_id": prediction_id,
+                    "error": {
+                        "code": "UNCERTAIN_DISEASE_PREDICTION",
+                        "message": model2_dict.get("message", "Disease symptoms could not be conclusively diagnosed."),
+                        "crop": {
+                            "name": raw_res.get("predicted_crop"),
+                            "slug": raw_res.get("predicted_class"),
+                            "confidence": round(float(raw_res.get("confidence", 0.0)), 4),
+                        },
+                        "details": {
+                            "status": "uncertain",
+                            "confidence": model2_dict.get("confidence"),
+                        },
+                    },
+                },
+            )
+
+        # 5. Success response (Healthy or Diagnosed Disease)
+        model1_dict = raw_res.get("model1", {})
+        is_healthy = (m2_status == "healthy")
+        treatment_data = model2_dict.get("treatment") or {}
+
+        if is_healthy:
+            disease_name = "Healthy"
+            disease_slug = "healthy"
+        else:
+            disease_name = model2_dict.get("primary_disease", "Unknown Disease")
+            disease_slug = model2_dict.get("primary_disease_slug", "")
+
+        return {
+            "success": True,
+            "prediction_id": prediction_id,
+            "crop": {
+                "name": model1_dict.get("predicted_crop", ""),
+                "slug": model1_dict.get("predicted_class", ""),
+                "confidence": round(float(model1_dict.get("confidence", 0.0)), 4),
+            },
+            "disease": {
+                "name": disease_name,
+                "slug": disease_slug,
+                "confidence": round(float(model2_dict.get("confidence", 0.0)), 4),
+                "is_healthy": is_healthy,
+            },
+            "treatment": {
+                "curable": treatment_data.get("curable_simple", "Manageable" if not is_healthy else "Not applicable"),
+                "description": treatment_data.get("curable_reason", ""),
+                "immediate_actions": treatment_data.get("cure_treatment", []),
+                "treatment_options": treatment_data.get("treatment_options", {}),
+                "prevention": treatment_data.get("prevention", []),
+                "sources": treatment_data.get("sources", []),
+            },
+            "precautions": treatment_data.get("precautions", []),
+            "model_versions": {
+                "model1": "model1_corrected_v3",
+                "model2": "model2_retrained_v4",
+            },
+        }
+
+    except FileNotFoundError as exc:
+        logger.warning(f"Prediction model checkpoint unavailable: {exc}")
+        return JSONResponse(
+            status_code=503,
+            content={
+                "success": False,
+                "prediction_id": prediction_id,
+                "error": {
+                    "code": "MODEL_CHECKPOINT_UNAVAILABLE",
+                    "message": f"Inference model checkpoint is unavailable: {str(exc)}",
+                    "details": None,
+                },
+            },
+        )
+    except Exception as exc:
+        logger.error(f"Internal prediction failure: {exc}", exc_info=True)
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "prediction_id": prediction_id,
+                "error": {
+                    "code": "INTERNAL_INFERENCE_FAILURE",
+                    "message": f"Internal prediction failure: {str(exc)}",
+                    "details": None,
+                },
+            },
+        )
+
 
 @app.post("/api/inference/image")
 async def inference_image_endpoint(file: UploadFile = File(...)):

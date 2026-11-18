@@ -84,6 +84,29 @@ export async function routeQuery(text) {
 }
 
 /**
+ * Helper to extract meaningful error messages from API responses
+ */
+async function parseResponseError(res, defaultBadRequestMsg) {
+  try {
+    const err = await res.json();
+    if (err.detail) return err.detail;
+    if (err.message) return err.message;
+  } catch {
+    // Fall back to status-specific human-readable messages
+  }
+  if (res.status === 400) {
+    return defaultBadRequestMsg;
+  } else if (res.status === 502) {
+    return 'Backend service is starting up or temporarily unavailable (HTTP 502 Bad Gateway). Please retry in a few moments.';
+  } else if (res.status === 503) {
+    return 'Service temporarily unavailable (HTTP 503). Vision model checkpoint is unavailable or service is loading.';
+  } else if (res.status === 504) {
+    return 'Request timed out (HTTP 504 Gateway Timeout). Please try with a shorter clip or smaller file.';
+  }
+  return `Request failed with HTTP ${res.status}`;
+}
+
+/**
  * Direct video inference endpoint
  * @param {Blob|File} videoFile
  * @param {number} [targetFrames=8]
@@ -100,22 +123,10 @@ export async function predictVideo(videoFile, targetFrames = 8) {
   });
 
   if (!res.ok) {
-    let errorDetail = `Video inference failed with HTTP ${res.status}`;
-    try {
-      const err = await res.json();
-      if (err.detail) errorDetail = err.detail;
-      else if (err.message) errorDetail = err.message;
-    } catch {
-      if (res.status === 400) {
-        errorDetail = 'The uploaded video file is unsupported or corrupted. Please upload a valid plant video clip (MP4, WebM, MOV, AVI).';
-      } else if (res.status === 502) {
-        errorDetail = 'Backend service is starting up or temporarily unavailable (HTTP 502 Bad Gateway). Please retry in a few moments.';
-      } else if (res.status === 503) {
-        errorDetail = 'Service temporarily unavailable (HTTP 503). Vision model checkpoint is unavailable.';
-      } else if (res.status === 504) {
-        errorDetail = 'Request timed out (HTTP 504 Gateway Timeout). Please try with a shorter video clip.';
-      }
-    }
+    const errorDetail = await parseResponseError(
+      res,
+      'The uploaded video file is unsupported or corrupted. Please upload a valid plant video clip (MP4, WebM, MOV, AVI).'
+    );
     throw new Error(errorDetail);
   }
 
@@ -148,22 +159,10 @@ export async function sendChatMessage({ text = '', file = null, inputType = 'tex
   });
 
   if (!res.ok) {
-    let errorDetail = `Chat request failed with HTTP ${res.status}`;
-    try {
-      const err = await res.json();
-      if (err.detail) errorDetail = err.detail;
-      else if (err.message) errorDetail = err.message;
-    } catch {
-      if (res.status === 400) {
-        errorDetail = 'The uploaded file is unsupported, corrupted, or exceeded limits. Please verify your file and try again.';
-      } else if (res.status === 502) {
-        errorDetail = 'Backend service is starting up or temporarily unavailable (HTTP 502 Bad Gateway). Please retry in a few moments.';
-      } else if (res.status === 503) {
-        errorDetail = 'Service temporarily unavailable (HTTP 503). The requested model checkpoint is unavailable or service is loading.';
-      } else if (res.status === 504) {
-        errorDetail = 'Request timed out (HTTP 504 Gateway Timeout). Please try with a smaller file or text query.';
-      }
-    }
+    const errorDetail = await parseResponseError(
+      res,
+      'The uploaded file is unsupported, corrupted, or exceeded limits. Please verify your file and try again.'
+    );
     throw new Error(errorDetail);
   }
 

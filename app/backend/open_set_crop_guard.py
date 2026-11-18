@@ -26,7 +26,6 @@ from pathlib import Path
 from typing import Any, Optional
 
 import numpy as np
-import torch
 
 from app.backend.config import MODEL1_CLASS_MAPPING, MODEL1_PROTOTYPES
 from model1_test_app.inference import format_class_name, normalize_crop_id

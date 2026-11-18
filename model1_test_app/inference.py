@@ -23,10 +23,11 @@ from torchvision.models import efficientnet_b2
 
 logger = logging.getLogger(__name__)
 
-# Default model artifacts (Expanded 46-crop classifier for production)
-DEFAULT_CHECKPOINT_PATH = Path("models/model1_expanded/best_model.pth")
-DEFAULT_MAPPING_PATH = Path("models/model1_expanded/class_mapping.json")
-DEFAULT_CONFIG_PATH = Path("models/model1_expanded/config.json")
+# Default model artifacts (Validated Model 1 Corrected V3 52-crop classifier)
+DEFAULT_CHECKPOINT_PATH = Path(os.environ.get("MODEL1_CHECKPOINT", "models/model1_corrected_v3/best_model.pth"))
+DEFAULT_MAPPING_PATH = Path(os.environ.get("MODEL1_CLASS_MAPPING", "models/model1_expanded_v2/class_mapping.json"))
+DEFAULT_CONFIG_PATH = Path(os.environ.get("MODEL1_CONFIG", "models/model1_corrected_v3/config.json"))
+DEFAULT_PROTOTYPES_PATH = Path(os.environ.get("MODEL1_PROTOTYPES", "models/model1_corrected_v3/crop_prototypes.npz"))
 
 # Exact ImageNet normalization parameters used in training
 IMAGENET_MEAN = [0.485, 0.456, 0.406]
@@ -46,7 +47,7 @@ def validate_model1_setup(
     Enforces:
     1. Checkpoint and mapping files must exist; fails clearly if unavailable.
     2. Checkpoint output dimension must match mapping class count; fails clearly on mismatch.
-    3. Production cannot silently select legacy (<46 classes) models unless allow_legacy=True or ALLOW_LEGACY_MODEL1=true.
+    3. Production cannot silently select legacy (<52 classes) models unless allow_legacy=True or ALLOW_LEGACY_MODEL1=true.
 
     Returns:
         dict with metadata: {
@@ -63,7 +64,7 @@ def validate_model1_setup(
     if not chk_path.exists():
         raise FileNotFoundError(
             f"Required Model 1 checkpoint not found at: '{chk_path}'. "
-            f"Expanded 46-class checkpoint is required for production."
+            f"Validated Model 1 Expanded V2 (52-class) checkpoint is required."
         )
     if not map_path.exists():
         raise FileNotFoundError(
@@ -105,16 +106,16 @@ def validate_model1_setup(
             f"output classes, but class mapping '{map_path}' defines {mapping_class_count} classes."
         )
 
-    # 4. Prevent silent fallback to legacy 22-class model in production
+    # 4. Prevent silent fallback to legacy (<52 classes) models unless explicitly permitted
     if allow_legacy is None:
         allow_legacy = os.environ.get("ALLOW_LEGACY_MODEL1", "false").lower() in ("true", "1", "yes")
 
-    if checkpoint_output_dim < 46 and not allow_legacy:
+    if checkpoint_output_dim < 52 and not allow_legacy:
         raise RuntimeError(
-            f"Production configuration error: Legacy Model 1 checkpoint with {checkpoint_output_dim} "
-            f"classes ('{chk_path}') cannot be silently selected in production. "
-            f"The expanded 46-class model is required. Set ALLOW_LEGACY_MODEL1=true to explicitly allow "
-            f"alternate/legacy checkpoints in test environments."
+            f"Configuration error: Model 1 checkpoint with {checkpoint_output_dim} "
+            f"classes ('{chk_path}') cannot be silently selected. "
+            f"The validated 52-class Model 1 Expanded V2 model is required. "
+            f"Set ALLOW_LEGACY_MODEL1=true to explicitly allow alternate/legacy checkpoints in test environments."
         )
 
     logger.info(
@@ -126,7 +127,7 @@ def validate_model1_setup(
         "mapping_path": map_path,
         "num_classes": mapping_class_count,
         "checkpoint_output_dim": checkpoint_output_dim,
-        "is_expanded": checkpoint_output_dim >= 46,
+        "is_expanded": checkpoint_output_dim >= 52,
     }
 
 
@@ -234,8 +235,9 @@ CROP_DISPLAY_NAMES: dict[str, str] = {
     "bellpepper": "Bell Pepper",
     "capsicum": "Bell Pepper",
     "bell_pepper": "Bell Pepper",
-    "french_bean": "French Bean",
-    "cherry_tomato": "Cherry Tomato",
+    "french_bean": "Bean",
+    "bean": "Bean",
+    "cherry_tomato": "Tomato",
 }
 
 
@@ -247,7 +249,7 @@ def normalize_crop_id(crop: Optional[str]) -> Optional[str]:
     if c in ("capsicum", "bell_pepper", "bellpepper", "bell pepper"):
         return "bellpepper"
     if c in ("bean", "french_bean", "french bean"):
-        return "french_bean"
+        return "bean"
     return c.replace(" ", "_")
 
 

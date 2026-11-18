@@ -15,7 +15,6 @@ from __future__ import annotations
 
 import base64
 import io
-import json
 import logging
 import os
 import tempfile
@@ -25,7 +24,6 @@ from pathlib import Path
 from typing import Any, Optional
 
 import numpy as np
-import torch
 from PIL import Image
 
 from app.backend.config import (
@@ -37,7 +35,6 @@ from app.backend.config import (
     MODEL1_CONFIG,
     MODEL2_CHECKPOINT,
     MODEL2_CLASS_MAPPING,
-    MODEL2_CONFIG,
     TEMP_MEDIA_DIR,
     WHISPER_MODEL_SIZE,
 )
@@ -59,21 +56,18 @@ from model1_test_app.inference import (
     normalize_crop_id,
     predict_image,
 )
-from model1_test_app.video_inference import TARGET_FRAMES_DEFAULT, predict_video
+from model1_test_app.video_inference import predict_video
 from models.model2_classifier_v4.predict import (
     Model2DiseaseClassifierV4,
     format_disease_name_clean,
-    format_human_readable,
 )
 from router.query_router import route_query
 from video.frame_extractor import (
-    MAX_VIDEO_DURATION_SECONDS,
     MAX_VIDEO_SIZE_BYTES,
-    VideoDurationExceededError,
     VideoSizeExceededError,
 )
 from app.backend.image_validator import validate_plant_image
-from app.backend.open_set_crop_guard import evaluate_crop_acceptance, get_supported_crop_classes
+from app.backend.open_set_crop_guard import evaluate_crop_acceptance
 from knowledge.treatment import get_disease_treatment
 
 logger = logging.getLogger(__name__)

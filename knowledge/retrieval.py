@@ -17,10 +17,9 @@ from knowledge.database import AgriculturalKnowledgeBase, get_knowledge_base
 from knowledge.schema import (
     CropRecord,
     DiseaseRecord,
-    SourcedFact,
 )
 from knowledge.sources import format_source_citation
-from knowledge.treatment import get_disease_treatment, get_disease_insights
+from knowledge.treatment import get_disease_treatment
 from router.taxonomy import ExtractedEntities, Intent
 
 logger = logging.getLogger(__name__)

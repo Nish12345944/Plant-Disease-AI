@@ -26,10 +26,8 @@ from PIL import Image
 
 from model1_test_app.plant_detector import (
     DEFAULT_MAX_BRIGHTNESS,
-    DEFAULT_MIN_BLUR_SCORE,
     DEFAULT_MIN_BRIGHTNESS,
     DEFAULT_MIN_PLANT_COVERAGE,
-    ensure_bgr_array,
     extract_tight_plant_rois,
 )
 

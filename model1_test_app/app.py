@@ -58,7 +58,7 @@ def main():
         <div style="text-align: center; margin-bottom: 20px;">
             <h1 style="color: #22c55e; margin-bottom: 4px; font-weight: 800;">🌱 PLANT / CROP IDENTIFICATION</h1>
             <p style="color: #94a3b8; font-size: 1.1rem; margin-top: 0;">
-                Model 1 Testing Suite (EfficientNet-B2 &bull; 22-Class Transfer Learning)
+                Model 1 Testing Suite (EfficientNet-B2 &bull; 52-Crop Transfer Learning)
             </p>
         </div>
         """,

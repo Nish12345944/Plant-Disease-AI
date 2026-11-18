@@ -30,6 +30,7 @@ data/processed/
 _*
 temp_multimodal_uploads/
 temp_test_videos/
+temp_video_frames/
 reports/video_debug/
 *.mp4
 *.avi
@@ -37,6 +38,8 @@ reports/video_debug/
 
 # IDE
 .vscode/
+.idea/
+
 # Local dataset backups & scratch work
 backups/
 scratch/
@@ -45,15 +48,9 @@ scratch/
 .pytest_cache/
 .mypy_cache/
 
-.idea/
-
 # Frontend build artifacts
 app/frontend/dist/
 
 # OS
 .DS_Store
 Thumbs.db
-
-# Cache
-.pytest_cache/
-.mypy_cache/

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import math
 import shutil
 import uuid
 from dataclasses import dataclass
@@ -14,7 +13,6 @@ import cv2
 import numpy as np
 
 from video.frame_extractor import (
-    EmptyVideoError,
     InvalidVideoError,
     get_video_metadata,
     validate_video,

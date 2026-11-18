@@ -11,7 +11,6 @@ from typing import Any, Optional
 
 from knowledge.schema import AnswerPlan, FinalAgentResponse, StructuredReasoningResult
 from knowledge.treatment import get_disease_treatment
-from router.taxonomy import Intent
 
 
 def build_response(

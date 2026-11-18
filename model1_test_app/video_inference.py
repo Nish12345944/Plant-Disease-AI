@@ -604,20 +604,44 @@ def predict_video(
 
     # Step 5: Final Aggregated Video Prediction across all valid frames
     if valid_plant_prob_vectors:
-        weights_arr = np.array(valid_plant_weights, dtype=np.float32)
-        total_weight = float(np.sum(weights_arr))
-        if total_weight > 0:
-            norm_weights = weights_arr / total_weight
-            mean_prob_vector = np.sum([w * p for w, p in zip(norm_weights, valid_plant_prob_vectors)], axis=0)
-        else:
-            mean_prob_vector = np.mean(valid_plant_prob_vectors, axis=0)
-
         from collections import Counter
         crop_counts = Counter(valid_plant_classes)
         crop_support_counts = dict(crop_counts)
         dominant_crop, max_support = crop_counts.most_common(1)[0]
         support_ratio = max_support / len(valid_plant_classes)
         crop_disagreement = round(1.0 - support_ratio, 3)
+
+        # Subject-focused consensus aggregation:
+        # If a dominant crop is established across the video (>= 3 frames or >= 35% support),
+        # discount frames that completely conflict with the dominant crop subject (e.g. distant aisle/corridor background)
+        # so they do not contaminate the true crop subject's confidence.
+        dom_idx = None
+        for idx_k, name_v in (idx_to_class.items() if isinstance(idx_to_class, dict) else enumerate(idx_to_class)):
+            if normalize_crop_id(str(name_v)) == dominant_crop or str(name_v) == dominant_crop:
+                dom_idx = int(idx_k)
+                break
+
+        weights_arr = np.array(valid_plant_weights, dtype=np.float32)
+        if dominant_crop and (max_support >= 3 or support_ratio >= 0.35) and dom_idx is not None:
+            adjusted_weights = []
+            for i, (c, p) in enumerate(zip(valid_plant_classes, valid_plant_prob_vectors)):
+                w = valid_plant_weights[i]
+                dom_prob = float(p[dom_idx])
+                if c != dominant_crop and dom_prob < 0.08:
+                    # Background / corridor scene not showing the subject crop
+                    w *= 0.05
+                elif c == dominant_crop:
+                    # Supporting subject frame bonus
+                    w *= (1.0 + 0.5 * dom_prob)
+                adjusted_weights.append(w)
+            weights_arr = np.array(adjusted_weights, dtype=np.float32)
+
+        total_weight = float(np.sum(weights_arr))
+        if total_weight > 0:
+            norm_weights = weights_arr / total_weight
+            mean_prob_vector = np.sum([w * p for w, p in zip(norm_weights, valid_plant_prob_vectors)], axis=0)
+        else:
+            mean_prob_vector = np.mean(valid_plant_prob_vectors, axis=0)
 
         sorted_class_indices = np.argsort(mean_prob_vector)[::-1]
         top_c_idx = int(sorted_class_indices[0])
@@ -718,7 +742,7 @@ def predict_video(
     if detect_disease and final_prediction.get("status") in ("valid", "valid_plant_roi") and final_crop_slug and final_crop_slug not in ("unknown", "blurry", "uncertain", "crop_uncertain", "low_quality", "no_plant_evidence"):
         accepted_records = [f for f in frame_records if f.get("contributed_to_crop") and f.get("roi_pil")]
         try:
-            from model2.test_model2 import draw_predictions, predict_disease
+            from model2.test_model2 import predict_disease
             for f in accepted_records:
                 roi_p = f.get("roi_pil")
                 if roi_p is None:
